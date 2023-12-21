@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-quiz-generator",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "placeholder",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -12,13 +12,13 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^16.11.6",
-		"@typescript-eslint/eslint-plugin": "5.29.0",
-		"@typescript-eslint/parser": "5.29.0",
+		"@types/node": "^20.10.5",
+		"@typescript-eslint/eslint-plugin": "6.15.0",
+		"@typescript-eslint/parser": "6.15.0",
 		"builtin-modules": "3.3.0",
-		"esbuild": "0.17.3",
+		"esbuild": "0.19.10",
 		"obsidian": "latest",
-		"tslib": "2.4.0",
-		"typescript": "4.7.4"
+		"tslib": "2.6.2",
+		"typescript": "5.3.3"
 	}
 }
