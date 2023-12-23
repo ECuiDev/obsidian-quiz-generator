@@ -37,54 +37,92 @@ export default class QuizUI {
 			}
 		});
 
-		document.addEventListener("keydown", (event) => this.handleKeyPress(event, modal));
-
 		modal.open();
 	}
 
+
 	private displayUI() {
-		if (!this.container) {
-			this.container = document.createElement("div");
-			this.container.id = "selected-notes-container";
-			document.body.appendChild(this.container);
-		}
+		this.displayContainer();
+		this.displayButtons();
+		this.displayElements();
+	}
+
+	private displayContainer() {
+		this.container = document.createElement("div");
+		this.container.id = "selected-notes-container";
+		document.body.appendChild(this.container);
 
 		this.container.innerHTML = "";
 
-		if (this.container) {
-			this.container.style.position = "fixed";
-			this.container.style.top = "50%";
-			this.container.style.left = "50%";
-			this.container.style.transform = "translate(-50%, -50%)";
-			this.container.style.zIndex = "1";
-			this.container.style.width = "800px";
-			this.container.style.height = "80vh";
-			this.container.style.overflow = "hidden";
-			this.container.style.backgroundColor = "#343434";
-			this.container.style.padding = "10px";
-			this.container.style.border = "1px solid #ccc";
-			this.container.style.borderRadius = "5px";
+		this.container.style.position = "fixed";
+		this.container.style.top = "50%";
+		this.container.style.left = "50%";
+		this.container.style.transform = "translate(-50%, -50%)";
+		this.container.style.zIndex = "1";
+		this.container.style.width = "800px";
+		this.container.style.height = "80vh";
+		this.container.style.overflow = "hidden";
+		this.container.style.backgroundColor = "#343434";
+		this.container.style.padding = "10px";
+		this.container.style.border = "1px solid #ccc";
+		this.container.style.borderRadius = "5px";
+	}
 
-			const buttonSection = document.createElement("div");
-			buttonSection.style.position = "absolute";
-			buttonSection.style.bottom = "0";
-			buttonSection.style.width = "100%";
+	private displayButtons() {
+		const buttonSectionLeft = document.createElement("div");
+		buttonSectionLeft.style.position = "absolute";
+		buttonSectionLeft.style.bottom = "10px";
+		buttonSectionLeft.style.left = "10px";
+		buttonSectionLeft.style.display = "flex";
 
-			const button1 = document.createElement("button");
-			button1.textContent = "Button 1";
-			buttonSection.appendChild(button1);
-			const button2 = document.createElement("button");
-			button2.textContent = "Button 2";
-			buttonSection.appendChild(button2);
+		const exit = document.createElement("button");
+		exit.textContent = "Exit";
+		exit.style.backgroundColor = "#4CAF50";
+		exit.style.color = "white";
+		exit.style.padding = "10px 20px";
+		exit.style.marginRight = "10px";
 
-			this.container?.appendChild(buttonSection);
+		const clear = document.createElement("button");
+		clear.textContent = "Clear All";
+		clear.style.backgroundColor = "#008CBA";
+		clear.style.color = "white";
+		clear.style.padding = "10px 20px";
+		clear.style.marginRight = "10px";
 
-			this.elementsSection = document.createElement("div");
-			this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
-			this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
+		buttonSectionLeft.appendChild(exit);
+		buttonSectionLeft.appendChild(clear);
+		this.container?.appendChild(buttonSectionLeft);
 
-			this.container.appendChild(this.elementsSection);
-		}
+		const buttonSectionRight = document.createElement("div");
+		buttonSectionRight.style.position = "absolute";
+		buttonSectionRight.style.bottom = "10px";
+		buttonSectionRight.style.right = "10px";
+		buttonSectionRight.style.display = "flex";
+
+		const add = document.createElement("button");
+		add.textContent = "Add";
+		add.style.backgroundColor = "#ff6600";
+		add.style.color = "white";
+		add.style.padding = "10px 20px";
+		add.style.marginLeft = "10px";
+
+		const generate = document.createElement("button");
+		generate.textContent = "Generate";
+		generate.style.backgroundColor = "#800080";
+		generate.style.color = "white";
+		generate.style.padding = "10px 20px";
+		generate.style.marginLeft = "10px";
+
+		buttonSectionRight.appendChild(add);
+		buttonSectionRight.appendChild(generate);
+		this.container?.appendChild(buttonSectionRight);
+	}
+
+	private displayElements() {
+		this.elementsSection = document.createElement("div");
+		this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
+		this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
+		this.container?.appendChild(this.elementsSection);
 	}
 
 	private displaySelectedNote(selectedNote: TFile) {
@@ -104,31 +142,12 @@ export default class QuizUI {
 		return this.allMarkdownFiles.find(file => file.basename === noteName) || null;
 	}
 
-	private getRemainingNoteNames(): string[] {
-		return this.allMarkdownFiles
-			.filter((file) => !this.selectedNotes.some((selectedNote) => selectedNote.basename === file.basename))
-			.map((file) => file.basename);
-	}
-
-	private handleKeyPress(event: KeyboardEvent, modal: SearchBar) {
-		if (event.code === "Escape") {
-			this.terminateProcess(modal);
-		}
-	}
-
-	private terminateProcess(modal: SearchBar) {
-		if (modal) {
-			console.log("Process terminated by user.");
-			modal.close();
-			document.removeEventListener("keydown", (event) => this.handleKeyPress(event, modal));
-		}
-	}
-
 }
 
 class SearchBar extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
 	private readonly noteNames: string[];
+	private keydownHandler: (event: KeyboardEvent) => void;
 
 	constructor(app: App, noteNames: string[]) {
 		super(app);
@@ -137,8 +156,16 @@ class SearchBar extends FuzzySuggestModal<string> {
 
 	onOpen() {
 		super.onOpen();
+		this.keydownHandler = (event: KeyboardEvent) => this.handleKeyPress(event);
+		document.addEventListener("keydown", this.keydownHandler);
+
 		this.modalEl.style.top = "20%";
 		this.modalEl.style.left = "30%";
+	}
+
+	onClose() {
+		document.removeEventListener("keydown", this.keydownHandler);
+		super.onClose();
 	}
 
 	setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
@@ -157,6 +184,17 @@ class SearchBar extends FuzzySuggestModal<string> {
 
 	getItems(): string[] {
 		return this.noteNames;
+	}
+
+	private handleKeyPress(event: KeyboardEvent) {
+		if (event.code === "Escape") {
+			this.terminateProcess();
+		}
+	}
+
+	private terminateProcess() {
+		document.removeEventListener("keydown", this.keydownHandler);
+		this.close();
 	}
 
 }
