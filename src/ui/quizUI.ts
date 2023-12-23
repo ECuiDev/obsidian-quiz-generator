@@ -6,6 +6,7 @@ export default class QuizUI {
 	private allMarkdownFiles: TFile[];
 	private selectedNotes: TFile[] = [];
 	private container: HTMLDivElement | null = null;
+	private elementsSection: HTMLDivElement | null = null;
 
 	constructor(app: App) {
 		this.app = app;
@@ -14,7 +15,7 @@ export default class QuizUI {
 	open() {
 		this.allMarkdownFiles = this.app.vault.getMarkdownFiles();
 		this.noteNames = this.allMarkdownFiles.map(file => file.basename);
-		this.displaySelectedNotes();
+		this.displayUI();
 		this.showSearchBar();
 	}
 
@@ -30,7 +31,7 @@ export default class QuizUI {
 
 			if (selectedNote) {
 				this.selectedNotes.push(selectedNote);
-				this.displaySelectedNotes();
+				this.displaySelectedNote(selectedNote);
 				modal.close();
 				this.showSearchBar();
 			}
@@ -41,7 +42,7 @@ export default class QuizUI {
 		modal.open();
 	}
 
-	private displaySelectedNotes() {
+	private displayUI() {
 		if (!this.container) {
 			this.container = document.createElement("div");
 			this.container.id = "selected-notes-container";
@@ -50,73 +51,53 @@ export default class QuizUI {
 
 		this.container.innerHTML = "";
 
-		/*if (this.container) {
-			this.container.style.maxHeight = "70vh";
-			this.container.style.overflowY = "auto"; // Add a scrollbar if content exceeds the maximum height
-			this.container.style.backgroundColor = "#ebecf0";
-			this.container.style.padding = "10px"; // Padding
-			this.container.style.border = "1px solid #ccc"; // Border for visibility
-			this.container.style.borderRadius = "5px"; // Rounded corners
-			this.container.style.display = "flex";
-			this.container.style.flexDirection = "column"; // Align children in a column
-			this.container.style.justifyContent = "space-between"; // Space between items
-		}*/
-
 		if (this.container) {
 			this.container.style.position = "fixed";
-			this.container.style.top = "50%"; // Center vertically
-			this.container.style.left = "50%"; // Center horizontally
-			this.container.style.transform = "translate(-50%, -50%)"; // Centering trick
+			this.container.style.top = "50%";
+			this.container.style.left = "50%";
+			this.container.style.transform = "translate(-50%, -50%)";
 			this.container.style.zIndex = "1";
 			this.container.style.width = "800px";
-			this.container.style.height = "80vh"; // Set a maximum height based on viewport height
-			this.container.style.overflow = "hidden"; // Hide overflow to prevent buttons from being pushed down
+			this.container.style.height = "80vh";
+			this.container.style.overflow = "hidden";
+			this.container.style.backgroundColor = "#343434";
+			this.container.style.padding = "10px";
+			this.container.style.border = "1px solid #ccc";
+			this.container.style.borderRadius = "5px";
 
-			// Create a new section for buttons
 			const buttonSection = document.createElement("div");
 			buttonSection.style.position = "absolute";
-			buttonSection.style.bottom = "0"; // Align to the bottom
+			buttonSection.style.bottom = "0";
 			buttonSection.style.width = "100%";
 
-			// Add buttons to the button section
 			const button1 = document.createElement("button");
 			button1.textContent = "Button 1";
 			buttonSection.appendChild(button1);
-
 			const button2 = document.createElement("button");
 			button2.textContent = "Button 2";
 			buttonSection.appendChild(button2);
 
-			// Append the button section to the container
 			this.container?.appendChild(buttonSection);
 
-			// Create a new section for elements
-			const elementsSection = document.createElement("div");
-			elementsSection.style.overflowY = "auto"; // Make this section scrollable
-			elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
+			this.elementsSection = document.createElement("div");
+			this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
+			this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
 
-			// Append the elements section to the container
-			this.container.appendChild(elementsSection);
-
-			this.selectedNotes.forEach((selectedNote) => {
-				const selectedNoteBox = document.createElement("div");
-				selectedNoteBox.classList.add("selected-note-box");
-				selectedNoteBox.textContent = selectedNote.basename;
-				elementsSection.appendChild(selectedNoteBox);
-			});
+			this.container.appendChild(this.elementsSection);
 		}
+	}
 
-		const noteBoxes = document.querySelectorAll(".selected-note-box");
-		noteBoxes.forEach((noteBox) => {
-			const boxElement = noteBox as HTMLElement; // Explicitly cast to HTMLElement
-			if (boxElement) {
-				boxElement.style.backgroundColor = "#343434"; // Background color
-				boxElement.style.padding = "10px"; // Padding
-				boxElement.style.marginBottom = "5px"; // Adjust margin as needed
-				boxElement.style.borderRadius = "5px"; // Rounded corners
-				boxElement.style.border = "1px solid #ddd"; // Border
-			}
-		});
+	private displaySelectedNote(selectedNote: TFile) {
+		const selectedNoteBox = document.createElement("div");
+		selectedNoteBox.textContent = selectedNote.basename;
+		this.elementsSection?.appendChild(selectedNoteBox);
+
+		const boxElement = selectedNoteBox as HTMLElement; // Explicitly cast to HTMLElement
+		boxElement.style.backgroundColor = "#343434"; // Background color
+		boxElement.style.padding = "10px"; // Padding
+		boxElement.style.marginBottom = "5px"; // Adjust margin as needed
+		boxElement.style.borderRadius = "5px"; // Rounded corners
+		boxElement.style.border = "1px solid #ddd"; // Border
 	}
 
 	private getNoteByName(noteName: string): TFile | null {
