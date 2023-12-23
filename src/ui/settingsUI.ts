@@ -36,6 +36,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						this.plugin.settings.numberOfMultipleChoice = value;
 						this.plugin.saveSettings();
 					})
+					.setDynamicTooltip()
+					.showTooltip()
 			);
 
 		new Setting(containerEl)
@@ -60,6 +62,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						this.plugin.settings.numberOfTrueFalse = value;
 						this.plugin.saveSettings();
 					})
+					.setDynamicTooltip()
+					.showTooltip()
 			);
 
 		new Setting(containerEl)
@@ -84,6 +88,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						this.plugin.settings.numberOfShortAnswer = value;
 						this.plugin.saveSettings();
 					})
+					.setDynamicTooltip()
+					.showTooltip()
 			);
 	}
 
