@@ -5,7 +5,7 @@ export default class QuizUI {
 	private noteNames: string[];
 	private allMarkdownFiles: TFile[];
 	private selectedNotes: TFile[] = [];
-	private container: HTMLDivElement | null = null;
+	private searchContainer: HTMLDivElement | null = null;
 	private elementsSection: HTMLDivElement | null = null;
 
 	constructor(app: App) {
@@ -15,12 +15,18 @@ export default class QuizUI {
 	open() {
 		this.allMarkdownFiles = this.app.vault.getMarkdownFiles();
 		this.noteNames = this.allMarkdownFiles.map(file => file.basename);
-		this.displayUI();
+		this.displaySearchUI();
 		this.showSearchBar();
 	}
 
 	close() {
 
+	}
+
+	private displaySearchUI() {
+		this.displaySearchContainer();
+		this.displaySearchButtons();
+		this.displaySearchElements();
 	}
 
 	private showSearchBar() {
@@ -40,35 +46,28 @@ export default class QuizUI {
 		modal.open();
 	}
 
+	private displaySearchContainer() {
+		this.searchContainer = document.createElement("div");
+		this.searchContainer.id = "selected-notes-container";
+		document.body.appendChild(this.searchContainer);
 
-	private displayUI() {
-		this.displayContainer();
-		this.displayButtons();
-		this.displayElements();
+		this.searchContainer.innerHTML = "";
+
+		this.searchContainer.style.position = "fixed";
+		this.searchContainer.style.top = "50%";
+		this.searchContainer.style.left = "50%";
+		this.searchContainer.style.transform = "translate(-50%, -50%)";
+		this.searchContainer.style.zIndex = "1";
+		this.searchContainer.style.width = "800px";
+		this.searchContainer.style.height = "80vh";
+		this.searchContainer.style.overflow = "hidden";
+		this.searchContainer.style.backgroundColor = "#343434";
+		this.searchContainer.style.padding = "10px";
+		this.searchContainer.style.border = "1px solid #ccc";
+		this.searchContainer.style.borderRadius = "5px";
 	}
 
-	private displayContainer() {
-		this.container = document.createElement("div");
-		this.container.id = "selected-notes-container";
-		document.body.appendChild(this.container);
-
-		this.container.innerHTML = "";
-
-		this.container.style.position = "fixed";
-		this.container.style.top = "50%";
-		this.container.style.left = "50%";
-		this.container.style.transform = "translate(-50%, -50%)";
-		this.container.style.zIndex = "1";
-		this.container.style.width = "800px";
-		this.container.style.height = "80vh";
-		this.container.style.overflow = "hidden";
-		this.container.style.backgroundColor = "#343434";
-		this.container.style.padding = "10px";
-		this.container.style.border = "1px solid #ccc";
-		this.container.style.borderRadius = "5px";
-	}
-
-	private displayButtons() {
+	private displaySearchButtons() {
 		const buttonSectionLeft = document.createElement("div");
 		buttonSectionLeft.style.position = "absolute";
 		buttonSectionLeft.style.bottom = "10px";
@@ -91,7 +90,7 @@ export default class QuizUI {
 
 		buttonSectionLeft.appendChild(exit);
 		buttonSectionLeft.appendChild(clear);
-		this.container?.appendChild(buttonSectionLeft);
+		this.searchContainer?.appendChild(buttonSectionLeft);
 
 		const buttonSectionRight = document.createElement("div");
 		buttonSectionRight.style.position = "absolute";
@@ -115,14 +114,14 @@ export default class QuizUI {
 
 		buttonSectionRight.appendChild(add);
 		buttonSectionRight.appendChild(generate);
-		this.container?.appendChild(buttonSectionRight);
+		this.searchContainer?.appendChild(buttonSectionRight);
 	}
 
-	private displayElements() {
+	private displaySearchElements() {
 		this.elementsSection = document.createElement("div");
 		this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
 		this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
-		this.container?.appendChild(this.elementsSection);
+		this.searchContainer?.appendChild(this.elementsSection);
 	}
 
 	private displaySelectedNote(selectedNote: TFile) {
