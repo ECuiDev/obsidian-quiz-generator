@@ -19,9 +19,10 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Do you want to generate multiple choice questions?")
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.generateMultipleChoice).onChange((value) => {
+					.setValue(this.plugin.settings.generateMultipleChoice)
+					.onChange(async (value) => {
 						this.plugin.settings.generateMultipleChoice = value;
-						this.plugin.saveSettings();
+						await this.plugin.saveSettings();
 					})
 			);
 
@@ -32,9 +33,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				slider
 					.setValue(this.plugin.settings.numberOfMultipleChoice)
 					.setLimits(1, 10, 1)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.numberOfMultipleChoice = value;
-						this.plugin.saveSettings();
+						await this.plugin.saveSettings();
 					})
 					.setDynamicTooltip()
 					.showTooltip()
@@ -45,10 +46,11 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Do you want to generate true/false questions?")
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.generateTrueFalse).onChange((value) => {
-					this.plugin.settings.generateTrueFalse = value;
-					this.plugin.saveSettings();
-				})
+					.setValue(this.plugin.settings.generateTrueFalse)
+					.onChange(async (value) => {
+						this.plugin.settings.generateTrueFalse = value;
+						await this.plugin.saveSettings();
+					})
 			);
 
 		new Setting(containerEl)
@@ -58,9 +60,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				slider
 					.setValue(this.plugin.settings.numberOfTrueFalse)
 					.setLimits(1, 10, 1)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.numberOfTrueFalse = value;
-						this.plugin.saveSettings();
+						await this.plugin.saveSettings();
 					})
 					.setDynamicTooltip()
 					.showTooltip()
@@ -71,10 +73,11 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Do you want to generate short answer questions?")
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.generateShortAnswer).onChange((value) => {
-					this.plugin.settings.generateShortAnswer = value;
-					this.plugin.saveSettings();
-				})
+					.setValue(this.plugin.settings.generateShortAnswer)
+					.onChange(async (value) => {
+						this.plugin.settings.generateShortAnswer = value;
+						await this.plugin.saveSettings();
+					})
 			);
 
 		new Setting(containerEl)
@@ -84,12 +87,25 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				slider
 					.setValue(this.plugin.settings.numberOfShortAnswer)
 					.setLimits(1, 10, 1)
-					.onChange((value) => {
+					.onChange(async (value) => {
 						this.plugin.settings.numberOfShortAnswer = value;
-						this.plugin.saveSettings();
+						await this.plugin.saveSettings();
 					})
 					.setDynamicTooltip()
 					.showTooltip()
+			);
+
+		new Setting(containerEl)
+			.setName("API Key")
+			.setDesc("Enter your OpenAI API key here.")
+			.addText((text) =>
+				text
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.apiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.apiKey = value;
+						await this.plugin.saveSettings();
+					})
 			);
 	}
 

@@ -35,6 +35,7 @@ interface QuizSettings {
 	generateMultipleChoice: boolean;
 	generateTrueFalse: boolean;
 	generateShortAnswer: boolean;
+	apiKey: string;
 }
 
 const DEFAULT_SETTINGS: Partial<QuizSettings> = {
@@ -43,5 +44,6 @@ const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	numberOfShortAnswer: 1,
 	generateMultipleChoice: true,
 	generateTrueFalse: true,
-	generateShortAnswer: true
+	generateShortAnswer: true,
+	apiKey: ""
 };
