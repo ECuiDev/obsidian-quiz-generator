@@ -1,15 +1,24 @@
 import { App, FuzzySuggestModal, TFile } from "obsidian";
+import GptService from "../service/gptService";
+import QuizGenerator from "../main";
 
 export default class QuizUI {
 	private readonly app: App;
+	private readonly plugin: QuizGenerator;
 	private noteNames: string[];
 	private allMarkdownFiles: TFile[];
 	private selectedNotes: TFile[] = [];
 	private searchContainer: HTMLDivElement | null = null;
 	private elementsSection: HTMLDivElement | null = null;
+	private exitListener: () => void;
+	private clearListener: () => void;
+	private addListener: () => void;
+	private generateListener: () => void;
+	private gpt: GptService;
 
-	constructor(app: App) {
+	constructor(app: App, plugin: QuizGenerator) {
 		this.app = app;
+		this.plugin = plugin;
 	}
 
 	open() {
@@ -106,6 +115,7 @@ export default class QuizUI {
 		add.style.marginLeft = "10px";
 
 		const generate = document.createElement("button");
+		generate.id = "generate";
 		generate.textContent = "Generate";
 		generate.style.backgroundColor = "#800080";
 		generate.style.color = "white";
@@ -115,6 +125,13 @@ export default class QuizUI {
 		buttonSectionRight.appendChild(add);
 		buttonSectionRight.appendChild(generate);
 		this.searchContainer?.appendChild(buttonSectionRight);
+
+		this.generateListener = async () => {
+			this.gpt = new GptService(this.plugin);
+			await this.generateQuestions();
+			generate.removeEventListener("click", this.generateListener);
+		}
+		generate?.addEventListener("click", this.generateListener);
 	}
 
 	private displaySearchElements() {
@@ -124,17 +141,31 @@ export default class QuizUI {
 		this.searchContainer?.appendChild(this.elementsSection);
 	}
 
-	private displaySelectedNote(selectedNote: TFile) {
+	private async displaySelectedNote(selectedNote: TFile) {
 		const selectedNoteBox = document.createElement("div");
+		const noteTokens = await this.countNoteTokens(await this.app.vault.cachedRead(selectedNote));
 		selectedNoteBox.textContent = selectedNote.basename;
-		this.elementsSection?.appendChild(selectedNoteBox);
 
-		const boxElement = selectedNoteBox as HTMLElement; // Explicitly cast to HTMLElement
-		boxElement.style.backgroundColor = "#343434"; // Background color
-		boxElement.style.padding = "10px"; // Padding
-		boxElement.style.marginBottom = "5px"; // Adjust margin as needed
-		boxElement.style.borderRadius = "5px"; // Rounded corners
-		boxElement.style.border = "1px solid #ddd"; // Border
+		selectedNoteBox.style.backgroundColor = "#343434"; // Background color
+		selectedNoteBox.style.padding = "10px"; // Padding
+		selectedNoteBox.style.marginBottom = "5px"; // Adjust margin as needed
+		selectedNoteBox.style.borderRadius = "5px"; // Rounded corners
+		selectedNoteBox.style.border = "1px solid #ddd"; // Border
+
+		this.elementsSection?.appendChild(selectedNoteBox);
+	}
+
+	private async generateQuestions() {
+		const noteContents: string[] = [];
+
+		for (const selectedNote of this.selectedNotes) {
+			const content = await this.app.vault.cachedRead(selectedNote);
+			noteContents.push(content);
+		}
+	}
+
+	private async countNoteTokens(noteContents: string) {
+		return Math.round(noteContents.length / 4);
 	}
 
 	private getNoteByName(noteName: string): TFile | null {
@@ -187,13 +218,8 @@ class SearchBar extends FuzzySuggestModal<string> {
 
 	private handleKeyPress(event: KeyboardEvent) {
 		if (event.code === "Escape") {
-			this.terminateProcess();
+			this.close();
 		}
-	}
-
-	private terminateProcess() {
-		document.removeEventListener("keydown", this.keydownHandler);
-		this.close();
 	}
 
 }
