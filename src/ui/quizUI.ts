@@ -5,9 +5,9 @@ import QuizGenerator from "../main";
 export default class QuizUI {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
-	private noteNames: string[];
 	private allMarkdownFiles: TFile[];
-	private selectedNotes: TFile[] = [];
+	private noteNames: string[];
+	private selectedNotes: Map<string, string>;
 	private searchContainer: HTMLDivElement | null = null;
 	private elementsSection: HTMLDivElement | null = null;
 	private exitListener: () => void;
@@ -24,6 +24,7 @@ export default class QuizUI {
 	open() {
 		this.allMarkdownFiles = this.app.vault.getMarkdownFiles();
 		this.noteNames = this.allMarkdownFiles.map(file => file.basename);
+		this.selectedNotes = new Map<string, string>();
 		this.displaySearchUI();
 		this.showSearchBar();
 	}
@@ -38,15 +39,16 @@ export default class QuizUI {
 		this.displaySearchElements();
 	}
 
-	private showSearchBar() {
+	private async showSearchBar() {
 		const modal = new SearchBar(this.app, this.noteNames);
 
-		modal.setCallback((selectedItem: string) => {
+		modal.setCallback(async (selectedItem: string) => {
 			const selectedNote = this.getNoteByName(selectedItem);
 
 			if (selectedNote) {
-				this.selectedNotes.push(selectedNote);
-				this.displaySelectedNote(selectedNote);
+				const noteContents = await this.app.vault.cachedRead(selectedNote);
+				this.selectedNotes.set(selectedNote.basename, noteContents);
+				await this.displaySelectedNote(selectedNote.basename);
 				modal.close();
 				this.showSearchBar();
 			}
@@ -141,16 +143,24 @@ export default class QuizUI {
 		this.searchContainer?.appendChild(this.elementsSection);
 	}
 
-	private async displaySelectedNote(selectedNote: TFile) {
+	private async displaySelectedNote(selectedNote: string) {
 		const selectedNoteBox = document.createElement("div");
-		const noteTokens = await this.countNoteTokens(await this.app.vault.cachedRead(selectedNote));
-		selectedNoteBox.textContent = selectedNote.basename;
+		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(selectedNote));
 
+		selectedNoteBox.textContent = selectedNote;
+		selectedNoteBox.style.display = "flex";
+		selectedNoteBox.style.flexDirection = "row";
 		selectedNoteBox.style.backgroundColor = "#343434"; // Background color
 		selectedNoteBox.style.padding = "10px"; // Padding
 		selectedNoteBox.style.marginBottom = "5px"; // Adjust margin as needed
 		selectedNoteBox.style.borderRadius = "5px"; // Rounded corners
 		selectedNoteBox.style.border = "1px solid #ddd"; // Border
+
+		const noteTokensElement = document.createElement("div");
+		noteTokensElement.textContent = noteTokens + " tokens";
+		noteTokensElement.style.marginLeft = "auto";
+
+		selectedNoteBox.appendChild(noteTokensElement);
 
 		this.elementsSection?.appendChild(selectedNoteBox);
 	}
@@ -158,14 +168,15 @@ export default class QuizUI {
 	private async generateQuestions() {
 		const noteContents: string[] = [];
 
-		for (const selectedNote of this.selectedNotes) {
-			const content = await this.app.vault.cachedRead(selectedNote);
-			noteContents.push(content);
+		for (const noteContent of this.selectedNotes.values()) {
+			noteContents.push(noteContent);
 		}
 	}
 
-	private async countNoteTokens(noteContents: string) {
-		return Math.round(noteContents.length / 4);
+	private async countNoteTokens(noteContents: string | undefined) {
+		if (typeof noteContents === "string") {
+			return Math.round(noteContents.length / 4);
+		}
 	}
 
 	private getNoteByName(noteName: string): TFile | null {
