@@ -14,6 +14,8 @@ export default class GptService {
 
 	async generateQuestions(contents: string[]) {
 		try {
+			console.log("Making API request...");
+			const notice = new Notice("Making API request...");
 			const completion = await this.openai.chat.completions.create({
 				messages: [{ role: "system", content: "You are an assistant specialized in generating questions and " +
 						"answers.\n\n"
@@ -31,9 +33,12 @@ export default class GptService {
 				],
 				model: "gpt-3.5-turbo-1106"
 			});
-			console.log(completion.choices[0].message.content);
+			notice.hide();
+			console.log("API request successful:", completion.choices[0].message.content);
+			console.log(completion.usage?.total_tokens);
 			return completion.choices[0].message.content;
 		} catch (e) {
+			console.error("API request failed:", e);
 			new Notice("Error generating quiz. Did you set your API key in the settings?", 5000);
 		}
 	}
@@ -41,15 +46,15 @@ export default class GptService {
 	private formatMultipleChoice() {
 		const formattedChoices = this.choices.map((choice, index) =>
 			`${String.fromCharCode(97 + index)}) ${choice}`).join('\n');
-		return `Multiple Choice Format\nQ: Question\n${formattedChoices}\nA: Answer`;
+		return `Multiple Choice Format\nQMC: Question\n${formattedChoices}\nAMC: Either a, b, c, or d`;
 	}
 
 	private formatTrueFalse() {
-		return "True/False Format\nQ: Question\nA: True or False";
+		return "True/False Format\nQTF: Question\nATF: True or False";
 	}
 
 	private formatShortAnswer() {
-		return "Short Answer Format\nQ: Question\nA: Answer";
+		return "Short Answer Format\nQSA: Question\nASA: Answer";
 	}
 
 }
