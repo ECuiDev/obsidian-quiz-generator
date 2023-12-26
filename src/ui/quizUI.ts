@@ -12,6 +12,7 @@ export default class QuizUI {
 	private elementsSection: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
+	private questionsAndAnswers: (ParsedMCQ | ParsedTFSA)[];
 	private exitListener: () => void;
 	private clearListener: () => void;
 	private addListener: () => void;
@@ -223,6 +224,62 @@ export default class QuizUI {
 		return this.allMarkdownFiles.find(file => file.basename === noteName) || null;
 	}
 
+	private parseQuestionsAndAnswers(inputString: string): (ParsedMCQ | ParsedTFSA)[] {
+		const mcRegex = /QMC: (.+?)(?:\na\) (.+?)\nb\) (.+?)\nc\) (.+?)\nd\) (.+?))+\nAMC: ([a-d])/s;
+		const tfRegex = /QTF: (.+?)\nATF: (True|False)/g;
+		const saRegex = /QSA: (.+?)(?:\nASA: (.+))?/g;
+
+		function matchQuestions(regex: RegExp): (ParsedMCQ | ParsedTFSA)[] {
+			const matches: (ParsedMCQ | ParsedTFSA)[] = [];
+
+			let match: RegExpExecArray | null = null;
+			do {
+				// Reset the regex lastIndex before each iteration
+				regex.lastIndex = match ? match.index + 1 : 0;
+
+				match = regex.exec(inputString);
+
+				if (match) {
+					if (regex === mcRegex) {
+						const [, question, choice1, choice2, choice3, choice4, answer] = match;
+						matches.push({
+							question,
+							choice1,
+							choice2,
+							choice3,
+							choice4,
+							answer,
+							type: "MC",
+						});
+					} else if (regex === tfRegex) {
+						const [, question, answer] = match;
+						matches.push({
+							question,
+							answer,
+							type: "TF",
+						});
+					} else if (regex === saRegex) {
+						const [, question, answer] = match;
+						matches.push({
+							question,
+							answer,
+							type: "SA",
+						});
+					}
+				}
+			} while (match);
+
+			return matches;
+		}
+
+
+		const mcQuestions = matchQuestions(mcRegex);
+		const tfQuestions = matchQuestions(tfRegex);
+		const saQuestions = matchQuestions(saRegex);
+
+		return mcQuestions.concat(tfQuestions, saQuestions);
+	}
+
 }
 
 class SearchBar extends FuzzySuggestModal<string> {
@@ -273,4 +330,20 @@ class SearchBar extends FuzzySuggestModal<string> {
 		}
 	}
 
+}
+
+interface ParsedMCQ {
+	question: string;
+	choice1: string;
+	choice2: string;
+	choice3: string;
+	choice4: string;
+	answer: string;
+	type: "MC";
+}
+
+interface ParsedTFSA {
+	question: string;
+	answer: string;
+	type: "TF" | "SA";
 }
