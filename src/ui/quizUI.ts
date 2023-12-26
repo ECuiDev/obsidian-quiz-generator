@@ -8,8 +8,10 @@ export default class QuizUI {
 	private allMarkdownFiles: TFile[];
 	private noteNames: string[];
 	private selectedNotes: Map<string, string>;
-	private searchContainer: HTMLDivElement | null = null;
-	private elementsSection: HTMLDivElement | null = null;
+	private searchContainer: HTMLDivElement;
+	private elementsSection: HTMLDivElement;
+	private tokenSection: HTMLSpanElement;
+	private promptTokens: number = 0;
 	private exitListener: () => void;
 	private clearListener: () => void;
 	private addListener: () => void;
@@ -30,13 +32,9 @@ export default class QuizUI {
 	}
 
 	private close() {
-		// @ts-ignore
 		this.searchContainer.style.display = "none";
-		// @ts-ignore
 		this.searchContainer.innerHTML = "";
-		// @ts-ignore
 		this.elementsSection.style.display = "none";
-		// @ts-ignore
 		this.elementsSection.innerHTML = "";
 	}
 
@@ -45,6 +43,7 @@ export default class QuizUI {
 		this.activateButtons();
 		this.displaySearchButtons();
 		this.displaySearchElements();
+		this.displayTokens();
 	}
 
 	private async showSearchBar() {
@@ -107,7 +106,7 @@ export default class QuizUI {
 
 		buttonSectionLeft.appendChild(exit);
 		buttonSectionLeft.appendChild(clear);
-		this.searchContainer?.appendChild(buttonSectionLeft);
+		this.searchContainer.appendChild(buttonSectionLeft);
 
 		const buttonSectionRight = document.createElement("div");
 		buttonSectionRight.style.position = "absolute";
@@ -132,7 +131,7 @@ export default class QuizUI {
 
 		buttonSectionRight.appendChild(add);
 		buttonSectionRight.appendChild(generate);
-		this.searchContainer?.appendChild(buttonSectionRight);
+		this.searchContainer.appendChild(buttonSectionRight);
 
 		exit.addEventListener("click", this.exitListener);
 		clear.addEventListener("click", this.clearListener);
@@ -144,7 +143,19 @@ export default class QuizUI {
 		this.elementsSection = document.createElement("div");
 		this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
 		this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
-		this.searchContainer?.appendChild(this.elementsSection);
+		this.searchContainer.appendChild(this.elementsSection);
+	}
+
+	private displayTokens() {
+		this.tokenSection = document.createElement("span");
+		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+
+		this.tokenSection.style.position = "absolute";
+		this.tokenSection.style.left = "50%";
+		this.tokenSection.style.bottom = "10px";
+		this.tokenSection.style.transform = "translateX(-50%)";
+
+		this.searchContainer.appendChild(this.tokenSection);
 	}
 
 	private activateButtons() {
@@ -152,8 +163,9 @@ export default class QuizUI {
 
 		this.clearListener = async () => {
 			this.selectedNotes.clear();
-			// @ts-ignore
 			this.elementsSection.innerHTML = "";
+			this.promptTokens = 0;
+			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 		}
 
 		this.addListener = async () => await this.showSearchBar();
@@ -183,7 +195,10 @@ export default class QuizUI {
 
 		selectedNoteBox.appendChild(noteTokensElement);
 
-		this.elementsSection?.appendChild(selectedNoteBox);
+		this.elementsSection.appendChild(selectedNoteBox);
+
+		this.promptTokens += noteTokens;
+		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
 	private async generateQuestions() {
@@ -199,6 +214,8 @@ export default class QuizUI {
 	private async countNoteTokens(noteContents: string | undefined) {
 		if (typeof noteContents === "string") {
 			return Math.round(noteContents.length / 4);
+		} else {
+			return 0;
 		}
 	}
 
