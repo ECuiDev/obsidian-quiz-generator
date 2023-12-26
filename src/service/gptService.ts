@@ -5,6 +5,7 @@ import QuizGenerator from "../main";
 export default class GptService {
 	private plugin: QuizGenerator;
 	openai: OpenAI;
+	private choices = ["Choice1", "Choice2", "Choice3", "Choice4"];
 
 	constructor(plugin: QuizGenerator) {
 		this.plugin = plugin;
@@ -15,15 +16,18 @@ export default class GptService {
 		try {
 			const completion = await this.openai.chat.completions.create({
 				messages: [{ role: "system", content: "You are an assistant specialized in generating questions and " +
-						"answers. Precede each question and answer with Q: and A: respectively." },
+						"answers.\n\n"
+						+ (this.plugin.settings.generateMultipleChoice ? this.formatMultipleChoice() + "\n\n" : "")
+						+ (this.plugin.settings.generateTrueFalse ? this.formatTrueFalse() + "\n\n" : "")
+						+ (this.plugin.settings.generateShortAnswer ? this.formatShortAnswer() + "\n\n" : "") },
 					{ role: "user", content: (this.plugin.settings.generateMultipleChoice
-								? `generate ${this.plugin.settings.numberOfMultipleChoice} multiple choice questions,` : "")
+								? `generate ${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` : "")
 							+ (this.plugin.settings.generateTrueFalse
-								? `generate ${this.plugin.settings.numberOfTrueFalse} true/false questions,` : "")
+								? `generate ${this.plugin.settings.numberOfTrueFalse} true/false questions, ` : "")
 							+ (this.plugin.settings.generateShortAnswer
-								? `generate ${this.plugin.settings.numberOfShortAnswer} short answer questions,` : "")
-							+ "based off the following text: " + `...${contents}` +
-							"The overall focus should be on assessing understanding and critical thinking."}
+								? `generate ${this.plugin.settings.numberOfShortAnswer} short answer questions, ` : "")
+							+ "based off the following text: " + contents.join('') +
+							" The overall focus should be on assessing understanding and critical thinking."}
 				],
 				model: "gpt-3.5-turbo-1106"
 			});
@@ -32,6 +36,20 @@ export default class GptService {
 		} catch (e) {
 			new Notice("Error generating quiz. Did you set your API key in the settings?", 5000);
 		}
+	}
+
+	private formatMultipleChoice() {
+		const formattedChoices = this.choices.map((choice, index) =>
+			`${String.fromCharCode(97 + index)}) ${choice}`).join('\n');
+		return `Multiple Choice Format\nQ: Question\n${formattedChoices}\nA: Answer`;
+	}
+
+	private formatTrueFalse() {
+		return "True/False Format\nQ: Question\nA: True or False";
+	}
+
+	private formatShortAnswer() {
+		return "Short Answer Format\nQ: Question\nA: Answer";
 	}
 
 }
