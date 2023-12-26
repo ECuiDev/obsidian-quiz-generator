@@ -15,7 +15,7 @@ export default class GptService {
 		try {
 			const completion = await this.openai.chat.completions.create({
 				messages: [{ role: "system", content: "You are an assistant specialized in generating questions and " +
-						"answers. For each question answer pair you generate, precede each with Q: and A: respectively." },
+						"answers. Precede each question and answer with Q: and A: respectively." },
 					{ role: "user", content: (this.plugin.settings.generateMultipleChoice
 								? `generate ${this.plugin.settings.numberOfMultipleChoice} multiple choice questions,` : "")
 							+ (this.plugin.settings.generateTrueFalse
@@ -27,7 +27,7 @@ export default class GptService {
 				],
 				model: "gpt-3.5-turbo-1106"
 			});
-
+			console.log(completion.choices[0].message.content);
 			return completion.choices[0].message.content;
 		} catch (e) {
 			new Notice("Error generating quiz. Did you set your API key in the settings?", 5000);
