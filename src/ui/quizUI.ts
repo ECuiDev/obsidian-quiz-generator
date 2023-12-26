@@ -29,12 +29,20 @@ export default class QuizUI {
 		this.showSearchBar();
 	}
 
-	close() {
-
+	private close() {
+		// @ts-ignore
+		this.searchContainer.style.display = "none";
+		// @ts-ignore
+		this.searchContainer.innerHTML = "";
+		// @ts-ignore
+		this.elementsSection.style.display = "none";
+		// @ts-ignore
+		this.elementsSection.innerHTML = "";
 	}
 
 	private displaySearchUI() {
 		this.displaySearchContainer();
+		this.activateButtons();
 		this.displaySearchButtons();
 		this.displaySearchElements();
 	}
@@ -61,8 +69,6 @@ export default class QuizUI {
 		this.searchContainer = document.createElement("div");
 		this.searchContainer.id = "selected-notes-container";
 		document.body.appendChild(this.searchContainer);
-
-		this.searchContainer.innerHTML = "";
 
 		this.searchContainer.style.position = "fixed";
 		this.searchContainer.style.top = "50%";
@@ -128,12 +134,10 @@ export default class QuizUI {
 		buttonSectionRight.appendChild(generate);
 		this.searchContainer?.appendChild(buttonSectionRight);
 
-		this.generateListener = async () => {
-			this.gpt = new GptService(this.plugin);
-			await this.gpt.generateQuestions(await this.generateQuestions());
-			generate.removeEventListener("click", this.generateListener);
-		}
-		generate?.addEventListener("click", this.generateListener);
+		exit.addEventListener("click", this.exitListener);
+		clear.addEventListener("click", this.clearListener);
+		add.addEventListener("click", this.addListener);
+		generate.addEventListener("click", this.generateListener);
 	}
 
 	private displaySearchElements() {
@@ -141,6 +145,23 @@ export default class QuizUI {
 		this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
 		this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
 		this.searchContainer?.appendChild(this.elementsSection);
+	}
+
+	private activateButtons() {
+		this.exitListener = async () => this.close();
+
+		this.clearListener = async () => {
+			this.selectedNotes.clear();
+			// @ts-ignore
+			this.elementsSection.innerHTML = "";
+		}
+
+		this.addListener = async () => await this.showSearchBar();
+
+		this.generateListener = async () => {
+			this.gpt = new GptService(this.plugin);
+			await this.gpt.generateQuestions(await this.generateQuestions());
+		}
 	}
 
 	private async displaySelectedNote(selectedNote: string) {
