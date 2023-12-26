@@ -130,7 +130,7 @@ export default class QuizUI {
 
 		this.generateListener = async () => {
 			this.gpt = new GptService(this.plugin);
-			await this.generateQuestions();
+			await this.gpt.generateQuestions(await this.generateQuestions());
 			generate.removeEventListener("click", this.generateListener);
 		}
 		generate?.addEventListener("click", this.generateListener);
@@ -171,6 +171,8 @@ export default class QuizUI {
 		for (const noteContent of this.selectedNotes.values()) {
 			noteContents.push(noteContent);
 		}
+
+		return noteContents;
 	}
 
 	private async countNoteTokens(noteContents: string | undefined) {
