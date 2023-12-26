@@ -9,7 +9,7 @@ export default class GptService {
 
 	constructor(plugin: QuizGenerator) {
 		this.plugin = plugin;
-		this.openai = new OpenAI({apiKey: this.plugin.settings.apiKey})
+		this.openai = new OpenAI({apiKey: this.plugin.settings.apiKey, dangerouslyAllowBrowser: true})
 	}
 
 	async generateQuestions(contents: string[]) {
