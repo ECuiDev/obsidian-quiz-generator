@@ -1,6 +1,7 @@
 import { App, FuzzySuggestModal, TFile } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
+import { cleanUpString } from "../utils/parser";
 
 export default class QuizUI {
 	private readonly app: App;
@@ -54,9 +55,7 @@ export default class QuizUI {
 			const selectedNote = this.getNoteByName(selectedItem);
 
 			if (selectedNote) {
-				const noteContents = await this.app.vault.cachedRead(selectedNote);
-				console.log(noteContents);
-				console.log(JSON.stringify(noteContents));
+				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
 				this.selectedNotes.set(selectedNote.basename, noteContents);
 				console.log(this.selectedNotes.get(selectedNote.basename));
 				console.log(JSON.stringify(this.selectedNotes.get(selectedNote.basename)));
