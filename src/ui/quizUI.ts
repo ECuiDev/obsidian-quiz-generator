@@ -55,7 +55,11 @@ export default class QuizUI {
 
 			if (selectedNote) {
 				const noteContents = await this.app.vault.cachedRead(selectedNote);
+				console.log(noteContents);
+				console.log(JSON.stringify(noteContents));
 				this.selectedNotes.set(selectedNote.basename, noteContents);
+				console.log(this.selectedNotes.get(selectedNote.basename));
+				console.log(JSON.stringify(this.selectedNotes.get(selectedNote.basename)));
 				await this.displaySelectedNote(selectedNote.basename);
 				modal.close();
 				this.showSearchBar();
@@ -222,62 +226,6 @@ export default class QuizUI {
 
 	private getNoteByName(noteName: string): TFile | null {
 		return this.allMarkdownFiles.find(file => file.basename === noteName) || null;
-	}
-
-	private parseQuestionsAndAnswers(inputString: string): (ParsedMCQ | ParsedTFSA)[] {
-		const mcRegex = /QMC: (.+?)(?:\na\) (.+?)\nb\) (.+?)\nc\) (.+?)\nd\) (.+?))+\nAMC: ([a-d])/s;
-		const tfRegex = /QTF: (.+?)\nATF: (True|False)/g;
-		const saRegex = /QSA: (.+?)(?:\nASA: (.+))?/g;
-
-		function matchQuestions(regex: RegExp): (ParsedMCQ | ParsedTFSA)[] {
-			const matches: (ParsedMCQ | ParsedTFSA)[] = [];
-
-			let match: RegExpExecArray | null = null;
-			do {
-				// Reset the regex lastIndex before each iteration
-				regex.lastIndex = match ? match.index + 1 : 0;
-
-				match = regex.exec(inputString);
-
-				if (match) {
-					if (regex === mcRegex) {
-						const [, question, choice1, choice2, choice3, choice4, answer] = match;
-						matches.push({
-							question,
-							choice1,
-							choice2,
-							choice3,
-							choice4,
-							answer,
-							type: "MC",
-						});
-					} else if (regex === tfRegex) {
-						const [, question, answer] = match;
-						matches.push({
-							question,
-							answer,
-							type: "TF",
-						});
-					} else if (regex === saRegex) {
-						const [, question, answer] = match;
-						matches.push({
-							question,
-							answer,
-							type: "SA",
-						});
-					}
-				}
-			} while (match);
-
-			return matches;
-		}
-
-
-		const mcQuestions = matchQuestions(mcRegex);
-		const tfQuestions = matchQuestions(tfRegex);
-		const saQuestions = matchQuestions(saRegex);
-
-		return mcQuestions.concat(tfQuestions, saQuestions);
 	}
 
 }
