@@ -21,7 +21,7 @@ export function removeMarkdownHeadings(input: string) {
 }
 
 export function removeMarkdownFormatting(input: string) {
-	const markdownFormattingRegex = /(\*\*\*|___|\*\*|__|\*|_|~~|==)(.*?)\1/g;
+	const markdownFormattingRegex = /(\*\*\*|___|\*\*|__|\*|_|~~|==|%%)(.*?)\1/g;
 	return input.replace(markdownFormattingRegex, "$2");
 }
 
