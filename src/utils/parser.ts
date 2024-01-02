@@ -35,12 +35,12 @@ function removeMarkdownFormatting(input: string) {
 	return input.replace(markdownFormattingRegex, "$2");
 }
 
-function removeSpecialCharacters(input: string) {
+export function removeSpecialCharacters(input: string) {
 	const regex = /[\n\\`]/g;
 	return input.replace(regex, "");
 }
 
-function cleanUpWhiteSpace(input: string) {
+export function cleanUpWhiteSpace(input: string) {
 	const consecutiveSpacesRegex = /\s+/g;
 	return input.replace(consecutiveSpacesRegex, " ").trim();
 }

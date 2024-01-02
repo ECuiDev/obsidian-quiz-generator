@@ -9,7 +9,8 @@ export default class GptService {
 
 	constructor(plugin: QuizGenerator) {
 		this.plugin = plugin;
-		this.openai = new OpenAI({apiKey: this.plugin.settings.apiKey, dangerouslyAllowBrowser: true})
+		this.openai = new OpenAI({apiKey: this.plugin.settings.apiKey,
+			dangerouslyAllowBrowser: true});
 	}
 
 	async generateQuestions(contents: string[]) {
@@ -18,8 +19,13 @@ export default class GptService {
 			const notice = new Notice("Making API request...");
 			const completion = await this.openai.chat.completions.create({
 				messages: [
+					{ role: "system", content: `You are an assistant specialized in generating questions and answers.
+					Your response must be a JSON object with the following properties:
+					"quiz": an array of JSON objects, where each JSON object represents a question and answer pair.
+					Each type of question is represented by a different JSON object format.
+					For multiple choice questions, the JSON object must have the following properties: ` },
 					{ role: "system", content: "You are an assistant specialized in generating questions and " +
-						"answers. Provide your response as an array of JSON objects, where each element of the array " +
+						"answers. Your response must be a JSON object with the following properties: , where each element of the array " +
 							"is a JSON object that represents a question/answer pair. Here are the question types and " +
 							"their corresponding JSON object format."
 						+ (this.plugin.settings.generateMultipleChoice ? this.formatMultipleChoice() + "\n\n" : "")
@@ -48,52 +54,53 @@ export default class GptService {
 	}
 
 	private formatMultipleChoice() {
-
-
-		return `For multiple choice questions, return a JSON object with the following structure:
-			- Q: The question
-			- A: The first choice
-			- B: The second choice
-			- C: The third choice
-			- D: The fourth choice
-			- AMC: The letter corresponding to the correct choice
-			
-			Example:
-			{
-			  "Q": "What is the capital city of Australia?",
-			  "A": "Sydney",
-			  "B": "Melbourne",
-			  "C": "Canberra",
-			  "D": "Brisbane",
-			  "AMC": C
-			}`
+		return `"Q": The question 
+		"A": The first choice 
+		"B": The second choice 
+		"C": The third choice 
+		"D": The fourth choice 
+		"AMC": The letter corresponding to the correct choice`;
 	}
 
 	private formatTrueFalse() {
-		return `For true/false questions, return a JSON object with the following structure:
-			- Q: The question
-			- ATF: The correct answer to the question
-			
-			Example:
-			{
-			  "Q": "The Great Wall of China is visible from space.",
-			  "ATF": False
-			}`
+		return `"Q": The question "ATF": The correct answer to the question`;
 	}
 
 	private formatShortAnswer() {
-		return `For short answer questions, return a JSON object with the following structure:
-			- Q: The question
-			- ASA: The correct answer to the question
-			
-			Example:
-			{
-			  "Q": "Explain the concept of photosynthesis in plants.",
-			  "ATF": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light 
-			  energy into chemical energy, stored in the form of glucose or other organic compounds. It occurs in the 
-			  chloroplasts of cells and involves the absorption of light by chlorophyll, the conversion of carbon 
-			  dioxide and water into glucose, and the release of oxygen as a byproduct."
-			}`
+		return `"Q": The question "ASA": The correct answer to the question`;
+	}
+
+	private formatExample() {
+		const multipleChoiceExample = `{
+		  "Q": "What is the capital city of Australia?",
+		  "A": "Sydney",
+		  "B": "Melbourne",
+		  "C": "Canberra",
+		  "D": "Brisbane",
+		  "AMC": C
+		}`;
+
+		const trueFalseExample = `{
+		  "Q": "The Great Wall of China is visible from space.",
+		  "ATF": False
+		}`;
+
+		const shortAnswerExample = `{
+		  "Q": "Explain the concept of photosynthesis in plants.",
+		  "ATF": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light 
+		  energy into chemical energy, stored in the form of glucose or other organic compounds. It occurs in the 
+		  chloroplasts of cells and involves the absorption of light by chlorophyll, the conversion of carbon 
+		  dioxide and water into glucose, and the release of oxygen as a byproduct."
+		}`;
+
+		const example = `{
+		  "quiz": [
+		  ${multipleChoiceExample},
+		  ${trueFalseExample},
+		  ${shortAnswerExample}
+		  ]
+		}`;
+
 	}
 
 }
