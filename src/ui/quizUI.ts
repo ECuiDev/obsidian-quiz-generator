@@ -1,4 +1,4 @@
-import { App, FuzzySuggestModal, TFile } from "obsidian";
+import {App, FuzzySuggestModal, Notice, TFile} from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
@@ -175,8 +175,13 @@ export default class QuizUI {
 		this.addListener = async () => await this.showSearchBar();
 
 		this.generateListener = async () => {
-			this.gpt = new GptService(this.plugin);
-			await this.gpt.generateQuestions(await this.generateQuestions());
+			if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
+				|| this.plugin.settings.generateShortAnswer) {
+				this.gpt = new GptService(this.plugin);
+				await this.gpt.generateQuestions(await this.generateQuestions());
+			} else {
+				new Notice("Generation cancelled because all question types are set to false.")
+			}
 		}
 	}
 
