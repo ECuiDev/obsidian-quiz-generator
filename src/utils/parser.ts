@@ -8,6 +8,10 @@ export function cleanUpString(input: string) {
 	return cleanUpWhiteSpace(cleanedString);
 }
 
+export function cleanUpPrompt(input: string) {
+	return cleanUpWhiteSpace(removeSpecialCharacters(input));
+}
+
 function removeFrontMatter(input: string) {
 	const yamlFrontMatterRegex = /---[\s\S]+?---\n/;
 	return input.replace(yamlFrontMatterRegex, "");
@@ -35,12 +39,12 @@ function removeMarkdownFormatting(input: string) {
 	return input.replace(markdownFormattingRegex, "$2");
 }
 
-export function removeSpecialCharacters(input: string) {
+function removeSpecialCharacters(input: string) {
 	const regex = /[\n\\`]/g;
 	return input.replace(regex, "");
 }
 
-export function cleanUpWhiteSpace(input: string) {
+function cleanUpWhiteSpace(input: string) {
 	const consecutiveSpacesRegex = /\s+/g;
 	return input.replace(consecutiveSpacesRegex, " ").trim();
 }
