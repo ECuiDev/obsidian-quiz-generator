@@ -17,8 +17,11 @@ export default class GptService {
 			console.log("Making API request...");
 			const notice = new Notice("Making API request...");
 			const completion = await this.openai.chat.completions.create({
-				messages: [{ role: "system", content: "You are an assistant specialized in generating questions and " +
-						"answers.\n\n"
+				messages: [
+					{ role: "system", content: "You are an assistant specialized in generating questions and " +
+						"answers. Provide your response as an array of JSON objects, where each element of the array " +
+							"is a JSON object that represents a question/answer pair. Here are the question types and " +
+							"their corresponding JSON object format."
 						+ (this.plugin.settings.generateMultipleChoice ? this.formatMultipleChoice() + "\n\n" : "")
 						+ (this.plugin.settings.generateTrueFalse ? this.formatTrueFalse() + "\n\n" : "")
 						+ (this.plugin.settings.generateShortAnswer ? this.formatShortAnswer() + "\n\n" : "") },
@@ -31,7 +34,8 @@ export default class GptService {
 							+ "based off the following text: " + contents.join('') +
 							" The overall focus should be on assessing understanding and critical thinking."}
 				],
-				model: "gpt-3.5-turbo-1106"
+				model: "gpt-3.5-turbo-1106",
+				response_format: { type: "json_object" },
 			});
 			notice.hide();
 			console.log("API request successful:", completion.choices[0].message.content);
@@ -44,17 +48,52 @@ export default class GptService {
 	}
 
 	private formatMultipleChoice() {
-		const formattedChoices = this.choices.map((choice, index) =>
-			`${String.fromCharCode(97 + index)}) ${choice}`).join('\n');
-		return `Multiple Choice Format\nQMC: Question\n${formattedChoices}\nAMC: Either a, b, c, or d`;
+
+
+		return `For multiple choice questions, return a JSON object with the following structure:
+			- Q: The question
+			- A: The first choice
+			- B: The second choice
+			- C: The third choice
+			- D: The fourth choice
+			- AMC: The letter corresponding to the correct choice
+			
+			Example:
+			{
+			  "Q": "What is the capital city of Australia?",
+			  "A": "Sydney",
+			  "B": "Melbourne",
+			  "C": "Canberra",
+			  "D": "Brisbane",
+			  "AMC": C
+			}`
 	}
 
 	private formatTrueFalse() {
-		return "True/False Format\nQTF: Question\nATF: True or False";
+		return `For true/false questions, return a JSON object with the following structure:
+			- Q: The question
+			- ATF: The correct answer to the question
+			
+			Example:
+			{
+			  "Q": "The Great Wall of China is visible from space.",
+			  "ATF": False
+			}`
 	}
 
 	private formatShortAnswer() {
-		return "Short Answer Format\nQSA: Question\nASA: Answer";
+		return `For short answer questions, return a JSON object with the following structure:
+			- Q: The question
+			- ASA: The correct answer to the question
+			
+			Example:
+			{
+			  "Q": "Explain the concept of photosynthesis in plants.",
+			  "ATF": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light 
+			  energy into chemical energy, stored in the form of glucose or other organic compounds. It occurs in the 
+			  chloroplasts of cells and involves the absorption of light by chlorophyll, the conversion of carbon 
+			  dioxide and water into glucose, and the release of oxygen as a byproduct."
+			}`
 	}
 
 }
