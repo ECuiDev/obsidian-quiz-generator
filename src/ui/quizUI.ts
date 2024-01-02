@@ -175,7 +175,9 @@ export default class QuizUI {
 		this.addListener = async () => await this.showSearchBar();
 
 		this.generateListener = async () => {
-			if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
+			if (this.selectedNotes.size === 0) {
+				return;
+			} else if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) {
 				this.gpt = new GptService(this.plugin);
 				await this.gpt.generateQuestions(await this.generateQuestions());
