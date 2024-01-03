@@ -57,8 +57,6 @@ export default class QuizUI {
 			if (selectedNote) {
 				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
 				this.selectedNotes.set(selectedNote.basename, noteContents);
-				console.log(this.selectedNotes.get(selectedNote.basename));
-				console.log(JSON.stringify(this.selectedNotes.get(selectedNote.basename)));
 				await this.displaySelectedNote(selectedNote.basename);
 				modal.close();
 				this.showSearchBar();
@@ -180,7 +178,16 @@ export default class QuizUI {
 			} else if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) {
 				this.gpt = new GptService(this.plugin);
-				await this.gpt.generateQuestions(await this.generateQuestions());
+				const json = await this.gpt.generateQuestions(await this.generateQuestions());
+				console.log(json);
+				console.log(JSON.stringify(json));
+				if (json != null) {
+					const parsedJSON = JSON.parse(json);
+					console.log(parsedJSON);
+					console.log(JSON.stringify(parsedJSON));
+				} else {
+					new Notice("json variable is null");
+				}
 			} else {
 				new Notice("Generation cancelled because all question types are set to false.")
 			}
