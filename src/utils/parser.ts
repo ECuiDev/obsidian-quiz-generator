@@ -8,10 +8,6 @@ export function cleanUpString(input: string) {
 	return cleanUpWhiteSpace(cleanedString);
 }
 
-export function cleanUpPrompt(input: string) {
-	return cleanUpWhiteSpace(removeSpecialCharacters(input));
-}
-
 function removeFrontMatter(input: string) {
 	const yamlFrontMatterRegex = /---[\s\S]+?---\n/;
 	return input.replace(yamlFrontMatterRegex, "");
