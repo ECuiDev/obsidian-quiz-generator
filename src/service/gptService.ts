@@ -33,14 +33,15 @@ export default class GptService {
 			const completion = await this.openai.chat.completions.create({
 				messages: [
 					{ role: "system", content: systemPrompt },
-					{ role: "user", content: (this.plugin.settings.generateMultipleChoice
-								? `generate ${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` : "")
+					{ role: "user", content: "Generate " +
+							(this.plugin.settings.generateMultipleChoice
+								? `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` : "")
 							+ (this.plugin.settings.generateTrueFalse
-								? `generate ${this.plugin.settings.numberOfTrueFalse} true/false questions, ` : "")
+								? `${this.plugin.settings.numberOfTrueFalse} true/false questions, ` : "")
 							+ (this.plugin.settings.generateShortAnswer
-								? `generate ${this.plugin.settings.numberOfShortAnswer} short answer questions, ` : "")
-							+ "based off the following text: " + contents.join('') +
-							"The overall focus should be on assessing understanding and critical thinking."}
+								? `${this.plugin.settings.numberOfShortAnswer} short answer questions, ` : "")
+							+ "based off the following text:\n" + contents.join('') +
+							"\nThe overall focus should be on assessing understanding and critical thinking."}
 				],
 				model: "gpt-3.5-turbo-1106",
 				response_format: { type: "json_object" },
