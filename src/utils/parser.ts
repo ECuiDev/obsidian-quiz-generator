@@ -40,7 +40,7 @@ function removeMarkdownFormatting(input: string) {
 }
 
 function removeSpecialCharacters(input: string) {
-	const regex = /[\n\\`]/g;
+	const regex = /[\n\\`\t]/g;
 	return input.replace(regex, "");
 }
 
