@@ -4,7 +4,7 @@ import QuizGenerator from "../main";
 
 export default class GptService {
 	private plugin: QuizGenerator;
-	openai: OpenAI;
+	private openai: OpenAI;
 
 	constructor(plugin: QuizGenerator) {
 		this.plugin = plugin;
