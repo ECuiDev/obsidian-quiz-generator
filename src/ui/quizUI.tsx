@@ -1,8 +1,9 @@
-import {App, FuzzySuggestModal, Notice, TFile} from "obsidian";
+import { App, FuzzySuggestModal, Notice, TFile } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
+import React, { useState } from "react";
 
 export default class QuizUI {
 	private readonly app: App;
@@ -252,24 +253,25 @@ export default class QuizUI {
 class SearchBar extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
 	private readonly noteNames: string[];
-	private keydownHandler: (event: KeyboardEvent) => void;
 
 	constructor(app: App, noteNames: string[]) {
 		super(app);
 		this.noteNames = noteNames;
+
+		this.onChooseItem = this.onChooseItem.bind(this);
+		this.handleKeyPress = this.handleKeyPress.bind(this);
 	}
 
 	onOpen() {
 		super.onOpen();
-		this.keydownHandler = (event: KeyboardEvent) => this.handleKeyPress(event);
-		document.addEventListener("keydown", this.keydownHandler);
+		document.addEventListener("keydown", this.handleKeyPress);
 
 		this.modalEl.style.top = "20%";
 		this.modalEl.style.left = "30%";
 	}
 
 	onClose() {
-		document.removeEventListener("keydown", this.keydownHandler);
+		document.removeEventListener("keydown", this.handleKeyPress);
 		super.onClose();
 	}
 
