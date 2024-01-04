@@ -1,20 +1,20 @@
 export interface ParsedMCQ {
-	question: string;
-	choice1: string;
-	choice2: string;
-	choice3: string;
-	choice4: string;
-	answer: number;
+	QuestionMC: string;
+	1: string;
+	2: string;
+	3: string;
+	4: string;
+	Answer: number;
 }
 
 export interface ParsedTF {
-	question: string;
-	answer: string;
+	QuestionTF: string;
+	Answer: boolean;
 }
 
 export interface ParsedSA {
-	question: string;
-	answer: string;
+	QuestionSA: string;
+	Answer: string;
 }
 
 export interface QuizSettings {
