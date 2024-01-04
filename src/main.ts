@@ -1,4 +1,4 @@
-import { App, Plugin } from "obsidian";
+import { Plugin } from "obsidian";
 import QuizUI from "./ui/quizUI";
 import QuizSettingsTab from "./ui/settingsUI";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";

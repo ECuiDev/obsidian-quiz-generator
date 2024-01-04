@@ -1,3 +1,7 @@
+export interface ParsedQuestions {
+	[quiz: string]: (ParsedMCQ | ParsedTF | ParsedSA)[];
+}
+
 export interface ParsedMCQ {
 	QuestionMC: string;
 	1: string;

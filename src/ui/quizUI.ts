@@ -2,7 +2,7 @@ import {App, FuzzySuggestModal, Notice, TFile} from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
-import { ParsedMCQ, ParsedTF, ParsedSA} from "../utils/types";
+import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
 
 export default class QuizUI {
 	private readonly app: App;
@@ -175,17 +175,22 @@ export default class QuizUI {
 
 		this.generateListener = async () => {
 			if (this.selectedNotes.size === 0) {
-				return;
+				new Notice("No notes selected.");
 			} else if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) {
 				this.gpt = new GptService(this.plugin);
-				const json = await this.gpt.generateQuestions(await this.generateQuestions());
-				console.log(json);
-				console.log(JSON.stringify(json));
-				if (json != null) {
-					const parsedJSON = JSON.parse(json);
+				const questions = await this.gpt.generateQuestions(await this.loadNoteContents());
+
+				console.log(questions);
+				console.log(JSON.stringify(questions));
+
+				if (questions != null) {
+					const parsedJSON: ParsedQuestions = JSON.parse(questions);
+
 					console.log(parsedJSON);
 					console.log(JSON.stringify(parsedJSON));
+
+					this.questionsAndAnswers = parsedJSON.quiz;
 				} else {
 					new Notice("json variable is null");
 				}
@@ -220,7 +225,7 @@ export default class QuizUI {
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
-	private async generateQuestions() {
+	private async loadNoteContents() {
 		const noteContents: string[] = [];
 
 		for (const noteContent of this.selectedNotes.values()) {
