@@ -1,6 +1,7 @@
 import { App, Plugin } from "obsidian";
 import QuizUI from "./ui/quizUI";
 import QuizSettingsTab from "./ui/settingsUI";
+import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 
 export default class QuizGenerator extends Plugin {
 	settings: QuizSettings;
@@ -27,23 +28,3 @@ export default class QuizGenerator extends Plugin {
 	}
 
 }
-
-interface QuizSettings {
-	numberOfMultipleChoice: number;
-	numberOfTrueFalse: number;
-	numberOfShortAnswer: number;
-	generateMultipleChoice: boolean;
-	generateTrueFalse: boolean;
-	generateShortAnswer: boolean;
-	apiKey: string;
-}
-
-const DEFAULT_SETTINGS: Partial<QuizSettings> = {
-	numberOfMultipleChoice: 1,
-	numberOfTrueFalse: 1,
-	numberOfShortAnswer: 1,
-	generateMultipleChoice: true,
-	generateTrueFalse: true,
-	generateShortAnswer: true,
-	apiKey: ""
-};

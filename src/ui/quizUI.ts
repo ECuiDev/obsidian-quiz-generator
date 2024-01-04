@@ -2,6 +2,7 @@ import {App, FuzzySuggestModal, Notice, TFile} from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
+import { ParsedMCQ, ParsedTF, ParsedSA} from "../utils/types";
 
 export default class QuizUI {
 	private readonly app: App;
@@ -13,7 +14,7 @@ export default class QuizUI {
 	private elementsSection: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
-	private questionsAndAnswers: (ParsedMCQ | ParsedTFSA)[];
+	private questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
 	private exitListener: () => void;
 	private clearListener: () => void;
 	private addListener: () => void;
@@ -291,20 +292,4 @@ class SearchBar extends FuzzySuggestModal<string> {
 		}
 	}
 
-}
-
-interface ParsedMCQ {
-	question: string;
-	choice1: string;
-	choice2: string;
-	choice3: string;
-	choice4: string;
-	answer: string;
-	type: "MC";
-}
-
-interface ParsedTFSA {
-	question: string;
-	answer: string;
-	type: "TF" | "SA";
 }
