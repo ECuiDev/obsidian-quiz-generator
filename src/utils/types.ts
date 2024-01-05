@@ -21,6 +21,8 @@ export interface ParsedSA {
 	Answer: string;
 }
 
+export type ParsedQuestion = ParsedMCQ | ParsedTF | ParsedSA;
+
 export interface QuizSettings {
 	numberOfMultipleChoice: number;
 	numberOfTrueFalse: number;
