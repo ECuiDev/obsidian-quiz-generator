@@ -16,13 +16,10 @@
       "ES5",
       "ES6",
       "ES7"
-    ],
-	"jsx": "react",
-	"esModuleInterop": true
+    ]
   },
   "include": [
-    "**/*.ts",
-	"**/*.tsx"
+    "**/*.ts"
   ],
   "exclude": [
     "node_modules"
