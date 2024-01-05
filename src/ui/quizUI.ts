@@ -3,7 +3,6 @@ import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
-import React, { useState } from "react";
 
 export default class QuizUI {
 	private readonly app: App;
