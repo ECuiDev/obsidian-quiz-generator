@@ -1,5 +1,5 @@
 import { Plugin } from "obsidian";
-import QuizUI from "./ui/quizUI";
+import SelectorUI from "./ui/selectorUI";
 import QuizSettingsTab from "./ui/settingsUI";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 
@@ -11,7 +11,7 @@ export default class QuizGenerator extends Plugin {
 			id: "open-generator-gui",
 			name: "Open Generator GUI",
 			callback: () => {
-				new QuizUI(this.app, this).open();
+				new SelectorUI(this.app, this).open();
 			},
 		});
 

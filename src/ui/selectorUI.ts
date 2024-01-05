@@ -5,7 +5,7 @@ import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
 import NoteAdder from "./noteAdder";
 
-export default class QuizUI {
+export default class SelectorUI {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
 	private allMarkdownFiles: TFile[];
