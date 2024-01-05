@@ -1,8 +1,9 @@
-import { App, FuzzySuggestModal, Notice, TFile } from "obsidian";
+import { App, Notice, TFile } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
+import NoteAdder from "./noteAdder";
 
 export default class QuizUI {
 	private readonly app: App;
@@ -50,7 +51,7 @@ export default class QuizUI {
 	}
 
 	private async showSearchBar() {
-		const modal = new SearchBar(this.app, this.noteNames);
+		const modal = new NoteAdder(this.app, this.noteNames);
 
 		modal.setCallback(async (selectedItem: string) => {
 			const selectedNote = this.getNoteByName(selectedItem);
@@ -245,57 +246,6 @@ export default class QuizUI {
 
 	private getNoteByName(noteName: string): TFile | null {
 		return this.allMarkdownFiles.find(file => file.basename === noteName) || null;
-	}
-
-}
-
-class SearchBar extends FuzzySuggestModal<string> {
-	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
-	private readonly noteNames: string[];
-
-	constructor(app: App, noteNames: string[]) {
-		super(app);
-		this.noteNames = noteNames;
-
-		this.onChooseItem = this.onChooseItem.bind(this);
-		this.handleKeyPress = this.handleKeyPress.bind(this);
-	}
-
-	onOpen() {
-		super.onOpen();
-		document.addEventListener("keydown", this.handleKeyPress);
-
-		this.modalEl.style.top = "20%";
-		this.modalEl.style.left = "30%";
-	}
-
-	onClose() {
-		document.removeEventListener("keydown", this.handleKeyPress);
-		super.onClose();
-	}
-
-	setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
-		this.callback = callback;
-	}
-
-	onChooseItem(item: string, evt: MouseEvent | KeyboardEvent): void {
-		if (this.callback) {
-			this.callback(item, evt);
-		}
-	}
-
-	getItemText(item: string): string {
-		return item;
-	}
-
-	getItems(): string[] {
-		return this.noteNames;
-	}
-
-	private handleKeyPress(event: KeyboardEvent) {
-		if (event.code === "Escape") {
-			this.close();
-		}
 	}
 
 }
