@@ -1,6 +1,6 @@
 import { ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
 
-export class QuestionUI {
+export default class QuestionUI {
 	private readonly questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
 	private questionIndex: number;
 	private questionContainer: HTMLDivElement;
@@ -32,33 +32,27 @@ export class QuestionUI {
 	private showQuestion(index: number) {
 		this.questionContainer.empty();
 
-		let questionType: string;
+		const question = this.questionsAndAnswers[index];
 
 		const questionText = document.createElement("div");
 
-		switch(this.questionType(this.questionsAndAnswers[index])) {
+		switch(this.questionType(question)) {
 			case "MC":
-				questionType = "MC";
-				questionText.textContent = (this.questionsAndAnswers[index] as ParsedMCQ).QuestionMC;
+				questionText.textContent = (question as ParsedMCQ).QuestionMC;
 				break;
 			case "TF":
-				questionType = "TF";
-				questionText.textContent = (this.questionsAndAnswers[index] as ParsedTF).QuestionTF;
+				questionText.textContent = (question as ParsedTF).QuestionTF;
 				break;
 			case "SA":
-				questionType = "SA";
-				questionText.textContent = (this.questionsAndAnswers[index] as ParsedSA).QuestionSA;
+				questionText.textContent = (question as ParsedSA).QuestionSA;
 				break;
 			default:
-				return;
+				break;
 		}
 
 		this.questionContainer.appendChild(questionText);
 
-		// Display additional UI elements based on the question type (MCQ, TF, SA)
-		// You can customize this part based on your question types.
-
-		if (questionType === "MCQ") {
+		if (this.questionType(question) === "MC") {
 			let choices: string[] = [];
 
 			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["1"]);
@@ -67,22 +61,40 @@ export class QuestionUI {
 			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["4"]);
 
 			const choicesContainer = document.createElement("div");
-			choices.forEach((choice, i) => {
+
+			choices.forEach((choice, choiceNumber) => {
 				const choiceButton = document.createElement("button");
 				choiceButton.textContent = choice;
-				choiceButton.addEventListener("click", () => this.selectMCQAnswer(index, i));
+				choiceButton.addEventListener("click", () =>
+					this.selectMCQAnswer((this.questionsAndAnswers[index] as ParsedMCQ).Answer, choiceNumber + 1));
 				choicesContainer.appendChild(choiceButton);
 			});
+
 			this.questionContainer.appendChild(choicesContainer);
-		} else if (questionType === "TF") {
-			// Implement UI for True/False question
-		} else if (questionType === "SA") {
-			// Implement UI for Short Answer question
+		} else if (this.questionType(question) === "TF") {
+			const trueFalseContainer = document.createElement("div");
+
+			const trueButton = document.createElement("button");
+			trueButton.textContent = "True";
+			trueButton.addEventListener("click", () =>
+				this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, true));
+
+			const falseButton = document.createElement("button");
+			falseButton.textContent = "False";
+			falseButton.addEventListener("click", () =>
+				this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, false));
+
+			trueFalseContainer.appendChild(trueButton);
+			trueFalseContainer.appendChild(falseButton);
+		} else if (this.questionType(question) === "SA") {
+			const showAnswerButton = document.createElement("button");
+			showAnswerButton.textContent = "Show answer";
+			showAnswerButton.addEventListener("click", () =>
+				this.showSAAnswer((this.questionsAndAnswers[index] as ParsedSA).Answer));
 		} else {
 			// Display UI for Error
 		}
 
-		// Update navigation buttons based on the current index
 		this.backButton.disabled = index === 0;
 		this.nextButton.disabled = index === this.questionsAndAnswers.length - 1;
 	}
@@ -101,12 +113,24 @@ export class QuestionUI {
 		}
 	}
 
-	private selectMCQAnswer(questionIndex: number, choiceIndex: number) {
-		// Implement logic to handle user selection for MCQ
+	private selectMCQAnswer(answerNumber: number, choiceNumber: number) {
+		if (answerNumber === choiceNumber) {
+			// Logic for correct choice (make choice button green)
+		} else {
+			// Logic for incorrect choice (make choice button red)
+		}
 	}
 
-	private selectTFAnswer() {
-		// Implement logic to handle user selection for TF
+	private selectTFAnswer(answer: boolean, choice: boolean) {
+		if (answer === choice) {
+			// Logic for correct choice (make choice button green)
+		} else {
+			// Logic for incorrect choice (make choice button red)
+		}
+	}
+
+	private showSAAnswer(answer: string) {
+		// Logic for showing the answer
 	}
 
 	private questionType(question: ParsedQuestion) {
