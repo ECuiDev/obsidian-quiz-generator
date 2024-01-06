@@ -1,7 +1,7 @@
 import { ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
 
 export class QuestionUI {
-	private questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
+	private readonly questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
 	private questionIndex: number;
 	private questionContainer: HTMLDivElement;
 	private backButton: HTMLButtonElement;
@@ -30,7 +30,7 @@ export class QuestionUI {
 	}
 
 	private showQuestion(index: number) {
-		this.questionContainer.innerHTML = "";
+		this.questionContainer.empty();
 
 		let questionType: string;
 

@@ -37,9 +37,9 @@ export default class SelectorUI {
 
 	private close() {
 		this.searchContainer.style.display = "none";
-		this.searchContainer.innerHTML = "";
+		this.searchContainer.empty();
 		this.elementsSection.style.display = "none";
-		this.elementsSection.innerHTML = "";
+		this.elementsSection.empty();
 	}
 
 	private displaySearchUI() {
@@ -167,7 +167,7 @@ export default class SelectorUI {
 
 		this.clearListener = async () => {
 			this.selectedNotes.clear();
-			this.elementsSection.innerHTML = "";
+			this.elementsSection.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 		}
