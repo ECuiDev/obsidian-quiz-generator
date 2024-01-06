@@ -3,9 +3,9 @@ import { ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
 export default class QuestionUI {
 	private readonly questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
 	private questionIndex: number;
-	private questionContainer: HTMLDivElement;
-	private backButton: HTMLButtonElement;
-	private nextButton: HTMLButtonElement;
+	private readonly questionContainer: HTMLDivElement;
+	private readonly backButton: HTMLButtonElement;
+	private readonly nextButton: HTMLButtonElement;
 
 	constructor(questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[]) {
 		this.questionsAndAnswers = questionsAndAnswers;
@@ -23,14 +23,14 @@ export default class QuestionUI {
 		this.nextButton.textContent = "Next";
 		this.nextButton.addEventListener("click", () => this.showNextQuestion());
 
-		this.questionContainer.appendChild(this.backButton);
-		this.questionContainer.appendChild(this.nextButton);
-
 		this.showQuestion(this.questionIndex);
 	}
 
 	private showQuestion(index: number) {
 		this.questionContainer.empty();
+
+		this.questionContainer.appendChild(this.backButton);
+		this.questionContainer.appendChild(this.nextButton);
 
 		const question = this.questionsAndAnswers[index];
 
