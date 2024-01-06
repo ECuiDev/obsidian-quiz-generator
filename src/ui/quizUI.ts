@@ -61,6 +61,7 @@ export default class QuestionUI {
 			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["4"]);
 
 			const choicesContainer = document.createElement("div");
+			choicesContainer.classList.add("choices-container");
 
 			choices.forEach((choice, choiceNumber) => {
 				const choiceButton = document.createElement("button");
@@ -73,24 +74,31 @@ export default class QuestionUI {
 			this.questionContainer.appendChild(choicesContainer);
 		} else if (this.questionType(question) === "TF") {
 			const trueFalseContainer = document.createElement("div");
+			trueFalseContainer.classList.add("true-false-container");
 
 			const trueButton = document.createElement("button");
 			trueButton.textContent = "True";
+			trueButton.classList.add("true-button");
 			trueButton.addEventListener("click", () =>
 				this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, true));
 
 			const falseButton = document.createElement("button");
 			falseButton.textContent = "False";
+			falseButton.classList.add("false-button");
 			falseButton.addEventListener("click", () =>
 				this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, false));
 
 			trueFalseContainer.appendChild(trueButton);
 			trueFalseContainer.appendChild(falseButton);
+			this.questionContainer.appendChild(trueFalseContainer);
 		} else if (this.questionType(question) === "SA") {
 			const showAnswerButton = document.createElement("button");
 			showAnswerButton.textContent = "Show answer";
+			showAnswerButton.classList.add("show-answer-button");
 			showAnswerButton.addEventListener("click", () =>
 				this.showSAAnswer((this.questionsAndAnswers[index] as ParsedSA).Answer));
+
+			this.questionContainer.appendChild(showAnswerButton);
 		} else {
 			// Display UI for Error
 		}
@@ -114,23 +122,41 @@ export default class QuestionUI {
 	}
 
 	private selectMCQAnswer(answerNumber: number, choiceNumber: number) {
+		const choicesContainer = this.questionContainer.querySelector(".choices-container")!;
+		const choiceButtons = choicesContainer.querySelectorAll("button");
+
+		choiceButtons.forEach((button) => {
+			button.disabled = true;
+		});
+
 		if (answerNumber === choiceNumber) {
-			// Logic for correct choice (make choice button green)
+			choiceButtons[choiceNumber - 1].classList.add("correct-choice");
 		} else {
-			// Logic for incorrect choice (make choice button red)
+			choiceButtons[choiceNumber - 1].classList.add("incorrect-choice");
+			choiceButtons[answerNumber - 1].classList.add("correct-choice");
 		}
 	}
 
 	private selectTFAnswer(answer: boolean, choice: boolean) {
-		if (answer === choice) {
-			// Logic for correct choice (make choice button green)
+		const trueFalseContainer = this.questionContainer.querySelector(".true-false-container")!;
+		const trueButton = trueFalseContainer.querySelector(".true-button")! as HTMLButtonElement;
+		const falseButton = trueFalseContainer.querySelector(".false-button")! as HTMLButtonElement;
+
+		trueButton.disabled = true;
+		falseButton.disabled = true;
+
+		if (choice === answer) {
+			choice ? trueButton.classList.add("correct-choice") : falseButton.classList.add("correct-choice");
 		} else {
-			// Logic for incorrect choice (make choice button red)
+			choice ? trueButton.classList.add("incorrect-choice") : falseButton.classList.add("incorrect-choice");
+			answer ? trueButton.classList.add("correct-choice") : falseButton.classList.add("correct-choice");
 		}
 	}
 
 	private showSAAnswer(answer: string) {
-		// Logic for showing the answer
+		const showAnswerButton = this.questionContainer.querySelector(".show-answer-button")! as HTMLButtonElement;
+		showAnswerButton.textContent = answer;
+		showAnswerButton.disabled = true;
 	}
 
 	private questionType(question: ParsedQuestion) {
