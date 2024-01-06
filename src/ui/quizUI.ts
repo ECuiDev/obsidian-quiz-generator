@@ -1,4 +1,5 @@
 import { ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
+import "styles.css";
 
 export default class QuestionUI {
 	private readonly questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];

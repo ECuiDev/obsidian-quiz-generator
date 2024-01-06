@@ -4,6 +4,7 @@ import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
 import NoteAdder from "./noteAdder";
+import "styles.css";
 
 export default class SelectorUI {
 	private readonly app: App;
@@ -11,7 +12,7 @@ export default class SelectorUI {
 	private allMarkdownFiles: TFile[];
 	private noteNames: string[];
 	private selectedNotes: Map<string, string>;
-	private searchContainer: HTMLDivElement;
+	private selectedNotesContainer: HTMLDivElement;
 	private elementsSection: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
@@ -36,14 +37,14 @@ export default class SelectorUI {
 	}
 
 	private close() {
-		this.searchContainer.style.display = "none";
-		this.searchContainer.empty();
+		this.selectedNotesContainer.style.display = "none";
+		this.selectedNotesContainer.empty();
 		this.elementsSection.style.display = "none";
 		this.elementsSection.empty();
 	}
 
 	private displaySearchUI() {
-		this.displaySearchContainer();
+		this.displaySelectedNotesContainer();
 		this.activateButtons();
 		this.displaySearchButtons();
 		this.displaySearchElements();
@@ -68,74 +69,50 @@ export default class SelectorUI {
 		modal.open();
 	}
 
-	private displaySearchContainer() {
-		this.searchContainer = document.createElement("div");
-		this.searchContainer.id = "selected-notes-container";
-		document.body.appendChild(this.searchContainer);
-
-		this.searchContainer.style.position = "fixed";
-		this.searchContainer.style.top = "50%";
-		this.searchContainer.style.left = "50%";
-		this.searchContainer.style.transform = "translate(-50%, -50%)";
-		this.searchContainer.style.zIndex = "1";
-		this.searchContainer.style.width = "800px";
-		this.searchContainer.style.height = "80vh";
-		this.searchContainer.style.overflow = "hidden";
-		this.searchContainer.style.backgroundColor = "#343434";
-		this.searchContainer.style.padding = "10px";
-		this.searchContainer.style.border = "1px solid #ccc";
-		this.searchContainer.style.borderRadius = "5px";
+	private displaySelectedNotesContainer() {
+		this.selectedNotesContainer = document.createElement("div");
+		this.selectedNotesContainer.id = "selected-notes-container";
+		this.selectedNotesContainer.classList.add("selected-notes-container");
+		
+		document.body.appendChild(this.selectedNotesContainer);
 	}
 
 	private displaySearchButtons() {
 		const buttonSectionLeft = document.createElement("div");
-		buttonSectionLeft.style.position = "absolute";
-		buttonSectionLeft.style.bottom = "10px";
-		buttonSectionLeft.style.left = "10px";
-		buttonSectionLeft.style.display = "flex";
+		buttonSectionLeft.id = "left-buttons-container";
+		buttonSectionLeft.classList.add("left-buttons-container");
 
 		const exit = document.createElement("button");
 		exit.textContent = "Exit";
-		exit.style.backgroundColor = "#4CAF50";
-		exit.style.color = "white";
-		exit.style.padding = "10px 20px";
-		exit.style.marginRight = "10px";
+		exit.id = "exit";
+		exit.classList.add("exit");
 
 		const clear = document.createElement("button");
 		clear.textContent = "Clear All";
-		clear.style.backgroundColor = "#008CBA";
-		clear.style.color = "white";
-		clear.style.padding = "10px 20px";
-		clear.style.marginRight = "10px";
+		clear.id = "clear";
+		clear.classList.add("clear");
 
 		buttonSectionLeft.appendChild(exit);
 		buttonSectionLeft.appendChild(clear);
-		this.searchContainer.appendChild(buttonSectionLeft);
+		this.selectedNotesContainer.appendChild(buttonSectionLeft);
 
 		const buttonSectionRight = document.createElement("div");
-		buttonSectionRight.style.position = "absolute";
-		buttonSectionRight.style.bottom = "10px";
-		buttonSectionRight.style.right = "10px";
-		buttonSectionRight.style.display = "flex";
+		buttonSectionRight.id = "right-buttons-container";
+		buttonSectionRight.classList.add("right-buttons-container");
 
 		const add = document.createElement("button");
 		add.textContent = "Add";
-		add.style.backgroundColor = "#ff6600";
-		add.style.color = "white";
-		add.style.padding = "10px 20px";
-		add.style.marginLeft = "10px";
+		add.id = "add";
+		add.classList.add("add");
 
 		const generate = document.createElement("button");
-		generate.id = "generate";
 		generate.textContent = "Generate";
-		generate.style.backgroundColor = "#800080";
-		generate.style.color = "white";
-		generate.style.padding = "10px 20px";
-		generate.style.marginLeft = "10px";
+		generate.id = "generate";
+		generate.classList.add("generate");
 
 		buttonSectionRight.appendChild(add);
 		buttonSectionRight.appendChild(generate);
-		this.searchContainer.appendChild(buttonSectionRight);
+		this.selectedNotesContainer.appendChild(buttonSectionRight);
 
 		exit.addEventListener("click", this.exitListener);
 		clear.addEventListener("click", this.clearListener);
@@ -145,21 +122,19 @@ export default class SelectorUI {
 
 	private displaySearchElements() {
 		this.elementsSection = document.createElement("div");
-		this.elementsSection.style.overflowY = "auto"; // Make this section scrollable
-		this.elementsSection.style.height = "calc(100% - 40px)"; // Adjust the height as needed
-		this.searchContainer.appendChild(this.elementsSection);
+		this.elementsSection.id = "elements-section";
+		this.elementsSection.classList.add("elements-section");
+
+		this.selectedNotesContainer.appendChild(this.elementsSection);
 	}
 
 	private displayTokens() {
 		this.tokenSection = document.createElement("span");
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+		this.tokenSection.id = "token-section";
+		this.tokenSection.classList.add("token-section");
 
-		this.tokenSection.style.position = "absolute";
-		this.tokenSection.style.left = "50%";
-		this.tokenSection.style.bottom = "10px";
-		this.tokenSection.style.transform = "translateX(-50%)";
-
-		this.searchContainer.appendChild(this.tokenSection);
+		this.selectedNotesContainer.appendChild(this.tokenSection);
 	}
 
 	private activateButtons() {
@@ -203,20 +178,15 @@ export default class SelectorUI {
 
 	private async displaySelectedNote(selectedNote: string) {
 		const selectedNoteBox = document.createElement("div");
-		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(selectedNote));
-
 		selectedNoteBox.textContent = selectedNote;
-		selectedNoteBox.style.display = "flex";
-		selectedNoteBox.style.flexDirection = "row";
-		selectedNoteBox.style.backgroundColor = "#343434"; // Background color
-		selectedNoteBox.style.padding = "10px"; // Padding
-		selectedNoteBox.style.marginBottom = "5px"; // Adjust margin as needed
-		selectedNoteBox.style.borderRadius = "5px"; // Rounded corners
-		selectedNoteBox.style.border = "1px solid #ddd"; // Border
+		selectedNoteBox.id = "selected-note-box";
+		selectedNoteBox.classList.add("selected-note-box");
 
 		const noteTokensElement = document.createElement("div");
+		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(selectedNote));
 		noteTokensElement.textContent = noteTokens + " tokens";
-		noteTokensElement.style.marginLeft = "auto";
+		noteTokensElement.id = "note-tokens";
+		noteTokensElement.classList.add("note-tokens");
 
 		selectedNoteBox.appendChild(noteTokensElement);
 

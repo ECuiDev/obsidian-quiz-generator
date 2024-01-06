@@ -1,3 +1,86 @@
+#selected-notes-container {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1;
+	width: 800px;
+	height: 80vh;
+	overflow: hidden;
+	background-color: #343434;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+}
+
+#left-buttons-container {
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	display: flex;
+}
+
+#right-buttons-container {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	display: flex;
+}
+
+#exit {
+	background-color: #4CAF50;
+	color: white;
+	padding: 10px 20px;
+	margin-right: 10px;
+}
+
+#clear {
+	background-color: #008CBA;
+	color: white;
+	padding: 10px 20px;
+	margin-right: 10px;
+}
+
+#add {
+	background-color: #ff6600;
+	color: white;
+	padding: 10px 20px;
+	margin-left: 10px;
+}
+
+#generate {
+	background-color: #800080;
+	color: white;
+	padding: 10px 20px;
+	margin-left: 10px;
+}
+
+#elements-section {
+	overflow-y: auto;
+	height: calc(100% - 40px);
+}
+
+#token-section {
+	position: absolute;
+	left: 50%;
+	bottom: 10px;
+	transform: translateX(-50%);
+}
+
+#selected-note-box {
+	display: flex;
+	flex-direction: row;
+	background-color: #343434;
+	padding: 10px;
+	margin-bottom: 5px;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+}
+
+#note-tokens {
+	margin-left: auto;
+}
+
 #question-container {
 	display: flex;
 	flex-direction: column;
