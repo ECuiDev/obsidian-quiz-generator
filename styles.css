@@ -1,8 +1,59 @@
-/*
+#question-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin: 50px auto;
+	max-width: 600px;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+#question-container div {
+	margin-bottom: 20px;
+	font-size: 18px;
+	text-align: center;
+}
 
-If your plugin does not need CSS, delete this file.
+.choices-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
 
-*/
+.choices-container button {
+	padding: 10px;
+	font-size: 16px;
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.choices-container button:hover {
+	background-color: #45a049;
+}
+
+.show-answer-button {
+	margin-top: 20px;
+	padding: 10px;
+	font-size: 16px;
+	background-color: #008CBA;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.show-answer-button:hover {
+	background-color: #00688B;
+}
+
+.correct-choice {
+	background-color: #4CAF50 !important;
+}
+
+.incorrect-choice {
+	background-color: #FF6347 !important;
+}
