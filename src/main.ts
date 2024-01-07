@@ -11,7 +11,7 @@ export default class QuizGenerator extends Plugin {
 			id: "open-generator-gui",
 			name: "Open Generator GUI",
 			callback: () => {
-				new SelectorUI(this.app, this).open();
+				new SelectorUI(this.app, this);
 			},
 		});
 

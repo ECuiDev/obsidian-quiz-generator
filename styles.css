@@ -1,10 +1,11 @@
+/* selectorUI */
 #selected-notes-container {
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	z-index: 1;
-	width: 800px;
+	width: 80vh;
 	height: 80vh;
 	overflow: hidden;
 	background-color: #343434;
@@ -28,21 +29,21 @@
 }
 
 #exit {
-	background-color: #4CAF50;
+	background-color: #D9534F;
 	color: white;
 	padding: 10px 20px;
 	margin-right: 10px;
 }
 
 #clear {
-	background-color: #008CBA;
+	background-color: #32CD32;
 	color: white;
 	padding: 10px 20px;
 	margin-right: 10px;
 }
 
 #add {
-	background-color: #ff6600;
+	background-color: #6495ED;
 	color: white;
 	padding: 10px 20px;
 	margin-left: 10px;
@@ -81,13 +82,20 @@
 	margin-left: auto;
 }
 
+/* quizUI */
 #question-container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	margin: 50px auto;
-	max-width: 600px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1;
+	width: 80vh;
+	height: 80vh;
+	overflow: hidden;
+	background-color: #343434;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
 }
 
 #question-container div {

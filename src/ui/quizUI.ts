@@ -1,7 +1,7 @@
 import { ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
 import "styles.css";
 
-export default class QuestionUI {
+export default class QuizUI {
 	private readonly questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
 	private questionIndex: number;
 	private readonly questionContainer: HTMLDivElement;
@@ -14,7 +14,7 @@ export default class QuestionUI {
 
 		this.questionContainer = document.createElement("div");
 		this.questionContainer.id = "question-container";
-		document.body.appendChild(this.questionContainer);
+		this.questionContainer.classList.add("question-container");
 
 		this.backButton = document.createElement("button");
 		this.backButton.textContent = "Previous";
@@ -23,6 +23,8 @@ export default class QuestionUI {
 		this.nextButton = document.createElement("button");
 		this.nextButton.textContent = "Next";
 		this.nextButton.addEventListener("click", () => this.showNextQuestion());
+
+		document.body.appendChild(this.questionContainer);
 
 		this.showQuestion(this.questionIndex);
 	}

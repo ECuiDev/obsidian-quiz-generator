@@ -2,9 +2,10 @@ import { App, Notice, TFile } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
-import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
+import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
 import NoteAdder from "./noteAdder";
 import "styles.css";
+import QuizUI from "./quizUI";
 
 export default class SelectorUI {
 	private readonly app: App;
@@ -26,12 +27,11 @@ export default class SelectorUI {
 	constructor(app: App, plugin: QuizGenerator) {
 		this.app = app;
 		this.plugin = plugin;
-	}
 
-	open() {
 		this.allMarkdownFiles = this.app.vault.getMarkdownFiles();
 		this.noteNames = this.allMarkdownFiles.map(file => file.basename);
 		this.selectedNotes = new Map<string, string>();
+		this.questionsAndAnswers = [];
 		this.displaySearchUI();
 		this.showSearchBar();
 	}
@@ -154,6 +154,37 @@ export default class SelectorUI {
 				new Notice("No notes selected.");
 			} else if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) {
+				const temp = JSON.parse(new GptService(this.plugin).exampleResponse());
+				const temp2 = temp.quiz;
+
+				for (const key in temp) {
+					if(temp.hasOwnProperty(key)) {
+						const value = temp[key];
+
+						if (Array.isArray(value)) {
+							value.forEach(element => {
+								if ("QuestionMC" in element) {
+									this.questionsAndAnswers.push(element as ParsedMCQ);
+								} else if ("QuestionTF" in element) {
+									this.questionsAndAnswers.push(element as ParsedTF);
+								} else if ("QuestionSA" in element) {
+									this.questionsAndAnswers.push(element as ParsedSA);
+								}
+							});
+						}
+					}
+				}
+
+				console.log(this.questionsAndAnswers);
+
+				new QuizUI(this.questionsAndAnswers);
+
+				this.selectedNotesContainer.style.display = "none";
+				this.elementsSection.style.display = "none";
+
+				//new QuizUI(JSON.parse(new GptService(this.plugin).exampleResponse()));
+				//this.close();
+				/*
 				this.gpt = new GptService(this.plugin);
 				const questions = await this.gpt.generateQuestions(await this.loadNoteContents());
 
@@ -167,9 +198,10 @@ export default class SelectorUI {
 					console.log(JSON.stringify(parsedJSON));
 
 					this.questionsAndAnswers = parsedJSON.quiz;
+					new QuizUI(this.questionsAndAnswers);
 				} else {
 					new Notice("json variable is null");
-				}
+				}*/
 			} else {
 				new Notice("Generation cancelled because all question types are set to false.")
 			}

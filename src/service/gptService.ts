@@ -68,7 +68,7 @@ export default class GptService {
 		return `"QuestionSA": The question\n"Answer": The answer\n`;
 	}
 
-	private exampleResponse() {
+	exampleResponse() {
 		const multipleChoiceExample = `{"QuestionMC": "What is the capital city of Australia?", ` +
 			`"1": "Sydney", "2": "Melbourne", "3": "Canberra", "4": "Brisbane", "Answer": 3}`;
 
