@@ -1,4 +1,4 @@
-import { ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
+import { ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
 import "styles.css";
 
 export default class QuizUI {
@@ -162,7 +162,7 @@ export default class QuizUI {
 		showAnswerButton.disabled = true;
 	}
 
-	private questionType(question: ParsedQuestion) {
+	private questionType(question: ParsedMCQ | ParsedTF | ParsedSA) {
 		if ("QuestionMC" in question) {
 			return "MC";
 		} else if ("QuestionTF" in question) {
