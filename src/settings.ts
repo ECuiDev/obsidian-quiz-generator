@@ -19,7 +19,6 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Enter your OpenAI API key here.")
 			.addText((text) =>
 				text
-					.setPlaceholder("")
 					.setValue(this.plugin.settings.apiKey)
 					.onChange(async (value) => {
 						this.plugin.settings.apiKey = value;
@@ -112,7 +111,54 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		containerEl.createEl("h3", {text: `${("Saving")}`});
 
-		new Setting(containerEl).setName("Save questions in spaced repetition format")
+		new Setting(containerEl)
+			.setName("Spaced repetition")
+			.setDesc("Save questions in spaced repetition format.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.saveWithSpacedRepetition)
+					.onChange(async (value) => {
+						this.plugin.settings.saveWithSpacedRepetition = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Inline separator")
+			.setDesc("Separator for spaced repetition inline flashcards.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.inlineSeparator)
+					.onChange(async (value) => {
+						this.plugin.settings.inlineSeparator = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Multiline separator")
+			.setDesc("Separator for spaced repetition multiline flashcards.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.multilineSeparator)
+					.onChange(async (value) => {
+						this.plugin.settings.multilineSeparator = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Callout")
+			.setDesc("Save questions as callouts.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.saveAsCallout)
+					.onChange(async (value) => {
+						this.plugin.settings.saveAsCallout = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
 	}
 
 }
