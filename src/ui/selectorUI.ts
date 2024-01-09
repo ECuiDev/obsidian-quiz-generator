@@ -11,7 +11,7 @@ export default class SelectorUI {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
 	private allMarkdownFiles: TFile[];
-	private noteNames: string[];
+	private readonly noteNames: string[];
 	private selectedNotes: Map<string, string>;
 	private selectedNotesContainer: HTMLDivElement;
 	private elementsSection: HTMLDivElement;
