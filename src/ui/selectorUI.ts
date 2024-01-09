@@ -2,7 +2,7 @@ import { App, Notice, TFile } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
-import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA, ParsedQuestion } from "../utils/types";
+import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
 import NoteAdder from "./noteAdder";
 import "styles.css";
 import QuizUI from "./quizUI";
