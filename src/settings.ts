@@ -1,5 +1,5 @@
 import { App, PluginSettingTab, Setting} from "obsidian";
-import QuizGenerator from "../main";
+import QuizGenerator from "./main";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private plugin: QuizGenerator;
@@ -15,8 +15,23 @@ export default class QuizSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Generate Multiple Choice Questions")
-			.setDesc("Do you want to generate multiple choice questions?")
+			.setName("API key")
+			.setDesc("Enter your OpenAI API key here.")
+			.addText((text) =>
+				text
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.apiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.apiKey = value;
+						await this.plugin.saveSettings();
+					}).inputEl.type = "password"
+			);
+
+		containerEl.createEl("h3", {text: `${("Generation")}`});
+
+		new Setting(containerEl)
+			.setName("Multiple choice")
+			.setDesc("Generate multiple choice questions.")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.generateMultipleChoice)
@@ -27,8 +42,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Number of Multiple Choice Questions")
-			.setDesc("How many multiple choice questions do you want to generate?")
+			.setName("Multiple choice quantity")
+			.setDesc("Number of multiple choice questions to generate.")
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfMultipleChoice)
@@ -42,8 +57,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Generate True/False Questions")
-			.setDesc("Do you want to generate true/false questions?")
+			.setName("True/false")
+			.setDesc("Generate true/false questions.")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.generateTrueFalse)
@@ -54,8 +69,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Number of True/False Questions")
-			.setDesc("How many true/false questions do you want to generate?")
+			.setName("True/false quantity")
+			.setDesc("Number of true/false questions to generate.")
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfTrueFalse)
@@ -69,8 +84,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Generate Short Answer Questions")
-			.setDesc("Do you want to generate short answer questions?")
+			.setName("Short answer")
+			.setDesc("Generate short answer questions.")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.generateShortAnswer)
@@ -81,8 +96,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Number of Multiple Choice Questions")
-			.setDesc("How many multiple choice questions do you want to generate?")
+			.setName("Short answer quantity")
+			.setDesc("Number of short answer questions to generate.")
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfShortAnswer)
@@ -95,18 +110,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					.showTooltip()
 			);
 
-		new Setting(containerEl)
-			.setName("API Key")
-			.setDesc("Enter your OpenAI API key here.")
-			.addText((text) =>
-				text
-					.setPlaceholder("")
-					.setValue(this.plugin.settings.apiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value;
-						await this.plugin.saveSettings();
-					}).inputEl.type = "password"
-			);
+		containerEl.createEl("h3", {text: `${("Saving")}`});
+
+		new Setting(containerEl).setName("Save questions in spaced repetition format")
 	}
 
 }

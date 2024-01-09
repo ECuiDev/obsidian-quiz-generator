@@ -1,6 +1,6 @@
 import { Plugin } from "obsidian";
 import SelectorUI from "./ui/selectorUI";
-import QuizSettingsTab from "./ui/settingsUI";
+import QuizSettingsTab from "./settings";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 
 export default class QuizGenerator extends Plugin {
