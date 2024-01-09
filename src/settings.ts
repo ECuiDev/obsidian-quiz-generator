@@ -112,6 +112,18 @@ export default class QuizSettingsTab extends PluginSettingTab {
 		containerEl.createEl("h3", {text: `${("Saving")}`});
 
 		new Setting(containerEl)
+			.setName("Save location")
+			.setDesc("Enter vault absolute path to folder where questions are saved.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.questionSavePath)
+					.onChange(async (value) => {
+						this.plugin.settings.questionSavePath = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
 			.setName("Spaced repetition")
 			.setDesc("Save questions in spaced repetition format.")
 			.addToggle((toggle) =>

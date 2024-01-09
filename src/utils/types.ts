@@ -29,6 +29,7 @@ export interface QuizSettings {
 	generateMultipleChoice: boolean;
 	generateTrueFalse: boolean;
 	generateShortAnswer: boolean;
+	questionSavePath: string;
 	saveWithSpacedRepetition: boolean;
 	inlineSeparator: string;
 	multilineSeparator: string;
@@ -43,6 +44,7 @@ export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	generateMultipleChoice: true,
 	generateTrueFalse: true,
 	generateShortAnswer: true,
+	questionSavePath: "",
 	saveWithSpacedRepetition: false,
 	inlineSeparator: "::",
 	multilineSeparator: "?",
