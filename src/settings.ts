@@ -128,9 +128,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Save questions in spaced repetition format.")
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.saveWithSpacedRepetition)
+					.setValue(this.plugin.settings.saveForSpacedRepetition)
 					.onChange(async (value) => {
-						this.plugin.settings.saveWithSpacedRepetition = value;
+						this.plugin.settings.saveForSpacedRepetition = value;
 						await this.plugin.saveSettings();
 					})
 			);
