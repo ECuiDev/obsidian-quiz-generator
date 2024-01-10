@@ -1,8 +1,8 @@
 export interface ParsedQuestions {
-	[quiz: string]: (ParsedMCQ | ParsedTF | ParsedSA)[];
+	[quiz: string]: (ParsedMC | ParsedTF | ParsedSA)[];
 }
 
-export interface ParsedMCQ {
+export interface ParsedMC {
 	QuestionMC: string;
 	1: string;
 	2: string;

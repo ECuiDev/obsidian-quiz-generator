@@ -1,18 +1,18 @@
 import { App, Notice, TFile, normalizePath } from "obsidian";
-import { ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
+import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 
 export default class QuestionSaver {
 	private app: App;
 	private readonly plugin: QuizGenerator;
-	private readonly question: ParsedMCQ | ParsedTF | ParsedSA;
+	private readonly question: ParsedMC | ParsedTF | ParsedSA;
 	private path: string;
 	private readonly fileName: string;
 	private readonly validPath: boolean;
 	private readonly fileCreated: boolean;
 	private file: TFile;
 
-	constructor(app: App, plugin: QuizGenerator, question: ParsedMCQ | ParsedTF | ParsedSA,
+	constructor(app: App, plugin: QuizGenerator, question: ParsedMC | ParsedTF | ParsedSA,
 				fileName: string, validPath: boolean, fileCreated: boolean) {
 		this.app = app;
 		this.plugin = plugin;
@@ -59,7 +59,7 @@ export default class QuestionSaver {
 		await this.app.vault.append(this.file, "\n" + this.formatCalloutQuestion(this.question));
 	}
 
-	private formatSpacedRepQuestion(question: ParsedMCQ | ParsedTF | ParsedSA) {
+	private formatSpacedRepQuestion(question: ParsedMC | ParsedTF | ParsedSA) {
 		if ("QuestionMC" in question) {
 			return "**Multiple Choice:** " + question.QuestionMC +
 				`\na) ${question["1"]}` + `\nb) ${question["2"]}` +
@@ -77,7 +77,7 @@ export default class QuestionSaver {
 		}
 	}
 
-	private formatCalloutQuestion(question: ParsedMCQ | ParsedTF | ParsedSA) {
+	private formatCalloutQuestion(question: ParsedMC | ParsedTF | ParsedSA) {
 		if ("QuestionMC" in question) {
 			return `> [!question] ${question.QuestionMC}` +
 				`\n> a) ${question["1"]}` + `\n> b) ${question["2"]}` +
@@ -93,7 +93,7 @@ export default class QuestionSaver {
 		}
 	}
 
-	private numberToAnswer(input: number, question: ParsedMCQ) {
+	private numberToAnswer(input: number, question: ParsedMC) {
 		switch (input) {
 			case 1:
 				return "a) " + question["1"];

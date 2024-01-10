@@ -1,14 +1,16 @@
-import { ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
+import { ButtonComponent } from "obsidian";
+import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import "styles.css";
 
 export default class QuizUI {
-	private readonly questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
+	private readonly questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
+	private saved: boolean[];
 	private questionIndex: number;
 	private readonly questionContainer: HTMLDivElement;
 	private readonly backButton: HTMLButtonElement;
 	private readonly nextButton: HTMLButtonElement;
 
-	constructor(questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[]) {
+	constructor(questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[]) {
 		this.questionsAndAnswers = questionsAndAnswers;
 		this.questionIndex = 0;
 
@@ -41,7 +43,7 @@ export default class QuizUI {
 
 		switch(this.questionType(question)) {
 			case "MC":
-				questionText.textContent = (question as ParsedMCQ).QuestionMC;
+				questionText.textContent = (question as ParsedMC).QuestionMC;
 				break;
 			case "TF":
 				questionText.textContent = (question as ParsedTF).QuestionTF;
@@ -56,58 +58,70 @@ export default class QuizUI {
 		this.questionContainer.appendChild(questionText);
 
 		if (this.questionType(question) === "MC") {
-			let choices: string[] = [];
-
-			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["1"]);
-			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["2"]);
-			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["3"]);
-			choices.push((this.questionsAndAnswers[index] as ParsedMCQ)["4"]);
-
-			const choicesContainer = document.createElement("div");
-			choicesContainer.classList.add("choices-container");
-
-			choices.forEach((choice, choiceNumber) => {
-				const choiceButton = document.createElement("button");
-				choiceButton.textContent = choice;
-				choiceButton.addEventListener("click", () =>
-					this.selectMCQAnswer((this.questionsAndAnswers[index] as ParsedMCQ).Answer, choiceNumber + 1));
-				choicesContainer.appendChild(choiceButton);
-			});
-
-			this.questionContainer.appendChild(choicesContainer);
+			this.displayMC(index);
 		} else if (this.questionType(question) === "TF") {
-			const trueFalseContainer = document.createElement("div");
-			trueFalseContainer.classList.add("true-false-container");
-
-			const trueButton = document.createElement("button");
-			trueButton.textContent = "True";
-			trueButton.classList.add("true-button");
-			trueButton.addEventListener("click", () =>
-				this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, true));
-
-			const falseButton = document.createElement("button");
-			falseButton.textContent = "False";
-			falseButton.classList.add("false-button");
-			falseButton.addEventListener("click", () =>
-				this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, false));
-
-			trueFalseContainer.appendChild(trueButton);
-			trueFalseContainer.appendChild(falseButton);
-			this.questionContainer.appendChild(trueFalseContainer);
+			this.displayTF(index);
 		} else if (this.questionType(question) === "SA") {
-			const showAnswerButton = document.createElement("button");
-			showAnswerButton.textContent = "Show answer";
-			showAnswerButton.classList.add("show-answer-button");
-			showAnswerButton.addEventListener("click", () =>
-				this.showSAAnswer((this.questionsAndAnswers[index] as ParsedSA).Answer));
-
-			this.questionContainer.appendChild(showAnswerButton);
+			this.displaySA(index);
 		} else {
 			// Display UI for Error
 		}
 
 		this.backButton.disabled = index === 0;
 		this.nextButton.disabled = index === this.questionsAndAnswers.length - 1;
+	}
+	
+	private displayMC(index: number) {
+		let choices: string[] = [];
+
+		choices.push((this.questionsAndAnswers[index] as ParsedMC)["1"]);
+		choices.push((this.questionsAndAnswers[index] as ParsedMC)["2"]);
+		choices.push((this.questionsAndAnswers[index] as ParsedMC)["3"]);
+		choices.push((this.questionsAndAnswers[index] as ParsedMC)["4"]);
+
+		const choicesContainer = document.createElement("div");
+		choicesContainer.classList.add("choices-container");
+
+		choices.forEach((choice, choiceNumber) => {
+			const choiceButton = document.createElement("button");
+			choiceButton.textContent = choice;
+			choiceButton.addEventListener("click", () =>
+				this.selectMCQAnswer((this.questionsAndAnswers[index] as ParsedMC).Answer, choiceNumber + 1));
+			choicesContainer.appendChild(choiceButton);
+		});
+
+		this.questionContainer.appendChild(choicesContainer);
+	}
+	
+	private displayTF(index: number) {
+		const trueFalseContainer = document.createElement("div");
+		trueFalseContainer.classList.add("true-false-container");
+
+		const trueButton = document.createElement("button");
+		trueButton.textContent = "True";
+		trueButton.classList.add("true-button");
+		trueButton.addEventListener("click", () =>
+			this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, true));
+
+		const falseButton = document.createElement("button");
+		falseButton.textContent = "False";
+		falseButton.classList.add("false-button");
+		falseButton.addEventListener("click", () =>
+			this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, false));
+
+		trueFalseContainer.appendChild(trueButton);
+		trueFalseContainer.appendChild(falseButton);
+		this.questionContainer.appendChild(trueFalseContainer);
+	}
+	
+	private displaySA(index: number) {
+		const showAnswerButton = document.createElement("button");
+		showAnswerButton.textContent = "Show answer";
+		showAnswerButton.classList.add("show-answer-button");
+		showAnswerButton.addEventListener("click", () =>
+			this.showSAAnswer((this.questionsAndAnswers[index] as ParsedSA).Answer));
+
+		this.questionContainer.appendChild(showAnswerButton);
 	}
 
 	private showNextQuestion() {
@@ -122,6 +136,10 @@ export default class QuizUI {
 			this.questionIndex--;
 			this.showQuestion(this.questionIndex);
 		}
+	}
+	
+	private saveQuestion() {
+		
 	}
 
 	private selectMCQAnswer(answerNumber: number, choiceNumber: number) {
@@ -162,7 +180,7 @@ export default class QuizUI {
 		showAnswerButton.disabled = true;
 	}
 
-	private questionType(question: ParsedMCQ | ParsedTF | ParsedSA) {
+	private questionType(question: ParsedMC | ParsedTF | ParsedSA) {
 		if ("QuestionMC" in question) {
 			return "MC";
 		} else if ("QuestionTF" in question) {

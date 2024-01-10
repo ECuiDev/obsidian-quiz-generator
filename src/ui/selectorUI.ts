@@ -2,7 +2,7 @@ import { App, Notice, TFile, TFolder, normalizePath } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
-import { ParsedQuestions, ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
+import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import NoteAdder from "./noteAdder";
 import "styles.css";
 import QuizUI from "./quizUI";
@@ -17,7 +17,7 @@ export default class SelectorUI {
 	private elementsSection: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
-	private questionsAndAnswers: (ParsedMCQ | ParsedTF | ParsedSA)[];
+	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private exitListener: () => void;
 	private clearListener: () => void;
 	private addListener: () => void;
@@ -165,7 +165,7 @@ export default class SelectorUI {
 						if (Array.isArray(value)) {
 							value.forEach(element => {
 								if ("QuestionMC" in element) {
-									this.questionsAndAnswers.push(element as ParsedMCQ);
+									this.questionsAndAnswers.push(element as ParsedMC);
 								} else if ("QuestionTF" in element) {
 									this.questionsAndAnswers.push(element as ParsedTF);
 								} else if ("QuestionSA" in element) {
