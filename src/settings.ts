@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting} from "obsidian";
+import { App, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "./main";
 
 export default class QuizSettingsTab extends PluginSettingTab {

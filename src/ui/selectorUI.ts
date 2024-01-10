@@ -1,4 +1,4 @@
-import { App, Notice, TFile } from "obsidian";
+import { App, Notice, TFile, TFolder, normalizePath } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
@@ -23,6 +23,8 @@ export default class SelectorUI {
 	private addListener: () => void;
 	private generateListener: () => void;
 	private gpt: GptService;
+	private fileName: string;
+	private validPath: boolean;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		this.app = app;
@@ -34,6 +36,7 @@ export default class SelectorUI {
 		this.questionsAndAnswers = [];
 		this.displaySearchUI();
 		this.showSearchBar();
+		this.chooseFileName();
 	}
 
 	private close() {
@@ -248,6 +251,38 @@ export default class SelectorUI {
 
 	private getNoteByName(noteName: string): TFile | null {
 		return this.allMarkdownFiles.find(file => file.basename === noteName) || null;
+	}
+
+	private chooseFileName() {
+		let count = 1;
+		const folder =
+			this.app.vault.getAbstractFileByPath(normalizePath(this.plugin.settings.questionSavePath.trim()));
+
+		if (folder instanceof TFolder) {
+			const fileNames = folder.children
+				.filter(file => file instanceof TFile)
+				.map(file => file.name.toLowerCase())
+				.filter(name => name.startsWith("quiz"));
+
+			while (fileNames.includes(`quiz ${count}.md`)) {
+				count++;
+			}
+
+			this.fileName = `Quiz ${count}.md`;
+			this.validPath = true;
+		} else {
+			const rootFileNames = this.app.vault.getRoot().children
+				.filter(file => file instanceof TFile)
+				.map(file => file.name.toLowerCase())
+				.filter(name => name.startsWith("quiz"));
+
+			while (rootFileNames.includes(`quiz ${count}.md`)) {
+				count++;
+			}
+
+			this.fileName = `Quiz ${count}.md`;
+			this.validPath = false;
+		}
 	}
 
 }
