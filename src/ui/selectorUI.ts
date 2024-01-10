@@ -25,6 +25,7 @@ export default class SelectorUI {
 	private gpt: GptService;
 	private fileName: string;
 	private validPath: boolean;
+	private fileCreated: boolean;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		this.app = app;

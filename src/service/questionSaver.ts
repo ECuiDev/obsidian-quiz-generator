@@ -1,27 +1,39 @@
-import {App, Notice, TFile, normalizePath, requestUrl} from "obsidian";
+import { App, Notice, TFile, normalizePath } from "obsidian";
 import { ParsedMCQ, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 
 export default class QuestionSaver {
 	private app: App;
 	private readonly plugin: QuizGenerator;
-	private questions: (ParsedMCQ | ParsedTF | ParsedSA)[];
-	private readonly fileName: string;
-	private tags: string;
+	private readonly question: ParsedMCQ | ParsedTF | ParsedSA;
 	private path: string;
-	private spacedRepetitionFile: TFile;
-	private calloutFile: TFile;
+	private readonly fileName: string;
+	private readonly validPath: boolean;
+	private readonly fileCreated: boolean;
+	private file: TFile;
 
-	constructor(app: App, plugin: QuizGenerator, questions: (ParsedMCQ | ParsedTF | ParsedSA)[], fileName: string, tags: string) {
+	constructor(app: App, plugin: QuizGenerator, question: ParsedMCQ | ParsedTF | ParsedSA,
+				fileName: string, validPath: boolean, fileCreated: boolean) {
 		this.app = app;
 		this.plugin = plugin;
-		this.questions = questions;
+		this.question = question;
 		this.fileName = fileName;
-		this.tags = tags;
+		this.validPath = validPath;
+		this.fileCreated = fileCreated;
 	}
 
-	async saveQuestions() {
-		this.path = normalizePath(this.plugin.settings.questionSavePath.trim() + `/${this.fileName}`);
+	async saveQuestion() {
+		if (this.validPath) {
+			this.path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
+		} else {
+			this.path = this.fileName;
+		}
+
+		if (!this.fileCreated) {
+			this.file = await this.app.vault.create(this.path, "#flashcards\n");
+		} else {
+			this.file = this.app.vault.getAbstractFileByPath(this.path) as TFile;
+		}
 
 		if (this.plugin.settings.saveForSpacedRepetition) {
 			await this.saveForSpacedRepetition();
@@ -32,29 +44,19 @@ export default class QuestionSaver {
 	}
 
 	private async saveForSpacedRepetition() {
-		try {
-			this.spacedRepetitionFile = await this.app.vault.create(this.path, "");
-		} catch (error) {
-			this.spacedRepetitionFile = await this.app.vault.create("", "");
-			new Notice("Non-existent path. Questions saved in vault root folder.");
+		if (!this.validPath) {
+			new Notice("Invalid path. Questions saved in vault root folder.");
 		}
 
-		this.questions.forEach(question => {
-			this.app.vault.append(this.spacedRepetitionFile, "\n" + this.formatSpacedRepQuestion(question));
-		});
+		await this.app.vault.append(this.file, "\n" + this.formatSpacedRepQuestion(this.question));
 	}
 
 	private async saveAsCallout() {
-		try {
-			this.calloutFile = await this.app.vault.create(this.path, "");
-		} catch (error) {
-			this.calloutFile = await this.app.vault.create("", "");
-			new Notice("Non-existent path. Questions saved in vault root folder.");
+		if (!this.validPath) {
+			new Notice("Invalid path. Questions saved in vault root folder.");
 		}
 
-		this.questions.forEach(question => {
-			this.app.vault.append(this.calloutFile, "\n" + this.formatCalloutQuestion(question));
-		});
+		await this.app.vault.append(this.file, "\n" + this.formatCalloutQuestion(this.question));
 	}
 
 	private formatSpacedRepQuestion(question: ParsedMCQ | ParsedTF | ParsedSA) {
@@ -66,10 +68,10 @@ export default class QuestionSaver {
 				this.numberToAnswer(question.Answer, question);
 		} else if ("QuestionTF" in question) {
 			return "**True/False:** " + question.QuestionTF +
-				`${this.plugin.settings.inlineSeparator}` + question.Answer;
+				` ${this.plugin.settings.inlineSeparator} ` + question.Answer;
 		} else if ("QuestionSA" in question) {
 			return "**Short Answer:** " + question.QuestionSA +
-				`${this.plugin.settings.inlineSeparator}` + question.Answer;
+				` ${this.plugin.settings.inlineSeparator} ` + question.Answer;
 		} else {
 			return "Error saving question.";
 		}
@@ -89,10 +91,6 @@ export default class QuestionSaver {
 		} else {
 			return "> [!failure] Error saving question.";
 		}
-	}
-
-	private extractTags() {
-
 	}
 
 	private numberToAnswer(input: number, question: ParsedMCQ) {
