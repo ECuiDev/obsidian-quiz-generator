@@ -11,7 +11,7 @@ export default class SelectorUI {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
 	private allMarkdownFiles: TFile[];
-	private readonly noteNames: string[];
+	private noteNames: string[];
 	private selectedNotes: Map<string, string>;
 	private selectedNotesContainer: HTMLDivElement;
 	private elementsSection: HTMLDivElement;
@@ -36,15 +36,11 @@ export default class SelectorUI {
 		this.selectedNotes = new Map<string, string>();
 		this.questionsAndAnswers = [];
 		this.displaySearchUI();
-		this.showSearchBar();
 		this.chooseFileName();
 	}
 
 	private close() {
-		this.selectedNotesContainer.style.display = "none";
-		this.selectedNotesContainer.empty();
-		this.elementsSection.style.display = "none";
-		this.elementsSection.empty();
+		document.body.removeChild(this.selectedNotesContainer);
 	}
 
 	private displaySearchUI() {
@@ -55,18 +51,18 @@ export default class SelectorUI {
 		this.displayTokens();
 	}
 
-	private async showSearchBar() {
+	private async showNoteAdder() {
 		const modal = new NoteAdder(this.app, this.noteNames);
 
 		modal.setCallback(async (selectedItem: string) => {
 			const selectedNote = this.getNoteByName(selectedItem);
 
 			if (selectedNote) {
+				this.noteNames.remove(selectedNote.basename);
+				await this.showNoteAdder();
 				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
 				this.selectedNotes.set(selectedNote.basename, noteContents);
 				await this.displaySelectedNote(selectedNote.basename);
-				modal.close();
-				this.showSearchBar();
 			}
 		});
 
@@ -149,9 +145,10 @@ export default class SelectorUI {
 			this.elementsSection.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+			this.noteNames = this.allMarkdownFiles.map(file => file.basename);
 		}
 
-		this.addListener = async () => await this.showSearchBar();
+		this.addListener = async () => await this.showNoteAdder();
 
 		this.generateListener = async () => {
 			if (this.selectedNotes.size === 0) {
