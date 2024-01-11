@@ -42,6 +42,18 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					})
 			);
 
+		new Setting(containerEl)
+			.setName("Show folder path")
+			.setDesc("Turn this off to only show folder name.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.showFolderPath)
+					.onChange(async (value) => {
+						this.plugin.settings.showFolderPath = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
 		containerEl.createEl("h3", {text: `${("Generation")}`});
 
 		new Setting(containerEl)
