@@ -2,11 +2,11 @@ import { App, FuzzySuggestModal } from "obsidian";
 
 export default class NoteAdder extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
-	private readonly noteNames: string[];
+	private readonly notePaths: string[];
 
-	constructor(app: App, noteNames: string[]) {
+	constructor(app: App, notePaths: string[]) {
 		super(app);
-		this.noteNames = noteNames;
+		this.notePaths = notePaths;
 
 		this.onChooseItem = this.onChooseItem.bind(this);
 		this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -40,7 +40,7 @@ export default class NoteAdder extends FuzzySuggestModal<string> {
 	}
 
 	getItems(): string[] {
-		return this.noteNames;
+		return this.notePaths;
 	}
 
 	private handleKeyPress(event: KeyboardEvent) {

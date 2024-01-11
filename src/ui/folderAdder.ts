@@ -2,11 +2,11 @@ import { App, FuzzySuggestModal } from "obsidian";
 
 export default class FolderAdder extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
-	private readonly folders: string[];
+	private readonly folderPaths: string[];
 
-	constructor(app: App, folders: string[]) {
+	constructor(app: App, folderPaths: string[]) {
 		super(app);
-		this.folders = folders;
+		this.folderPaths = folderPaths;
 
 		this.onChooseItem = this.onChooseItem.bind(this);
 		this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -40,7 +40,7 @@ export default class FolderAdder extends FuzzySuggestModal<string> {
 	}
 
 	getItems(): string[] {
-		return this.folders;
+		return this.folderPaths;
 	}
 
 	private handleKeyPress(event: KeyboardEvent) {
