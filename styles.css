@@ -1,5 +1,5 @@
 /* selectorUI */
-#selected-notes-container {
+.selected-notes-container {
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -14,71 +14,79 @@
 	border-radius: 5px;
 }
 
-#left-buttons-container {
+.selected-notes-title {
+	display: flex;
+	justify-content: center;
+}
+
+.left-buttons-container {
 	position: absolute;
 	bottom: 10px;
 	left: 10px;
 	display: flex;
 }
 
-#right-buttons-container {
+.right-buttons-container {
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
 	display: flex;
 }
 
-#exit {
+.exit {
 	background-color: #D9534F;
 	color: white;
 	padding: 10px 20px;
 	margin-right: 10px;
 }
 
-#clear {
+.clear {
 	background-color: #32CD32;
 	color: white;
 	padding: 10px 20px;
 	margin-right: 10px;
 }
 
-#add {
+.add {
 	background-color: #6495ED;
 	color: white;
 	padding: 10px 20px;
 	margin-left: 10px;
 }
 
-#generate {
+.generate {
 	background-color: #800080;
 	color: white;
 	padding: 10px 20px;
 	margin-left: 10px;
 }
 
-#elements-section {
+.elements-section {
 	overflow-y: auto;
-	height: calc(100% - 40px);
+	height: 85%;
+	flex: none;
+	border: 1px solid #ccc;
+	border-radius: 5px;
 }
 
-#token-section {
+.token-section {
 	position: absolute;
 	left: 50%;
 	bottom: 10px;
 	transform: translateX(-50%);
 }
 
-#selected-note-box {
+.selected-note-box {
 	display: flex;
 	flex-direction: row;
 	background-color: #343434;
-	padding: 10px;
-	margin-bottom: 5px;
+	padding: 1.5%;
+	margin: 1%;
 	border-radius: 5px;
 	border: 1px solid #ddd;
 }
 
-#note-tokens {
+.note-tokens {
 	margin-left: auto;
 }
 
