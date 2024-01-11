@@ -7,6 +7,7 @@ import NoteAdder from "./noteAdder";
 import FolderAdder from "./folderAdder";
 import "styles.css";
 import QuizUI from "./quizUI";
+import {sleep} from "openai/core";
 
 export default class SelectorUI extends Modal {
 	private readonly plugin: QuizGenerator;
@@ -80,11 +81,18 @@ export default class SelectorUI extends Modal {
 			if (selectedFolder instanceof TFolder) {
 				this.folderPaths.remove(selectedFolder.path);
 				await this.showFolderAdder();
-				const folderNoteContents = selectedFolder.children
-					.filter(child => child instanceof TFile && child.extension === "md")
-					.map(async file => cleanUpString(await this.app.vault.cachedRead(file as TFile)))
-					.join(" ");
-				this.selectedNotes.set(selectedFolder.path, folderNoteContents);
+				const folderNotes = selectedFolder.children
+					.filter(child => child instanceof TFile && child.extension === "md");
+
+				let folderNoteContents: string[] = [];
+
+				for (const file of folderNotes) {
+					if (file instanceof TFile) {
+						folderNoteContents.push(cleanUpString(await this.app.vault.cachedRead(file)));
+					}
+				}
+
+				this.selectedNotes.set(selectedFolder.path, folderNoteContents.join(" "));
 				await this.displayFolder(selectedFolder);
 			}
 		});
@@ -229,8 +237,13 @@ export default class SelectorUI extends Modal {
 
 	private async displayFolder(folder: TFolder) {
 		const selectedFolderBox = this.contentEl.createDiv("selected-note-box");
-		this.plugin.settings.showFolderPath ?
-			selectedFolderBox.textContent = folder.path : selectedFolderBox.textContent = folder.name;
+
+		if (folder.path === "/") {
+			selectedFolderBox.textContent = this.app.vault.getName() + " (Vault)";
+		} else {
+			this.plugin.settings.showFolderPath ?
+				selectedFolderBox.textContent = folder.path : selectedFolderBox.textContent = folder.name;
+		}
 
 		const noteTokensElement = selectedFolderBox.createDiv("note-tokens");
 		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(folder.path));
