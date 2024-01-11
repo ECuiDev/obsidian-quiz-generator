@@ -21,7 +21,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				text
 					.setValue(this.plugin.settings.apiKey)
 					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value;
+						this.plugin.settings.apiKey = value.trim();
 						await this.plugin.saveSettings();
 					}).inputEl.type = "password"
 			);
