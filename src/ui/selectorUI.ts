@@ -4,19 +4,21 @@ import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import NoteAdder from "./noteAdder";
+import FolderAdder from "./folderAdder";
 import "styles.css";
 import QuizUI from "./quizUI";
 
 export default class SelectorUI extends Modal {
 	private readonly plugin: QuizGenerator;
-	private allMarkdownFiles: TFile[];
-	private noteNames: string[];
+	private notePaths: string[];
+	private folderPaths: string[];
 	private selectedNotes: Map<string, string>;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private clearListener: () => void;
 	private addNoteListener: () => void;
+	private addFolderListener: () => void;
 	private generateListener: () => void;
 	private gpt: GptService;
 	private fileName: string;
@@ -29,8 +31,10 @@ export default class SelectorUI extends Modal {
 	}
 
 	public onOpen() {
-		this.allMarkdownFiles = this.app.vault.getMarkdownFiles();
-		this.noteNames = this.allMarkdownFiles.map(file => file.basename);
+		this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
+		this.folderPaths = this.app.vault.getAllLoadedFiles()
+			.filter(abstractFile => abstractFile instanceof TFolder)
+			.map(folder => folder.path);
 		this.selectedNotes = new Map<string, string>();
 		this.questionsAndAnswers = [];
 
@@ -50,17 +54,38 @@ export default class SelectorUI extends Modal {
 	}
 
 	private async showNoteAdder() {
-		const modal = new NoteAdder(this.app, this.noteNames);
+		const modal = new NoteAdder(this.app, this.notePaths);
 
 		modal.setCallback(async (selectedItem: string) => {
-			const selectedNote = this.getNoteByName(selectedItem);
+			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
 
-			if (selectedNote) {
-				this.noteNames.remove(selectedNote.basename);
+			if (selectedNote instanceof TFile) {
+				this.notePaths.remove(selectedNote.path); // remove if this causes performance issues for large vaults
 				await this.showNoteAdder();
 				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
-				this.selectedNotes.set(selectedNote.basename, noteContents);
-				await this.displaySelectedNote(selectedNote.basename);
+				this.selectedNotes.set(selectedNote.path, noteContents);
+				await this.displayNote(selectedNote);
+			}
+		});
+
+		modal.open();
+	}
+
+	private async showFolderAdder() {
+		const modal = new FolderAdder(this.app, this.folderPaths);
+
+		modal.setCallback(async (selectedItem: string) => {
+			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
+
+			if (selectedFolder instanceof TFolder) {
+				this.folderPaths.remove(selectedFolder.path);
+				await this.showFolderAdder();
+				const folderNoteContents = selectedFolder.children
+					.filter(child => child instanceof TFile && child.extension === ".md")
+					.map(async file => cleanUpString(await this.app.vault.cachedRead(file as TFile)))
+					.join(" ");
+				this.selectedNotes.set(selectedFolder.path, folderNoteContents);
+				await this.displayFolder(selectedFolder);
 			}
 		});
 
@@ -94,6 +119,7 @@ export default class SelectorUI extends Modal {
 
 		clear.addEventListener("click", this.clearListener);
 		addNote.addEventListener("click", this.addNoteListener);
+		addFolder.addEventListener("click", this.addFolderListener);
 		generate.addEventListener("click", this.generateListener);
 	}
 
@@ -108,10 +134,15 @@ export default class SelectorUI extends Modal {
 			this.contentEl.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
-			this.noteNames = this.allMarkdownFiles.map(file => file.basename);
+			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path); // remove if performance issues
+			this.folderPaths = this.app.vault.getAllLoadedFiles()
+				.filter(abstractFile => abstractFile instanceof TFolder)
+				.map(folder => folder.path); // remove if this causes performance issues for large vaults
 		}
 
 		this.addNoteListener = async () => await this.showNoteAdder();
+
+		this.addFolderListener = async () => await this.showFolderAdder();
 
 		this.generateListener = async () => {
 			if (this.selectedNotes.size === 0) {
@@ -171,12 +202,13 @@ export default class SelectorUI extends Modal {
 		}
 	}
 
-	private async displaySelectedNote(selectedNote: string) {
+	private async displayNote(note: TFile) {
 		const selectedNoteBox = this.contentEl.createDiv("selected-note-box");
-		selectedNoteBox.textContent = selectedNote;
+		this.plugin.settings.showNotePath ?
+			selectedNoteBox.textContent = note.path : selectedNoteBox.textContent = note.basename;
 
 		const noteTokensElement = selectedNoteBox.createDiv("note-tokens");
-		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(selectedNote));
+		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(note.path));
 		noteTokensElement.textContent = noteTokens + " tokens";
 
 		const removeButton = selectedNoteBox.createEl("button");
@@ -185,9 +217,32 @@ export default class SelectorUI extends Modal {
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
 			this.contentEl.removeChild(selectedNoteBox);
-			this.noteNames.push(selectedNote);
-			this.selectedNotes.delete(selectedNote);
-		})
+			this.notePaths.push(note.path); // remove if this causes performance issues for large vaults
+			this.selectedNotes.delete(note.path);
+		});
+
+		this.promptTokens += noteTokens;
+		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+	}
+
+	private async displayFolder(folder: TFolder) {
+		const selectedFolderBox = this.contentEl.createDiv("selected-note-box");
+		this.plugin.settings.showFolderPath ?
+			selectedFolderBox.textContent = folder.path : selectedFolderBox.textContent = folder.name;
+
+		const noteTokensElement = selectedFolderBox.createDiv("note-tokens");
+		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(folder.path));
+		noteTokensElement.textContent = noteTokens + " tokens";
+
+		const removeButton = selectedFolderBox.createEl("button");
+		removeButton.addClass("remove-button");
+		setIcon(removeButton, "x");
+		setTooltip(removeButton, "Remove");
+		removeButton.addEventListener("click", async () => {
+			this.contentEl.removeChild(selectedFolderBox);
+			this.folderPaths.push(folder.path); // remove if this causes performance issues for large vaults
+			this.selectedNotes.delete(folder.path);
+		});
 
 		this.promptTokens += noteTokens;
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
@@ -209,10 +264,6 @@ export default class SelectorUI extends Modal {
 		} else {
 			return 0;
 		}
-	}
-
-	private getNoteByName(noteName: string): TFile | null {
-		return this.allMarkdownFiles.find(file => file.basename === noteName) || null;
 	}
 
 	private chooseFileName() {
