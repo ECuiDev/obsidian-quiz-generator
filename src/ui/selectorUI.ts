@@ -219,6 +219,8 @@ export default class SelectorUI extends Modal {
 			this.contentEl.removeChild(selectedNoteBox);
 			this.notePaths.push(note.path); // remove if this causes performance issues for large vaults
 			this.selectedNotes.delete(note.path);
+			this.promptTokens -= noteTokens;
+			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 		});
 
 		this.promptTokens += noteTokens;
@@ -242,6 +244,8 @@ export default class SelectorUI extends Modal {
 			this.contentEl.removeChild(selectedFolderBox);
 			this.folderPaths.push(folder.path); // remove if this causes performance issues for large vaults
 			this.selectedNotes.delete(folder.path);
+			this.promptTokens -= noteTokens;
+			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 		});
 
 		this.promptTokens += noteTokens;
