@@ -183,6 +183,11 @@ export default class SelectorUI extends Modal {
 		removeButton.addClass("remove-button");
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
+		removeButton.addEventListener("click", async () => {
+			this.contentEl.removeChild(selectedNoteBox);
+			this.noteNames.push(selectedNote);
+			this.selectedNotes.delete(selectedNote);
+		})
 
 		this.promptTokens += noteTokens;
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
