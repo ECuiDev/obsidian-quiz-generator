@@ -1,4 +1,4 @@
-import { App, Modal, Notice, TFile, TFolder, normalizePath } from "obsidian";
+import { App, Modal, Notice, TFile, TFolder, setIcon, setTooltip, normalizePath } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
@@ -15,9 +15,8 @@ export default class SelectorUI extends Modal {
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
-	private exitListener: () => void;
 	private clearListener: () => void;
-	private addListener: () => void;
+	private addNoteListener: () => void;
 	private generateListener: () => void;
 	private gpt: GptService;
 	private fileName: string;
@@ -71,27 +70,30 @@ export default class SelectorUI extends Modal {
 	private displayButtons() {
 		const buttonSectionLeft = this.modalEl.createDiv("left-buttons-container");
 
-		const exit = buttonSectionLeft.createEl("button");
-		exit.textContent = "Exit";
-		exit.addClass("exit");
-
 		const clear = buttonSectionLeft.createEl("button");
-		clear.textContent = "Clear All";
-		clear.addClass("clear");
+		clear.addClass("selector-button", "special");
+		setIcon(clear, "book-x");
+		setTooltip(clear, "Remove all");
 
 		const buttonSectionRight = this.modalEl.createDiv("right-buttons-container");
 
-		const add = buttonSectionRight.createEl("button");
-		add.textContent = "Add";
-		add.addClass("add");
+		const addNote = buttonSectionRight.createEl("button");
+		addNote.addClass("selector-button");
+		setIcon(addNote, "file-plus-2");
+		setTooltip(addNote, "Add note");
+
+		const addFolder = buttonSectionRight.createEl("button");
+		addFolder.addClass("selector-button");
+		setIcon(addFolder, "folder-plus");
+		setTooltip(addFolder, "Add folder");
 
 		const generate = buttonSectionRight.createEl("button");
-		generate.textContent = "Generate";
-		generate.addClass("generate");
+		generate.addClass("selector-button");
+		setIcon(generate, "brain-circuit");
+		setTooltip(generate, "Generate");
 
-		exit.addEventListener("click", this.exitListener);
 		clear.addEventListener("click", this.clearListener);
-		add.addEventListener("click", this.addListener);
+		addNote.addEventListener("click", this.addNoteListener);
 		generate.addEventListener("click", this.generateListener);
 	}
 
@@ -101,8 +103,6 @@ export default class SelectorUI extends Modal {
 	}
 
 	private activateButtons() {
-		this.exitListener = async () => this.close();
-
 		this.clearListener = async () => {
 			this.selectedNotes.clear();
 			this.contentEl.empty();
@@ -111,11 +111,11 @@ export default class SelectorUI extends Modal {
 			this.noteNames = this.allMarkdownFiles.map(file => file.basename);
 		}
 
-		this.addListener = async () => await this.showNoteAdder();
+		this.addNoteListener = async () => await this.showNoteAdder();
 
 		this.generateListener = async () => {
 			if (this.selectedNotes.size === 0) {
-				new Notice("No notes selected.");
+				new Notice("No notes selected");
 			} else if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) {
 				const temp = JSON.parse(new GptService(this.plugin).exampleResponse());
