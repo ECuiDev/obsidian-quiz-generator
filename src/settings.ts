@@ -26,6 +26,22 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					}).inputEl.type = "password"
 			);
 
+		new Setting(containerEl)
+			.setName("Model")
+			.setDesc("Model used for question generation.")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOption("gpt-3.5-turbo-1106", "gpt-3.5-turbo-1106")
+					.addOption("gpt-4-1106-preview", "gpt-4-1106-preview")
+					.addOption("gpt-4-0613", "gpt-4-0613")
+					.addOption("gpt-4-32k-0613", "gpt-4-32k-0613")
+					.setValue(this.plugin.settings.model)
+					.onChange(async (value) => {
+						this.plugin.settings.model = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
 		containerEl.createEl("h3", {text: `${("Generation")}`});
 
 		new Setting(containerEl)
