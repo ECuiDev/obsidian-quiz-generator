@@ -38,7 +38,6 @@
 	margin-left: 10%;
 	cursor: pointer;
 	--icon-size: 175%;
-
 }
 
 .selector-button:disabled {
@@ -50,7 +49,7 @@
 	--icon-size: 98%;
 }
 
-.elements-section {
+.notes-section {
 	overflow-y: auto;
 	height: 85%;
 	flex: none;
@@ -68,7 +67,6 @@
 .selected-note-box {
 	display: flex;
 	flex-direction: row;
-	background-color: #343434;
 	padding: 1.5%;
 	margin: 1%;
 	border-radius: 5px;
@@ -77,6 +75,19 @@
 
 .note-tokens {
 	margin-left: auto;
+	margin-right: 2%;
+}
+
+.remove-button {
+	background-color: transparent !important;
+	box-shadow: none !important;
+	cursor: pointer;
+	padding: initial;
+	height: initial;
+}
+
+.remove-button:hover {
+	background-color: revert !important;
 }
 
 /* quizUI */

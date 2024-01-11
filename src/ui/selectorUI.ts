@@ -37,7 +37,7 @@ export default class SelectorUI extends Modal {
 		this.modalEl.addClass("selected-notes-container");
 		this.titleEl.setText("Selected Notes");
 		this.titleEl.addClass("selected-notes-title");
-		this.contentEl.addClass("elements-section");
+		this.contentEl.addClass("notes-section");
 
 		this.activateButtons();
 		this.displayButtons();
@@ -178,6 +178,11 @@ export default class SelectorUI extends Modal {
 		const noteTokensElement = selectedNoteBox.createDiv("note-tokens");
 		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(selectedNote));
 		noteTokensElement.textContent = noteTokens + " tokens";
+
+		const removeButton = selectedNoteBox.createEl("button");
+		removeButton.addClass("remove-button");
+		setIcon(removeButton, "x");
+		setTooltip(removeButton, "Remove");
 
 		this.promptTokens += noteTokens;
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
