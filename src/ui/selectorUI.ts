@@ -81,7 +81,7 @@ export default class SelectorUI extends Modal {
 				this.folderPaths.remove(selectedFolder.path);
 				await this.showFolderAdder();
 				const folderNoteContents = selectedFolder.children
-					.filter(child => child instanceof TFile && child.extension === ".md")
+					.filter(child => child instanceof TFile && child.extension === "md")
 					.map(async file => cleanUpString(await this.app.vault.cachedRead(file as TFile)))
 					.join(" ");
 				this.selectedNotes.set(selectedFolder.path, folderNoteContents);
