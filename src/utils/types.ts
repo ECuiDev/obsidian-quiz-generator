@@ -24,6 +24,7 @@ export interface ParsedSA {
 export interface QuizSettings {
 	apiKey: string;
 	model: string;
+	showNotePath: boolean;
 	showFolderPath: boolean;
 	numberOfMultipleChoice: number;
 	numberOfTrueFalse: number;
@@ -41,6 +42,7 @@ export interface QuizSettings {
 export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	apiKey: "",
 	model: "gpt-3.5-turbo-1106",
+	showNotePath: false,
 	showFolderPath: false,
 	numberOfMultipleChoice: 1,
 	numberOfTrueFalse: 1,
