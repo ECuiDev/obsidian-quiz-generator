@@ -8,11 +8,16 @@ export default class QuizGenerator extends Plugin {
 
 	async onload() {
 		this.addCommand({
-			id: "open-generator-gui",
-			name: "Open Generator GUI",
+			id: "open-generator",
+			name: "Open generator",
 			callback: () => {
 				new SelectorUI(this.app, this).open();
 			},
+		});
+
+		// webhook, brain-circuit, scroll-text
+		this.addRibbonIcon("scroll-text", "Open generator", async () => {
+			new SelectorUI(this.app, this).open();
 		});
 
 		await this.loadSettings();
