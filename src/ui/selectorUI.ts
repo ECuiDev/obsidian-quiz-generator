@@ -1,4 +1,4 @@
-import { App, Modal, Notice, TFile, TFolder, setIcon, setTooltip, normalizePath } from "obsidian";
+import { App, Modal, Notice, TFile, TFolder, setIcon, setTooltip } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
@@ -21,9 +21,6 @@ export default class SelectorUI extends Modal {
 	private addFolderListener: () => void;
 	private generateListener: () => void;
 	private gpt: GptService;
-	private fileName: string;
-	private validPath: boolean;
-	private fileCreated: boolean;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		super(app);
@@ -46,7 +43,6 @@ export default class SelectorUI extends Modal {
 		this.activateButtons();
 		this.displayButtons();
 		this.displayTokens();
-		this.chooseFileName();
 	}
 
 	public onClose() {
@@ -97,7 +93,7 @@ export default class SelectorUI extends Modal {
 
 				console.log(this.questionsAndAnswers);
 
-				new QuizUI(this.app, this.questionsAndAnswers).open();
+				new QuizUI(this.app, this.plugin, this.questionsAndAnswers).open();
 
 				this.containerEl.style.display = "none";
 
@@ -161,38 +157,6 @@ export default class SelectorUI extends Modal {
 	private displayTokens() {
 		this.tokenSection = this.modalEl.createSpan("token-section");
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
-	}
-
-	private chooseFileName() {
-		let count = 1;
-		const folder =
-			this.app.vault.getAbstractFileByPath(normalizePath(this.plugin.settings.questionSavePath.trim()));
-
-		if (folder instanceof TFolder) {
-			const fileNames = folder.children
-				.filter(file => file instanceof TFile)
-				.map(file => file.name.toLowerCase())
-				.filter(name => name.startsWith("quiz"));
-
-			while (fileNames.includes(`quiz ${count}.md`)) {
-				count++;
-			}
-
-			this.fileName = `Quiz ${count}.md`;
-			this.validPath = true;
-		} else {
-			const rootFileNames = this.app.vault.getRoot().children
-				.filter(file => file instanceof TFile)
-				.map(file => file.name.toLowerCase())
-				.filter(name => name.startsWith("quiz"));
-
-			while (rootFileNames.includes(`quiz ${count}.md`)) {
-				count++;
-			}
-
-			this.fileName = `Quiz ${count}.md`;
-			this.validPath = false;
-		}
 	}
 
 	private async showNoteAdder() {
