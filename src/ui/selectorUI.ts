@@ -1,4 +1,4 @@
-import { App, Notice, TFile, TFolder, normalizePath } from "obsidian";
+import { App, Modal, Notice, TFile, TFolder, normalizePath } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
@@ -7,14 +7,11 @@ import NoteAdder from "./noteAdder";
 import "styles.css";
 import QuizUI from "./quizUI";
 
-export default class SelectorUI {
-	private readonly app: App;
+export default class SelectorUI extends Modal {
 	private readonly plugin: QuizGenerator;
 	private allMarkdownFiles: TFile[];
 	private noteNames: string[];
 	private selectedNotes: Map<string, string>;
-	private selectedNotesContainer: HTMLDivElement;
-	private elementsSection: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
@@ -28,27 +25,29 @@ export default class SelectorUI {
 	private fileCreated: boolean;
 
 	constructor(app: App, plugin: QuizGenerator) {
-		this.app = app;
+		super(app);
 		this.plugin = plugin;
+	}
 
+	public onOpen() {
 		this.allMarkdownFiles = this.app.vault.getMarkdownFiles();
 		this.noteNames = this.allMarkdownFiles.map(file => file.basename);
 		this.selectedNotes = new Map<string, string>();
 		this.questionsAndAnswers = [];
-		this.displaySearchUI();
+
+		this.modalEl.addClass("selected-notes-container");
+		this.titleEl.setText("Selected Notes");
+		this.titleEl.addClass("selected-notes-title");
+		this.contentEl.addClass("elements-section");
+
+		this.activateButtons();
+		this.displayButtons();
+		this.displayTokens();
 		this.chooseFileName();
 	}
 
-	private close() {
-		document.body.removeChild(this.selectedNotesContainer);
-	}
-
-	private displaySearchUI() {
-		this.displaySelectedNotesContainer();
-		this.activateButtons();
-		this.displaySearchButtons();
-		this.displaySearchElements();
-		this.displayTokens();
+	public onClose() {
+		super.onClose();
 	}
 
 	private async showNoteAdder() {
@@ -69,50 +68,26 @@ export default class SelectorUI {
 		modal.open();
 	}
 
-	private displaySelectedNotesContainer() {
-		this.selectedNotesContainer = document.createElement("div");
-		this.selectedNotesContainer.id = "selected-notes-container";
-		this.selectedNotesContainer.classList.add("selected-notes-container");
-		
-		document.body.appendChild(this.selectedNotesContainer);
-	}
+	private displayButtons() {
+		const buttonSectionLeft = this.modalEl.createDiv("left-buttons-container");
 
-	private displaySearchButtons() {
-		const buttonSectionLeft = document.createElement("div");
-		buttonSectionLeft.id = "left-buttons-container";
-		buttonSectionLeft.classList.add("left-buttons-container");
-
-		const exit = document.createElement("button");
+		const exit = buttonSectionLeft.createEl("button");
 		exit.textContent = "Exit";
-		exit.id = "exit";
-		exit.classList.add("exit");
+		exit.addClass("exit");
 
-		const clear = document.createElement("button");
+		const clear = buttonSectionLeft.createEl("button");
 		clear.textContent = "Clear All";
-		clear.id = "clear";
-		clear.classList.add("clear");
+		clear.addClass("clear");
 
-		buttonSectionLeft.appendChild(exit);
-		buttonSectionLeft.appendChild(clear);
-		this.selectedNotesContainer.appendChild(buttonSectionLeft);
+		const buttonSectionRight = this.modalEl.createDiv("right-buttons-container");
 
-		const buttonSectionRight = document.createElement("div");
-		buttonSectionRight.id = "right-buttons-container";
-		buttonSectionRight.classList.add("right-buttons-container");
-
-		const add = document.createElement("button");
+		const add = buttonSectionRight.createEl("button");
 		add.textContent = "Add";
-		add.id = "add";
-		add.classList.add("add");
+		add.addClass("add");
 
-		const generate = document.createElement("button");
+		const generate = buttonSectionRight.createEl("button");
 		generate.textContent = "Generate";
-		generate.id = "generate";
-		generate.classList.add("generate");
-
-		buttonSectionRight.appendChild(add);
-		buttonSectionRight.appendChild(generate);
-		this.selectedNotesContainer.appendChild(buttonSectionRight);
+		generate.addClass("generate");
 
 		exit.addEventListener("click", this.exitListener);
 		clear.addEventListener("click", this.clearListener);
@@ -120,21 +95,9 @@ export default class SelectorUI {
 		generate.addEventListener("click", this.generateListener);
 	}
 
-	private displaySearchElements() {
-		this.elementsSection = document.createElement("div");
-		this.elementsSection.id = "elements-section";
-		this.elementsSection.classList.add("elements-section");
-
-		this.selectedNotesContainer.appendChild(this.elementsSection);
-	}
-
 	private displayTokens() {
-		this.tokenSection = document.createElement("span");
+		this.tokenSection = this.modalEl.createSpan("token-section");
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
-		this.tokenSection.id = "token-section";
-		this.tokenSection.classList.add("token-section");
-
-		this.selectedNotesContainer.appendChild(this.tokenSection);
 	}
 
 	private activateButtons() {
@@ -142,7 +105,7 @@ export default class SelectorUI {
 
 		this.clearListener = async () => {
 			this.selectedNotes.clear();
-			this.elementsSection.empty();
+			this.contentEl.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 			this.noteNames = this.allMarkdownFiles.map(file => file.basename);
@@ -180,8 +143,7 @@ export default class SelectorUI {
 
 				new QuizUI(this.questionsAndAnswers);
 
-				this.selectedNotesContainer.style.display = "none";
-				this.elementsSection.style.display = "none";
+				this.containerEl.style.display = "none";
 
 				//new QuizUI(JSON.parse(new GptService(this.plugin).exampleResponse()));
 				//this.close();
@@ -210,20 +172,12 @@ export default class SelectorUI {
 	}
 
 	private async displaySelectedNote(selectedNote: string) {
-		const selectedNoteBox = document.createElement("div");
+		const selectedNoteBox = this.contentEl.createDiv("selected-note-box");
 		selectedNoteBox.textContent = selectedNote;
-		selectedNoteBox.id = "selected-note-box";
-		selectedNoteBox.classList.add("selected-note-box");
 
-		const noteTokensElement = document.createElement("div");
+		const noteTokensElement = selectedNoteBox.createDiv("note-tokens");
 		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(selectedNote));
 		noteTokensElement.textContent = noteTokens + " tokens";
-		noteTokensElement.id = "note-tokens";
-		noteTokensElement.classList.add("note-tokens");
-
-		selectedNoteBox.appendChild(noteTokensElement);
-
-		this.elementsSection.appendChild(selectedNoteBox);
 
 		this.promptTokens += noteTokens;
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
