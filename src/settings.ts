@@ -152,6 +152,18 @@ export default class QuizSettingsTab extends PluginSettingTab {
 		containerEl.createEl("h3", {text: `${("Saving")}`});
 
 		new Setting(containerEl)
+			.setName("Automatically save questions")
+			.setDesc("Auto-save all questions upon generation.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.autoSave)
+					.onChange(async (value) => {
+						this.plugin.settings.autoSave = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
 			.setName("Save location")
 			.setDesc("Enter vault absolute path to folder where questions are saved.")
 			.addText((text) =>
