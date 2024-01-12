@@ -13,6 +13,8 @@ export default class SelectorUI extends Modal {
 	private notePaths: string[];
 	private folderPaths: string[];
 	private selectedNotes: Map<string, string>;
+	private notesContainer: HTMLDivElement;
+	private buttonContainer: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
@@ -21,6 +23,7 @@ export default class SelectorUI extends Modal {
 	private addFolderListener: () => void;
 	private generateListener: () => void;
 	private gpt: GptService;
+	private quiz: QuizUI;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		super(app);
@@ -35,11 +38,12 @@ export default class SelectorUI extends Modal {
 		this.selectedNotes = new Map<string, string>();
 		this.questionsAndAnswers = [];
 
-		this.modalEl.addClass("selected-notes-container");
+		this.modalEl.addClass("modal-el-container");
+		this.contentEl.addClass("modal-content-container");
 		this.titleEl.setText("Selected Notes");
-		this.titleEl.addClass("selected-notes-title");
-		this.contentEl.addClass("notes-section");
+		this.titleEl.addClass("title-style");
 
+		this.displayNoteContainer();
 		this.activateButtons();
 		this.displayButtons();
 		this.displayTokens();
@@ -49,10 +53,14 @@ export default class SelectorUI extends Modal {
 		super.onClose();
 	}
 
+	private displayNoteContainer() {
+		this.notesContainer = this.contentEl.createDiv("notes-container");
+	}
+
 	private activateButtons() {
 		this.clearListener = async () => {
 			this.selectedNotes.clear();
-			this.contentEl.empty();
+			this.notesContainer.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path); // remove if performance issues
@@ -95,7 +103,7 @@ export default class SelectorUI extends Modal {
 
 				new QuizUI(this.app, this.plugin, this.questionsAndAnswers).open();
 
-				this.containerEl.style.display = "none";
+				// this.containerEl.style.display = "none"; KEEP or REMOVE?
 
 				//new QuizUI(JSON.parse(new GptService(this.plugin).exampleResponse()));
 				//this.close();
@@ -124,27 +132,25 @@ export default class SelectorUI extends Modal {
 	}
 
 	private displayButtons() {
-		const buttonSectionLeft = this.modalEl.createDiv("left-buttons-container");
+		this.buttonContainer = this.contentEl.createDiv("button-container");
 
-		const clear = buttonSectionLeft.createEl("button");
-		clear.addClass("selector-button", "special");
+		const clear = this.buttonContainer.createEl("button");
+		clear.addClass("ui-button");
 		setIcon(clear, "book-x");
 		setTooltip(clear, "Remove all");
 
-		const buttonSectionRight = this.modalEl.createDiv("right-buttons-container");
-
-		const addNote = buttonSectionRight.createEl("button");
-		addNote.addClass("selector-button");
+		const addNote = this.buttonContainer.createEl("button");
+		addNote.addClass("ui-button");
 		setIcon(addNote, "file-plus-2");
 		setTooltip(addNote, "Add note");
 
-		const addFolder = buttonSectionRight.createEl("button");
-		addFolder.addClass("selector-button");
+		const addFolder = this.buttonContainer.createEl("button");
+		addFolder.addClass("ui-button");
 		setIcon(addFolder, "folder-plus");
 		setTooltip(addFolder, "Add folder");
 
-		const generate = buttonSectionRight.createEl("button");
-		generate.addClass("selector-button");
+		const generate = this.buttonContainer.createEl("button");
+		generate.addClass("ui-button");
 		setIcon(generate, "brain-circuit");
 		setTooltip(generate, "Generate");
 
@@ -155,7 +161,7 @@ export default class SelectorUI extends Modal {
 	}
 
 	private displayTokens() {
-		this.tokenSection = this.modalEl.createSpan("token-section");
+		this.tokenSection = this.contentEl.createSpan("token-container");
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
@@ -206,7 +212,7 @@ export default class SelectorUI extends Modal {
 	}
 
 	private async displayNote(note: TFile) {
-		const selectedNoteBox = this.contentEl.createDiv("selected-note-box");
+		const selectedNoteBox = this.notesContainer.createDiv("notes-container-element");
 		this.plugin.settings.showNotePath ?
 			selectedNoteBox.textContent = note.path : selectedNoteBox.textContent = note.basename;
 
@@ -219,7 +225,7 @@ export default class SelectorUI extends Modal {
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
-			this.contentEl.removeChild(selectedNoteBox);
+			this.notesContainer.removeChild(selectedNoteBox);
 			this.notePaths.push(note.path); // remove if this causes performance issues for large vaults
 			this.selectedNotes.delete(note.path);
 			this.promptTokens -= noteTokens;
@@ -231,7 +237,7 @@ export default class SelectorUI extends Modal {
 	}
 
 	private async displayFolder(folder: TFolder) {
-		const selectedFolderBox = this.contentEl.createDiv("selected-note-box");
+		const selectedFolderBox = this.notesContainer.createDiv("notes-container-element");
 
 		if (folder.path === "/") {
 			selectedFolderBox.textContent = this.app.vault.getName() + " (Vault)";
@@ -249,7 +255,7 @@ export default class SelectorUI extends Modal {
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
-			this.contentEl.removeChild(selectedFolderBox);
+			this.notesContainer.removeChild(selectedFolderBox);
 			this.folderPaths.push(folder.path); // remove if this causes performance issues for large vaults
 			this.selectedNotes.delete(folder.path);
 			this.promptTokens -= noteTokens;
