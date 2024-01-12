@@ -140,6 +140,11 @@
 	transition: border-color 0.3s ease;
 }
 
+.mc-tf-container button:disabled {
+	border-color: initial;
+	cursor: default;
+}
+
 .show-answer-button {
 	border: 0.125rem solid;
 	cursor: pointer;
@@ -159,6 +164,11 @@
 .show-answer-button:hover {
 	border-color: hsl(210, 80%, 70%);
 	transition: border-color 0.3s ease;
+}
+
+.show-answer-button:disabled {
+	border-color: initial;
+	cursor: default;
 }
 
 .correct-choice {
