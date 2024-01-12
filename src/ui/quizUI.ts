@@ -32,6 +32,8 @@ export default class QuizUI extends Modal {
 
 	public onOpen() {
 		this.modalEl.addClass("quiz-container");
+		this.contentEl.addClass("question-container");
+		this.titleEl.addClass("selected-notes-title");
 
 		this.chooseFileName();
 		this.activateButtons();
@@ -138,11 +140,12 @@ export default class QuizUI extends Modal {
 		this.saveAllButton.disabled = this.saved.every(value => value);
 		this.nextButton.disabled = this.questionIndex === this.questionsAndAnswers.length - 1;
 
-		this.modalEl.empty(); // change to contentEl?
+		this.contentEl.empty();
+		this.titleEl.setText("Question " + (this.questionIndex + 1));
 
 		const question = this.questionsAndAnswers[this.questionIndex];
 
-		const questionText = document.createElement("div");
+		const questionText = this.contentEl.createDiv("question");
 
 		switch(this.questionType(question)) {
 			case "MC":
@@ -158,8 +161,6 @@ export default class QuizUI extends Modal {
 				break;
 		}
 
-		this.modalEl.appendChild(questionText);
-
 		if (this.questionType(question) === "MC") {
 			this.displayMC();
 		} else if (this.questionType(question) === "TF") {
@@ -167,7 +168,7 @@ export default class QuizUI extends Modal {
 		} else if (this.questionType(question) === "SA") {
 			this.displaySA();
 		} else {
-			// Display UI for Error
+			questionText.textContent = "Error";
 		}
 	}
 	
@@ -179,49 +180,36 @@ export default class QuizUI extends Modal {
 		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["3"]);
 		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["4"]);
 
-		const choicesContainer = document.createElement("div");
-		choicesContainer.classList.add("choices-container");
+		const choicesContainer = this.contentEl.createDiv("mc-container");
 
 		choices.forEach((choice, choiceNumber) => {
-			const choiceButton = document.createElement("button");
+			const choiceButton = choicesContainer.createEl("button");
 			choiceButton.textContent = choice;
 			choiceButton.addEventListener("click", () =>
 				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).Answer, choiceNumber + 1));
-			choicesContainer.appendChild(choiceButton);
 		});
-
-		this.modalEl.appendChild(choicesContainer);
 	}
 	
 	private displayTF() {
-		const trueFalseContainer = document.createElement("div");
-		trueFalseContainer.classList.add("true-false-container");
+		const trueFalseContainer = this.contentEl.createDiv("tf-container");
 
-		const trueButton = document.createElement("button");
+		const trueButton = trueFalseContainer.createEl("button");
 		trueButton.textContent = "True";
-		trueButton.classList.add("true-button");
 		trueButton.addEventListener("click", () =>
 			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, true));
 
-		const falseButton = document.createElement("button");
+		const falseButton = trueFalseContainer.createEl("button");
 		falseButton.textContent = "False";
-		falseButton.classList.add("false-button");
 		falseButton.addEventListener("click", () =>
 			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, false));
-
-		trueFalseContainer.appendChild(trueButton);
-		trueFalseContainer.appendChild(falseButton);
-		this.modalEl.appendChild(trueFalseContainer);
 	}
 	
 	private displaySA() {
-		const showAnswerButton = document.createElement("button");
+		const showAnswerButton = this.contentEl.createEl("button");
 		showAnswerButton.textContent = "Show answer";
 		showAnswerButton.classList.add("show-answer-button");
 		showAnswerButton.addEventListener("click", () =>
 			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).Answer));
-
-		this.modalEl.appendChild(showAnswerButton);
 	}
 
 	private showNextQuestion() {
