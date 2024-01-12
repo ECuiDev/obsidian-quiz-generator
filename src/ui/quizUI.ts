@@ -47,6 +47,7 @@ export default class QuizUI extends Modal {
 		this.backListener = async () => this.showPreviousQuestion();
 
 		this.saveListener = async () => {
+			this.saveButton.disabled = true;
 			this.saved[this.questionIndex] = true;
 			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
 				this.fileName, this.validPath, this.fileCreated).saveQuestion();
@@ -55,6 +56,7 @@ export default class QuizUI extends Modal {
 		}
 
 		this.saveAllListener = async () => {
+			this.saveAllButton.disabled = true;
 			for (let index = 0; index < this.questionsAndAnswers.length; index++) {
 				if (!this.saved[index]) {
 					this.saved[index] = true;
@@ -131,7 +133,12 @@ export default class QuizUI extends Modal {
 	}
 
 	private showQuestion() {
-		this.modalEl.empty();
+		this.backButton.disabled = this.questionIndex === 0;
+		this.saveButton.disabled = this.saved[this.questionIndex];
+		this.saveAllButton.disabled = this.saved.every(value => value);
+		this.nextButton.disabled = this.questionIndex === this.questionsAndAnswers.length - 1;
+
+		this.modalEl.empty(); // change to contentEl?
 
 		const question = this.questionsAndAnswers[this.questionIndex];
 
@@ -162,9 +169,6 @@ export default class QuizUI extends Modal {
 		} else {
 			// Display UI for Error
 		}
-
-		this.backButton.disabled = this.questionIndex === 0;
-		this.nextButton.disabled = this.questionIndex === this.questionsAndAnswers.length - 1;
 	}
 	
 	private displayMC() {
@@ -232,10 +236,6 @@ export default class QuizUI extends Modal {
 			this.questionIndex--;
 			this.showQuestion();
 		}
-	}
-	
-	private saveQuestion() {
-		
 	}
 
 	private selectMCQAnswer(answerNumber: number, choiceNumber: number) {
