@@ -1,4 +1,4 @@
-import { App, Modal, TFile, TFolder, setIcon, setTooltip, normalizePath } from "obsidian";
+import { App, Modal, TFile, TFolder, setIcon, setTooltip, normalizePath, Notice } from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 import QuestionSaver from "../service/questionSaver";
@@ -9,8 +9,10 @@ export default class QuizUI extends Modal {
 	private readonly questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private saved: boolean[];
 	private questionIndex: number;
-	private readonly backButton: HTMLButtonElement;
-	private readonly nextButton: HTMLButtonElement;
+	private backButton: HTMLButtonElement;
+	private saveButton: HTMLButtonElement;
+	private saveAllButton: HTMLButtonElement;
+	private nextButton: HTMLButtonElement;
 	private backListener: () => void;
 	private saveListener: () => void;
 	private saveAllListener: () => void;
@@ -34,7 +36,7 @@ export default class QuizUI extends Modal {
 		this.chooseFileName();
 		this.activateButtons();
 		this.displayButtons();
-		this.showQuestion(this.questionIndex);
+		this.showQuestion();
 	}
 
 	public onClose() {
@@ -49,17 +51,19 @@ export default class QuizUI extends Modal {
 			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
 				this.fileName, this.validPath, this.fileCreated).saveQuestion();
 			this.fileCreated = true;
+			new Notice("Question saved");
 		}
 
 		this.saveAllListener = async () => {
 			for (let index = 0; index < this.questionsAndAnswers.length; index++) {
 				if (!this.saved[index]) {
+					this.saved[index] = true;
 					await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[index],
 						this.fileName, this.validPath, this.fileCreated).saveQuestion();
 					this.fileCreated = true;
 				}
 			}
-			this.saved.fill(true);
+			new Notice("All questions saved");
 		}
 
 		this.nextListener = async () => this.showNextQuestion();
@@ -68,25 +72,30 @@ export default class QuizUI extends Modal {
 	private displayButtons() {
 		const buttonsSection = this.modalEl.createDiv("buttons-container");
 
-		const backButton = buttonsSection.createEl("button");
-		backButton.addClass("quiz-button");
-		setIcon(backButton, "arrow-left");
-		setTooltip(backButton, "Back");
+		this.backButton = buttonsSection.createEl("button");
+		this.backButton.addClass("quiz-button");
+		setIcon(this.backButton, "arrow-left");
+		setTooltip(this.backButton, "Back");
 
-		const saveButton = buttonsSection.createEl("button");
-		saveButton.addClass("quiz-button");
-		setIcon(saveButton, "save");
-		setTooltip(saveButton, "Save");
+		this.saveButton = buttonsSection.createEl("button");
+		this.saveButton.addClass("quiz-button");
+		setIcon(this.saveButton, "save");
+		setTooltip(this.saveButton, "Save");
 
-		const saveAllButton = buttonsSection.createEl("button");
-		saveAllButton.addClass("quiz-button");
-		setIcon(saveAllButton, "save-all");
-		setTooltip(saveAllButton, "Save all");
+		this.saveAllButton = buttonsSection.createEl("button");
+		this.saveAllButton.addClass("quiz-button");
+		setIcon(this.saveAllButton, "save-all");
+		setTooltip(this.saveAllButton, "Save all");
 
-		const nextButton = buttonsSection.createEl("button");
-		nextButton.addClass("quiz-button");
-		setIcon(nextButton, "arrow-right");
-		setTooltip(nextButton, "Next");
+		this.nextButton = buttonsSection.createEl("button");
+		this.nextButton.addClass("quiz-button");
+		setIcon(this.nextButton, "arrow-right");
+		setTooltip(this.nextButton, "Next");
+
+		this.backButton.addEventListener("click", this.backListener);
+		this.saveButton.addEventListener("click", this.saveListener);
+		this.saveAllButton.addEventListener("click", this.saveAllListener);
+		this.nextButton.addEventListener("click", this.nextListener);
 	}
 
 	private chooseFileName() {
@@ -121,10 +130,10 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	private showQuestion(index: number) {
+	private showQuestion() {
 		this.modalEl.empty();
 
-		const question = this.questionsAndAnswers[index];
+		const question = this.questionsAndAnswers[this.questionIndex];
 
 		const questionText = document.createElement("div");
 
@@ -145,26 +154,26 @@ export default class QuizUI extends Modal {
 		this.modalEl.appendChild(questionText);
 
 		if (this.questionType(question) === "MC") {
-			this.displayMC(index);
+			this.displayMC();
 		} else if (this.questionType(question) === "TF") {
-			this.displayTF(index);
+			this.displayTF();
 		} else if (this.questionType(question) === "SA") {
-			this.displaySA(index);
+			this.displaySA();
 		} else {
 			// Display UI for Error
 		}
 
-		this.backButton.disabled = index === 0;
-		this.nextButton.disabled = index === this.questionsAndAnswers.length - 1;
+		this.backButton.disabled = this.questionIndex === 0;
+		this.nextButton.disabled = this.questionIndex === this.questionsAndAnswers.length - 1;
 	}
 	
-	private displayMC(index: number) {
+	private displayMC() {
 		let choices: string[] = [];
 
-		choices.push((this.questionsAndAnswers[index] as ParsedMC)["1"]);
-		choices.push((this.questionsAndAnswers[index] as ParsedMC)["2"]);
-		choices.push((this.questionsAndAnswers[index] as ParsedMC)["3"]);
-		choices.push((this.questionsAndAnswers[index] as ParsedMC)["4"]);
+		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["1"]);
+		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["2"]);
+		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["3"]);
+		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["4"]);
 
 		const choicesContainer = document.createElement("div");
 		choicesContainer.classList.add("choices-container");
@@ -173,14 +182,14 @@ export default class QuizUI extends Modal {
 			const choiceButton = document.createElement("button");
 			choiceButton.textContent = choice;
 			choiceButton.addEventListener("click", () =>
-				this.selectMCQAnswer((this.questionsAndAnswers[index] as ParsedMC).Answer, choiceNumber + 1));
+				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).Answer, choiceNumber + 1));
 			choicesContainer.appendChild(choiceButton);
 		});
 
 		this.modalEl.appendChild(choicesContainer);
 	}
 	
-	private displayTF(index: number) {
+	private displayTF() {
 		const trueFalseContainer = document.createElement("div");
 		trueFalseContainer.classList.add("true-false-container");
 
@@ -188,25 +197,25 @@ export default class QuizUI extends Modal {
 		trueButton.textContent = "True";
 		trueButton.classList.add("true-button");
 		trueButton.addEventListener("click", () =>
-			this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, true));
+			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, true));
 
 		const falseButton = document.createElement("button");
 		falseButton.textContent = "False";
 		falseButton.classList.add("false-button");
 		falseButton.addEventListener("click", () =>
-			this.selectTFAnswer((this.questionsAndAnswers[index] as ParsedTF).Answer, false));
+			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, false));
 
 		trueFalseContainer.appendChild(trueButton);
 		trueFalseContainer.appendChild(falseButton);
 		this.modalEl.appendChild(trueFalseContainer);
 	}
 	
-	private displaySA(index: number) {
+	private displaySA() {
 		const showAnswerButton = document.createElement("button");
 		showAnswerButton.textContent = "Show answer";
 		showAnswerButton.classList.add("show-answer-button");
 		showAnswerButton.addEventListener("click", () =>
-			this.showSAAnswer((this.questionsAndAnswers[index] as ParsedSA).Answer));
+			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).Answer));
 
 		this.modalEl.appendChild(showAnswerButton);
 	}
@@ -214,14 +223,14 @@ export default class QuizUI extends Modal {
 	private showNextQuestion() {
 		if (this.questionIndex < this.questionsAndAnswers.length - 1) {
 			this.questionIndex++;
-			this.showQuestion(this.questionIndex);
+			this.showQuestion();
 		}
 	}
 
 	private showPreviousQuestion() {
 		if (this.questionIndex > 0) {
 			this.questionIndex--;
-			this.showQuestion(this.questionIndex);
+			this.showQuestion();
 		}
 	}
 	
