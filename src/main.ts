@@ -15,8 +15,7 @@ export default class QuizGenerator extends Plugin {
 			},
 		});
 
-		// webhook, brain-circuit, scroll-text
-		this.addRibbonIcon("scroll-text", "Open generator", async () => {
+		this.addRibbonIcon("brain-circuit", "Open generator", async () => {
 			new SelectorUI(this.app, this).open();
 		});
 
