@@ -9,7 +9,7 @@ import "styles.css";
 import QuizUI from "./quizUI";
 
 export default class SelectorUI extends Modal {
-	private readonly plugin: QuizGenerator;
+	private plugin: QuizGenerator;
 	private notePaths: string[];
 	private folderPaths: string[];
 	private selectedNotes: Map<string, string>;
@@ -44,9 +44,9 @@ export default class SelectorUI extends Modal {
 		this.titleEl.addClass("title-style");
 
 		this.displayNoteContainer();
+		this.displayTokens();
 		this.activateButtons();
 		this.displayButtons();
-		this.displayTokens();
 	}
 
 	public onClose() {
@@ -132,7 +132,7 @@ export default class SelectorUI extends Modal {
 	}
 
 	private displayButtons() {
-		this.buttonContainer = this.contentEl.createDiv("button-container");
+		this.buttonContainer = this.contentEl.createDiv("selector-button-container");
 
 		const clear = this.buttonContainer.createEl("button");
 		clear.addClass("ui-button");
