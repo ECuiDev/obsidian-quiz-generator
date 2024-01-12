@@ -30,9 +30,7 @@ export default class QuizUI extends Modal {
 		this.saved = new Array(this.questionsAndAnswers.length).fill(false); // fill true if auto-save on
 		this.questionIndex = 0;
 		this.fileCreated = false;
-	}
 
-	public onOpen() {
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
 		this.titleEl.addClass("title-style");
@@ -42,6 +40,9 @@ export default class QuizUI extends Modal {
 		this.displayButtons();
 		this.displayLine();
 		this.displayQuestionContainer();
+	}
+
+	public onOpen() {
 		this.showQuestion();
 	}
 
@@ -86,6 +87,8 @@ export default class QuizUI extends Modal {
 
 		this.saveListener = async () => {
 			this.saveButton.disabled = true;
+			this.saveAllButton.disabled = this.saved.every(value => value);
+
 			this.saved[this.questionIndex] = true;
 			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
 				this.fileName, this.validPath, this.fileCreated).saveQuestion();
@@ -94,7 +97,9 @@ export default class QuizUI extends Modal {
 		}
 
 		this.saveAllListener = async () => {
+			this.saveButton.disabled = true;
 			this.saveAllButton.disabled = true;
+
 			for (let index = 0; index < this.questionsAndAnswers.length; index++) {
 				if (!this.saved[index]) {
 					this.saved[index] = true;
@@ -103,6 +108,7 @@ export default class QuizUI extends Modal {
 					this.fileCreated = true;
 				}
 			}
+
 			new Notice("All questions saved");
 		}
 
