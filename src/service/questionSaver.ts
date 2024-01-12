@@ -30,7 +30,7 @@ export default class QuestionSaver {
 		}
 
 		if (!this.fileCreated) {
-			this.file = await this.app.vault.create(this.path, "#flashcards\n");
+			this.file = await this.app.vault.create(this.path, "#flashcards");
 		} else {
 			this.file = this.app.vault.getAbstractFileByPath(this.path) as TFile;
 		}
@@ -48,7 +48,7 @@ export default class QuestionSaver {
 			new Notice("Invalid path. Questions saved in vault root folder.");
 		}
 
-		await this.app.vault.append(this.file, "\n" + this.formatSpacedRepQuestion(this.question));
+		await this.app.vault.append(this.file, "\n\n" + this.formatSpacedRepQuestion(this.question));
 	}
 
 	private async saveAsCallout() {
@@ -56,7 +56,7 @@ export default class QuestionSaver {
 			new Notice("Invalid path. Questions saved in vault root folder.");
 		}
 
-		await this.app.vault.append(this.file, "\n" + this.formatCalloutQuestion(this.question));
+		await this.app.vault.append(this.file, "\n\n" + this.formatCalloutQuestion(this.question));
 	}
 
 	private formatSpacedRepQuestion(question: ParsedMC | ParsedTF | ParsedSA) {
