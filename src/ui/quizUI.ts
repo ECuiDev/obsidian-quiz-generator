@@ -40,6 +40,10 @@ export default class QuizUI extends Modal {
 		this.displayButtons();
 		this.displayLine();
 		this.displayQuestionContainer();
+
+		if (this.plugin.settings.autoSave) {
+			this.saveAllListener();
+		}
 	}
 
 	public onOpen() {
@@ -93,7 +97,12 @@ export default class QuizUI extends Modal {
 			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
 				this.fileName, this.validPath, this.fileCreated).saveQuestion();
 			this.fileCreated = true;
-			new Notice("Question saved");
+
+			if (this.validPath) {
+				new Notice("Question saved");
+			} else {
+				new Notice("Invalid path: Question saved in vault root folder");
+			}
 		}
 
 		this.saveAllListener = async () => {
@@ -109,7 +118,11 @@ export default class QuizUI extends Modal {
 				}
 			}
 
-			new Notice("All questions saved");
+			if (this.validPath) {
+				new Notice("All questions saved");
+			} else {
+				new Notice("Invalid path: All questions saved in vault root folder");
+			}
 		}
 
 		this.nextListener = async () => this.showNextQuestion();

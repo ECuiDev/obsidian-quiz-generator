@@ -1,4 +1,4 @@
-import { App, Notice, TFile, normalizePath } from "obsidian";
+import { App, TFile, normalizePath } from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 
@@ -44,18 +44,10 @@ export default class QuestionSaver {
 	}
 
 	private async saveForSpacedRepetition() {
-		if (!this.validPath) {
-			new Notice("Invalid path. Questions saved in vault root folder.");
-		}
-
 		await this.app.vault.append(this.file, "\n\n" + this.formatSpacedRepQuestion(this.question));
 	}
 
 	private async saveAsCallout() {
-		if (!this.validPath) {
-			new Notice("Invalid path. Questions saved in vault root folder.");
-		}
-
 		await this.app.vault.append(this.file, "\n\n" + this.formatCalloutQuestion(this.question));
 	}
 
