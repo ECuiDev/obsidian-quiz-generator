@@ -22,7 +22,7 @@ export default class QuestionSaver {
 		this.fileCreated = fileCreated;
 	}
 
-	async saveQuestion() {
+	public async saveQuestion() {
 		if (this.validPath) {
 			this.path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
 		} else {

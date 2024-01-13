@@ -12,7 +12,7 @@ export default class GptService {
 			dangerouslyAllowBrowser: true});
 	}
 
-	async generateQuestions(contents: string[]) {
+	public async generateQuestions(contents: string[]) {
 		try {
 			const systemPrompt = "You are an assistant specialized in generating exam-style questions " +
 				"and answers. Your response must be a JSON object with the following property:\n" +
@@ -182,7 +182,7 @@ export default class GptService {
 		return `"QuestionSA": The question\n"Answer": The answer\n`;
 	}
 
-	exampleResponse() {
+	private exampleResponse() {
 		const multipleChoiceExample = `{"QuestionMC": "What is the capital city of Australia?", ` +
 			`"1": "Sydney", "2": "Melbourne", "3": "Canberra", "4": "Brisbane", "Answer": 3}`;
 
