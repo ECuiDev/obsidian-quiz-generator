@@ -26,13 +26,25 @@
 	cursor: not-allowed;
 }
 
+.move-left {
+	transform: translateX(-51%);
+}
+
+.move-right {
+	transform: translateX(51%);
+}
+
+.remove-opacity {
+	opacity: 0 !important;
+}
+
 /* selectorUI */
 .notes-container {
 	overflow-y: auto;
 	height: 90%;
 	flex: none;
-	border: 1px solid #ccc;
-	border-radius: 5px;
+	border: 0.125rem solid;
+	border-radius: 0.5rem;
 }
 
 .selector-button-container {
@@ -58,8 +70,8 @@
 	flex-direction: row;
 	padding: 1.5%;
 	margin: 1%;
-	border-radius: 5px;
-	border: 1px solid #ddd;
+	border-radius: 0.5rem;
+	border: 0.1rem solid;
 }
 
 .note-tokens {
@@ -81,7 +93,9 @@
 
 /* noteAdder and folderAdder */
 .adder-modal {
-
+	width: 40%;
+	max-height: 80%;
+	top: 10%;
 }
 
 /* quizUI */
