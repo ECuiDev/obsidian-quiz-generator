@@ -1,4 +1,4 @@
-import { App, Modal, Notice, TFile, TFolder, setIcon, setTooltip } from "obsidian";
+import { App, Vault, Modal, Notice, TFile, TFolder, setIcon, setTooltip } from "obsidian";
 import GptService from "../service/gptService";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
@@ -91,59 +91,59 @@ export default class SelectorUI extends Modal {
 			if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) {
 				this.generateButton.disabled = true;
-				new Notice("Generating...");
-				const temp = JSON.parse(new GptService(this.plugin).exampleResponse());
-				const temp2 = temp.quiz;
-
-				for (const key in temp) {
-					if(temp.hasOwnProperty(key)) {
-						const value = temp[key];
-
-						if (Array.isArray(value)) {
-							value.forEach(element => {
-								if ("QuestionMC" in element) {
-									this.questionsAndAnswers.push(element as ParsedMC);
-								} else if ("QuestionTF" in element) {
-									this.questionsAndAnswers.push(element as ParsedTF);
-								} else if ("QuestionSA" in element) {
-									this.questionsAndAnswers.push(element as ParsedSA);
-								}
-							});
-						}
-					}
-				}
-
-				console.log(this.questionsAndAnswers);
-
-				this.quiz = new QuizUI(this.app, this.plugin, this.questionsAndAnswers);
-				this.quiz.open();
-
-				// this.containerEl.style.display = "none"; KEEP or REMOVE?
-
-				//new QuizUI(JSON.parse(new GptService(this.plugin).exampleResponse()));
-				//this.close();
-				/*
+				this.questionsAndAnswers.length = 0;
 				this.gpt = new GptService(this.plugin);
+
+				new Notice("Generating...");
 				const questions = await this.gpt.generateQuestions(await this.loadNoteContents());
 
 				console.log(questions);
 				console.log(JSON.stringify(questions));
 
-				if (questions != null) {
-					const parsedJSON: ParsedQuestions = JSON.parse(questions);
+				if (questions) {
+					try {
+						const parsedQuestions: ParsedQuestions = JSON.parse(questions);
 
-					console.log(parsedJSON);
-					console.log(JSON.stringify(parsedJSON));
+						console.log(parsedQuestions);
+						console.log(JSON.stringify(parsedQuestions));
 
-					this.questionsAndAnswers = parsedJSON.quiz;
-					new QuizUI(this.questionsAndAnswers);
+						for (const key in parsedQuestions) {
+							if (parsedQuestions.hasOwnProperty(key)) {
+								const value = parsedQuestions[key];
+
+								if (Array.isArray(value)) {
+									value.forEach(element => {
+										if ("QuestionMC" in element) {
+											this.questionsAndAnswers.push(element as ParsedMC);
+										} else if ("QuestionTF" in element) {
+											this.questionsAndAnswers.push(element as ParsedTF);
+										} else if ("QuestionSA" in element) {
+											this.questionsAndAnswers.push(element as ParsedSA);
+										} else {
+											new Notice("A question was generated incorrectly");
+										}
+									});
+								} else {
+									new Notice("Failure: Generation returned incorrect format");
+								}
+							}
+						}
+
+						this.quiz = new QuizUI(this.app, this.plugin, this.questionsAndAnswers);
+						this.quiz.open();
+					} catch (error) {
+						new Notice(error);
+					}
 				} else {
-					new Notice("json variable is null");
-				}*/
+					new Notice("Failure: Generation returned null");
+				}
+
+				console.log(this.questionsAndAnswers);
+
 				this.generateButton.disabled = false;
 				this.quizButton.disabled = false;
 			} else {
-				new Notice("Generation cancelled because all question types are set to false.")
+				new Notice("Generation cancelled because all question types are set to false")
 			}
 		}
 	}
@@ -189,7 +189,7 @@ export default class SelectorUI extends Modal {
 	}
 
 	private async showNoteAdder() {
-		const modal = new NoteAdder(this.app, this.notePaths);
+		const modal = new NoteAdder(this.app, this.notePaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
 			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
@@ -207,26 +207,31 @@ export default class SelectorUI extends Modal {
 	}
 
 	private async showFolderAdder() {
-		const modal = new FolderAdder(this.app, this.folderPaths);
+		const modal = new FolderAdder(this.app, this.folderPaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
 			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedFolder instanceof TFolder) {
-				this.folderPaths.remove(selectedFolder.path);
+				this.folderPaths.remove(selectedFolder.path); // remove if this causes performance issues for large vaults
 				await this.showFolderAdder();
-				const folderNotes = selectedFolder.children
-					.filter(child => child instanceof TFile && child.extension === "md");
 
-				let folderNoteContents: string[] = [];
+				let folderContents: string[] = [];
+				const promises: any[] = [];
 
-				for (const file of folderNotes) {
-					if (file instanceof TFile) {
-						folderNoteContents.push(cleanUpString(await this.app.vault.cachedRead(file)));
+				Vault.recurseChildren(selectedFolder, (file) => {
+					if (file instanceof TFile && file.extension === "md") {
+						promises.push(
+							(async () => {
+								folderContents.push(cleanUpString(await this.app.vault.cachedRead(file)));
+							})()
+						);
 					}
-				}
+				});
 
-				this.selectedNotes.set(selectedFolder.path, folderNoteContents.join(" "));
+				await Promise.all(promises);
+
+				this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
 				await this.displayFolder(selectedFolder);
 			}
 		});
