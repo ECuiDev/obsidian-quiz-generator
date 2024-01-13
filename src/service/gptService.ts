@@ -24,23 +24,19 @@ export default class GptService {
 					"must have the following properties:\n" + `${this.trueFalseFormat()}` : ""}` +
 				`${this.plugin.settings.generateShortAnswer ? "\nThe JSON object representing short answer questions " +
 					"must have the following properties:\n" + `${this.shortAnswerFormat()}` : ""}` +
-				"\nFor example, if I ask you to generate 1 multiple choice question, 1 true/false question, and 1 " +
-				"short answer question, the structure of your response should look like this:\n" +
+				"\nFor example, if I ask you to generate " + this.systemPromptQuestions() +
+				" the structure of your response should look like this:\n" +
 				`${this.exampleResponse()}`;
+			console.log(systemPrompt);
+			console.log(this.userPromptQuestions());
 
-			console.log("Making API request...");
+			/*console.log("Making API request...");
 			new Notice("Making API request...");
 			const completion = await this.openai.chat.completions.create({
 				messages: [
 					{ role: "system", content: systemPrompt },
-					{ role: "user", content: "Generate " +
-							(this.plugin.settings.generateMultipleChoice
-								? `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` : "")
-							+ (this.plugin.settings.generateTrueFalse
-								? `${this.plugin.settings.numberOfTrueFalse} true/false questions, ` : "")
-							+ (this.plugin.settings.generateShortAnswer
-								? `${this.plugin.settings.numberOfShortAnswer} short answer questions, ` : "")
-							+ "based off the following text:\n" + contents.join('') +
+					{ role: "user", content: "Generate " + this.userPromptQuestions() +
+							" based off the following text:\n" + contents.join('') +
 							"\nThe overall focus should be on assessing understanding and critical thinking."}
 				],
 				model: this.plugin.settings.model,
@@ -48,10 +44,128 @@ export default class GptService {
 			});
 			console.log("API request successful: ", completion.choices[0].message.content);
 			console.log(completion.usage?.total_tokens);
-			return completion.choices[0].message.content;
-		} catch (e) {
-			console.error("API request failed:", e);
-			new Notice("Error generating quiz. Did you set your API key in the settings?", 5000);
+			return completion.choices[0].message.content;*/
+		} catch (error) {
+			new Notice(error);
+			new Notice("Error generating quiz. Did you set your API key in the settings?");
+		}
+	}
+
+	private systemPromptQuestions() {
+		if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
+			!this.plugin.settings.generateShortAnswer) {
+			return "1 multiple choice question";
+		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
+			!this.plugin.settings.generateShortAnswer) {
+			return "1 true/false question";
+		} else if (!this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
+			this.plugin.settings.generateShortAnswer) {
+			return "1 short answer question";
+		} else if (this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
+			!this.plugin.settings.generateShortAnswer) {
+			return "1 multiple choice question and 1 true/false question";
+		} else if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
+			this.plugin.settings.generateShortAnswer) {
+			return "1 multiple choice question and 1 short answer question";
+		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
+			this.plugin.settings.generateShortAnswer) {
+			return "1 true/false question and 1 short answer question";
+		} else {
+			return "1 multiple choice question, 1 true/false question, and 1 short answer question";
+		}
+	}
+
+	private userPromptQuestions() {
+		if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
+			!this.plugin.settings.generateShortAnswer) {
+			if (this.plugin.settings.numberOfMultipleChoice > 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions`;
+			} else {
+				return "1 multiple choice question";
+			}
+		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
+			!this.plugin.settings.generateShortAnswer) {
+			if (this.plugin.settings.numberOfTrueFalse > 1) {
+				return `${this.plugin.settings.numberOfTrueFalse} true/false questions`;
+			} else {
+				return "1 true/false question";
+			}
+		} else if (!this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
+			this.plugin.settings.generateShortAnswer) {
+			if (this.plugin.settings.numberOfShortAnswer > 1) {
+				return `${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else {
+				return "1 short answer question";
+			}
+		} else if (this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
+			!this.plugin.settings.generateShortAnswer) {
+			if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse > 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and ` +
+				`${this.plugin.settings.numberOfTrueFalse} true/false questions`;
+			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse === 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and 1 true/false question`;
+			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse > 1) {
+				return `1 multiple choice question and ${this.plugin.settings.numberOfTrueFalse} true/false questions`;
+			} else {
+				return `1 multiple choice question and 1 true/false question`;
+			}
+		} else if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
+			this.plugin.settings.generateShortAnswer) {
+			if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfShortAnswer > 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and ` +
+					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfShortAnswer === 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and 1 short answer question`;
+			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfShortAnswer > 1) {
+				return `1 multiple choice question and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else {
+				return "1 multiple choice question and 1 short answer question, ";
+			}
+		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
+			this.plugin.settings.generateShortAnswer) {
+			if (this.plugin.settings.numberOfTrueFalse > 1 && this.plugin.settings.numberOfShortAnswer > 1) {
+				return `${this.plugin.settings.numberOfTrueFalse} true/false questions and ` +
+					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.plugin.settings.numberOfTrueFalse > 1 && this.plugin.settings.numberOfShortAnswer === 1) {
+				return `${this.plugin.settings.numberOfTrueFalse} true/false questions and 1 short answer question`;
+			} else if (this.plugin.settings.numberOfTrueFalse === 1 && this.plugin.settings.numberOfShortAnswer > 1) {
+				return `1 true/false question and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else {
+				return "1 true/false question and 1 short answer question";
+			}
+		} else {
+			if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
+				this.plugin.settings.numberOfShortAnswer > 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`${this.plugin.settings.numberOfTrueFalse} true/false questions, and ` +
+					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
+				this.plugin.settings.numberOfShortAnswer > 1) {
+				return `1 multiple choice question, ${this.plugin.settings.numberOfTrueFalse} true/false questions, ` +
+					`and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse === 1 &&
+				this.plugin.settings.numberOfShortAnswer > 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`1 true/false question, and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
+				this.plugin.settings.numberOfShortAnswer === 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`${this.plugin.settings.numberOfTrueFalse} true/false questions, and 1 short answer question`;
+			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse === 1 &&
+				this.plugin.settings.numberOfShortAnswer > 1) {
+				return `1 multiple choice question, 1 true/false question, and ` +
+					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
+				this.plugin.settings.numberOfShortAnswer === 1) {
+				return `1 multiple choice question, ${this.plugin.settings.numberOfTrueFalse} true/false questions, ` +
+					`and 1 short answer question`;
+			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse === 1 &&
+				this.plugin.settings.numberOfShortAnswer === 1) {
+				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`1 true/false question, and 1 short answer question`;
+			} else {
+				return "1 multiple choice question, 1 true/false question, and 1 short answer question";
+			}
 		}
 	}
 
@@ -81,7 +195,13 @@ export default class GptService {
 			`chloroplasts of cells and involves the absorption of light by chlorophyll, the conversion of carbon ` +
 			`dioxide and water into glucose, and the release of oxygen as a byproduct."}`;
 
-		return `{"quiz": [${multipleChoiceExample}, ${trueFalseExample}, ${shortAnswerExample}]}`;
+		return `{"quiz": [` +
+			`${this.plugin.settings.generateMultipleChoice ? `${multipleChoiceExample}` : ""}` +
+			`${this.plugin.settings.generateTrueFalse ? `${this.plugin.settings.generateMultipleChoice ? 
+				`, ${trueFalseExample}` : `${trueFalseExample}`}` : ""}` +
+			`${this.plugin.settings.generateShortAnswer ? 
+				`${this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse ? 
+					`, ${shortAnswerExample}` : `${shortAnswerExample}`}` : ""}` + `]}`;
 	}
 
 }
