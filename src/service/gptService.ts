@@ -1,4 +1,4 @@
-import {Notice} from "obsidian";
+import { Notice } from "obsidian";
 import OpenAI from "openai";
 import QuizGenerator from "../main";
 
@@ -16,7 +16,7 @@ export default class GptService {
 		try {
 			const systemPrompt = "You are an assistant specialized in generating exam-style questions " +
 				"and answers. Your response must be a JSON object with the following property:\n" +
-				`"quiz": an array of JSON objects, where each JSON object represents a question and answer pair. ` +
+				`"quiz": An array of JSON objects, where each JSON object represents a question and answer pair. ` +
 				"Each question type has a different JSON object format.\n" +
 				`${this.plugin.settings.generateMultipleChoice ? "\nThe JSON object representing multiple choice " +
 					"questions must have the following properties:\n" + `${this.multipleChoiceFormat()}` : ""}` +
@@ -27,11 +27,7 @@ export default class GptService {
 				"\nFor example, if I ask you to generate " + this.systemPromptQuestions() +
 				" the structure of your response should look like this:\n" +
 				`${this.exampleResponse()}`;
-			console.log(systemPrompt);
-			console.log(this.userPromptQuestions());
 
-			/*console.log("Making API request...");
-			new Notice("Making API request...");
 			const completion = await this.openai.chat.completions.create({
 				messages: [
 					{ role: "system", content: systemPrompt },
@@ -42,12 +38,16 @@ export default class GptService {
 				model: this.plugin.settings.model,
 				response_format: { type: "json_object" },
 			});
-			console.log("API request successful: ", completion.choices[0].message.content);
+
+			if (completion.choices[0].finish_reason === "length") {
+				new Notice("Generation truncated: Request token limit reached");
+			}
+
+			console.log(completion.choices[0].message.content);
 			console.log(completion.usage?.total_tokens);
-			return completion.choices[0].message.content;*/
+			return completion.choices[0].message.content?.replace(/```json\n?|```/g, "");
 		} catch (error) {
 			new Notice(error);
-			new Notice("Error generating quiz. Did you set your API key in the settings?");
 		}
 	}
 
@@ -119,7 +119,7 @@ export default class GptService {
 			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfShortAnswer > 1) {
 				return `1 multiple choice question and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
 			} else {
-				return "1 multiple choice question and 1 short answer question, ";
+				return "1 multiple choice question and 1 short answer question";
 			}
 		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
 			this.plugin.settings.generateShortAnswer) {
