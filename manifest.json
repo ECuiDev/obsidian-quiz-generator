@@ -1,9 +1,10 @@
 {
-	"id": "obsidian-quiz-generator",
+	"id": "quiz-generator",
 	"name": "Quiz Generator",
 	"version": "1.0.0",
-	"minAppVersion": "1.1.0",
-	"description": "placeholder",
+	"minAppVersion": "0.15.0",
+	"description": "Generate interactive quizzes from your notes using OpenAI's GPT-3.5 and GPT-4.",
 	"author": "Edward Cui",
-	"isDesktopOnly": true
+	"authorURL": "https://github.com/ECuiDev",
+	"isDesktopOnly": false
 }
