@@ -35,7 +35,7 @@
   - Adding a folder adds all of the notes inside it, as well as any notes in its subfolders. If you select an extremely large folder (thousands of files and hundreds of subfolders), it could take a few seconds for it to be added.
 - Use the [x](https://lucide.dev/icons/x) icon to remove individual notes/folders, and the [book](https://lucide.dev/icons/book-x) icon to remove everything.
 - Once you've added your notes and/or folders, select the [webhook](https://lucide.dev/icons/webhook) icon to generate the questions.
-  - The quiz UI will open automatically when the generation is complete (it usually takes at least a few seconds).
+  - The Quiz UI will open automatically when the generation is complete (it usually takes at least a few seconds).
   - The generation time may vary based on the length of your notes and the number of questions to generate.
 
 ### Saving
@@ -47,20 +47,37 @@
 
 ### Miscellaneous
 
-- Select the [scroll](https://lucide.dev/icons/scroll-text) icon in the generator UI to re-open the most recently generated quiz.
-- I recommend saving all generated questions because you cannot re-open them in the quiz UI once you close the generator UI.
+- Select the [scroll](https://lucide.dev/icons/scroll-text) icon in the Generator UI to re-open the most recently generated quiz.
+- I recommend saving all generated questions because you cannot re-open them in the Quiz UI once you close the Generator UI.
 
 ---
 
 ## Coming Soon
 
-Explore the [Roadmap](https://github.com/your-username/your-plugin-name/projects/roadmap) to see upcoming features and planned improvements.
+I'm actively working on bringing more features and improvements to Quiz Generator. Stay tuned for the following upcoming updates:
+
+### Sequentially Being Developed
+
+- **Math Mode:** Generate questions from notes that contain LaTeX.
+- **Quiz Revisiting:** Re-open saved questions in the interactive Quiz UI.
+- **Improved Folders:** Added folders have a dropdown that display the notes they contain.
+- **More Question Types:** Fill in the blank, matching, essay/long answer, and select all that apply.
+- **Dynamic Analysis:** Get real-time feedback on your response to short/long answer questions.
+- **Adjustable Difficulty:** Set the difficulty of generated questions.
+- **Question Randomization:** Randomize the question order each time you open the Quiz UI.
+- **Advanced Question Types:** Numerical response and image-based.
+- **Tag Adder**: Add notes by tag.
+- **Note Links:** Adding a note also adds the notes it links to.
+- **Extended Files:** Generate questions from PDF and image files.
+
+### Concurrently Being Developed
+
+- **Question Variety:** Customization options to control the question style and what it assesses.
+- **Quality of Life:** Reducing token usage while improving question quality.
 
 ## Limitations
 
 Make sure your input (selected notes and/or folders) and output (generated questions) token count does not exceed the context window of your chosen model. The input tokens are shown in the generator UI. 
-
-Talk about token limit (mention approximately how many tokens each question takes up). Mention each model's context window and how input + output cannot exceed it.
 
 ## Issues and Feature Requests
 
