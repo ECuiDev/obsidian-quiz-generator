@@ -88,8 +88,8 @@ export default class SelectorUI extends Modal {
 		this.addFolderListener = async () => await this.showFolderAdder();
 
 		this.generateListener = async () => {
-			if (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
-				|| this.plugin.settings.generateShortAnswer) {
+			if ((this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
+				|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0) {
 				this.generateButton.disabled = true;
 				this.questionsAndAnswers.length = 0;
 				this.gpt = new GptService(this.plugin);
@@ -143,7 +143,7 @@ export default class SelectorUI extends Modal {
 				this.generateButton.disabled = false;
 				this.quizButton.disabled = false;
 			} else {
-				new Notice("Generation cancelled because all question types are set to false")
+				new Notice("Generation cancelled because all question types are set to false or prompt contains 0 tokens");
 			}
 		}
 	}
