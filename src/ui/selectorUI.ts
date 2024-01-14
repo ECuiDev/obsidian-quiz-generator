@@ -93,15 +93,9 @@ export default class SelectorUI extends Modal {
 				new Notice("Generating...");
 				const questions = await this.gpt.generateQuestions(await this.loadNoteContents());
 
-				console.log(questions);
-				console.log(JSON.stringify(questions));
-
 				if (questions) {
 					try {
 						const parsedQuestions: ParsedQuestions = JSON.parse(questions);
-
-						console.log(parsedQuestions);
-						console.log(JSON.stringify(parsedQuestions));
 
 						for (const key in parsedQuestions) {
 							if (parsedQuestions.hasOwnProperty(key)) {
@@ -133,8 +127,6 @@ export default class SelectorUI extends Modal {
 				} else {
 					new Notice("Failure: Generation returned null");
 				}
-
-				console.log(this.questionsAndAnswers);
 
 				this.generateButton.disabled = false;
 				this.quizButton.disabled = false;

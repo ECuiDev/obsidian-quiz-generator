@@ -43,8 +43,6 @@ export default class GptService {
 				new Notice("Generation truncated: Request token limit reached");
 			}
 
-			console.log(completion.choices[0].message.content);
-			console.log(completion.usage?.total_tokens);
 			return completion.choices[0].message.content?.replace(/```json\n?|```/g, "");
 		} catch (error) {
 			new Notice(error);
