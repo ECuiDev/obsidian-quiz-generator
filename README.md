@@ -33,7 +33,7 @@
 - Open the command palette and select "Quiz Generator: Open generator" or select the [brain-circuit](https://lucide.dev/icons/brain-circuit) icon in the left sidebar.
 - Use the [file](https://lucide.dev/icons/file-plus-2) and [folder](https://lucide.dev/icons/folder-plus) icons to add notes and folders.
   - Adding a folder adds all of the notes inside it, as well as any notes in its subfolders. If you select an extremely large folder (thousands of files and hundreds of subfolders), it could take a few seconds for it to be added.
-- Use the [x](https://lucide.dev/icons/x) icon to remove individual notes/folders, and the [book](https://lucide.dev/icons/book-x) icon to remove everything.
+- Use the [x](https://lucide.dev/icons/x) icon to remove individual notes/folders and the [book](https://lucide.dev/icons/book-x) icon to remove everything.
 - Once you've added your notes and/or folders, select the [webhook](https://lucide.dev/icons/webhook) icon to generate the questions.
   - The Quiz UI will open automatically when the generation is complete (it usually takes at least a few seconds).
   - The generation time may vary based on the length of your notes and the number of questions to generate.
@@ -49,8 +49,6 @@
 
 - Select the [scroll](https://lucide.dev/icons/scroll-text) icon in the Generator UI to re-open the most recently generated quiz.
 - I recommend saving all generated questions because you cannot re-open them in the Quiz UI once you close the Generator UI.
-
----
 
 ## Coming Soon
 
@@ -77,7 +75,7 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 
 ## Limitations
 
-Make sure your input (selected notes and/or folders) and output (generated questions) token count does not exceed the context window of your chosen model. The input tokens are shown in the generator UI. 
+Make sure the combined token count of your input (selected notes/folders) and expected output (generated questions) does not exceed the context window of your chosen model. Otherwise your input and/or output will be truncated. The number of input tokens is shown in the Generator UI. For the number of output tokens, on average, a multiple choice question is ~60 tokens, a true/false question is ~30 tokens, and a short answer question is ~100 tokens. I recommend leaving at least 10% of the context window unused to be safe.
 
 ## Issues and Feature Requests
 
