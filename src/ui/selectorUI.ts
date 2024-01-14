@@ -75,10 +75,6 @@ export default class SelectorUI extends Modal {
 			this.notesContainer.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
-			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path); // remove if performance issues
-			this.folderPaths = this.app.vault.getAllLoadedFiles()
-				.filter(abstractFile => abstractFile instanceof TFolder)
-				.map(folder => folder.path); // remove if this causes performance issues for large vaults
 		}
 
 		this.quizListener = async () => this.quiz.open();
@@ -195,7 +191,6 @@ export default class SelectorUI extends Modal {
 			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedNote instanceof TFile) {
-				this.notePaths.remove(selectedNote.path); // remove if this causes performance issues for large vaults
 				await this.showNoteAdder();
 				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
 				this.selectedNotes.set(selectedNote.path, noteContents);
@@ -213,7 +208,6 @@ export default class SelectorUI extends Modal {
 			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedFolder instanceof TFolder) {
-				this.folderPaths.remove(selectedFolder.path); // remove if this causes performance issues for large vaults
 				await this.showFolderAdder();
 
 				let folderContents: string[] = [];
@@ -257,7 +251,6 @@ export default class SelectorUI extends Modal {
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
 			this.notesContainer.removeChild(selectedNoteBox);
-			this.notePaths.push(note.path); // remove if this causes performance issues for large vaults
 			this.selectedNotes.delete(note.path);
 			this.promptTokens -= noteTokens;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
@@ -295,7 +288,6 @@ export default class SelectorUI extends Modal {
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
 			this.notesContainer.removeChild(selectedFolderBox);
-			this.folderPaths.push(folder.path); // remove if this causes performance issues for large vaults
 			this.selectedNotes.delete(folder.path);
 			this.promptTokens -= noteTokens;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
