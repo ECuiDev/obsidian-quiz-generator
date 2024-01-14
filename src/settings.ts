@@ -163,7 +163,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Save location")
-			.setDesc("Enter vault absolute path to folder where questions are saved.")
+			.setDesc("Enter vault absolute path to folder where questions are saved (leave blank to save in vault root folder).")
 			.addText((text) =>
 				text
 					.setValue(this.plugin.settings.questionSavePath)
