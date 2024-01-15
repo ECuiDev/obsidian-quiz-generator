@@ -2,7 +2,6 @@
 
 **Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of OpenAI's GPT-3.5 and GPT-4 models to automatically generate interactive, exam-style questions (with answers) based on your notes. Whether you're a student looking to quiz yourself or an educator creating assessments, this plugin streamlines the question creation process.
 
-## Demo
 ![Demo](assets/Demo.gif)
 
 ## Features
@@ -22,14 +21,31 @@
 
 ### Installation
 
-1. Install the plugin from the **Community plugins** page in Obsidian.
+This plugin is currently under review to be added to the **Community plugins** page in Obsidian. Meanwhile, you can install it using either of the following methods.
+
+#### BRAT Installation
+
+1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat) from the **Community plugins** page in Obsidian.
    - **Settings** → **Community plugins** → **Browse**.
-   - Search for `Quiz Generator`.
+   - Search for `Obsidian42 - BRAT`.
    - Select the plugin to open its page and then select **Install**.
    - Select **Enable** on the plugin page or go back to the **Community plugins** page and toggle the switch.
-2. Open the plugin settings and enter your API key.
+2. Select `Add Beta plugin` in BRAT's settings.
+3. Enter this repository's URL: `https://github.com/ECuiDev/obsidian-quiz-generator`.
+4. Enable the plugin.
+5. Open the plugin settings and enter your API key.
    - If you don't have an API key, create an account at [OpenAI](https://platform.openai.com/) and retrieve your API key from [API keys](https://platform.openai.com/api-keys).
-3. Configure the other settings as desired.
+6. Configure the other settings as desired.
+
+#### Manual Installation
+
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/ECuiDev/obsidian-quiz-generator/releases).
+2. Go to your Obsidian vault's `plugins` folder and create a new folder named `quiz-generator`.
+3. Move the files you downloaded in step 1 to this folder.
+4. Enable the plugin in the **Community plugins** page in Obsidian.
+5. Open the plugin settings and enter your API key.
+   - If you don't have an API key, create an account at [OpenAI](https://platform.openai.com/) and retrieve your API key from [API keys](https://platform.openai.com/api-keys).
+6. Configure the other settings as desired.
 
 ### Generation
 
