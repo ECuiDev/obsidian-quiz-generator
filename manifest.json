@@ -5,6 +5,6 @@
 	"minAppVersion": "0.15.0",
 	"description": "Generate interactive quizzes from your notes using OpenAI's GPT-3.5 and GPT-4 models.",
 	"author": "Edward Cui",
-	"authorURL": "https://github.com/ECuiDev",
+	"authorUrl": "https://github.com/ECuiDev",
 	"isDesktopOnly": false
 }
