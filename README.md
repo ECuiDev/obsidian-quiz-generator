@@ -75,6 +75,7 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 
 ### Sequentially Being Developed
 
+- **Multi-Language Support:** Generate questions in the same language as your notes.
 - **Math Mode:** Generate questions from notes that contain LaTeX.
 - **Quiz Revisiting:** Re-open saved questions in the interactive Quiz UI.
 - **Improved Folders:** Added folders have a dropdown that display the notes they contain.
