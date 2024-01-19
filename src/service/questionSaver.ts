@@ -1,4 +1,4 @@
-import { App, TFile, normalizePath } from "obsidian";
+import {App, TFile, normalizePath, Notice} from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 
@@ -32,7 +32,13 @@ export default class QuestionSaver {
 		if (!this.fileCreated) {
 			this.file = await this.app.vault.create(this.path, "#flashcards");
 		} else {
-			this.file = this.app.vault.getAbstractFileByPath(this.path) as TFile;
+			const abstractFile = this.app.vault.getAbstractFileByPath(this.path);
+
+			if (abstractFile instanceof TFile) {
+				this.file = abstractFile;
+			} else {
+				new Notice("Created file no longer exists");
+			}
 		}
 
 		if (this.plugin.settings.saveForSpacedRepetition) {
