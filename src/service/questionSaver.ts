@@ -1,4 +1,4 @@
-import {App, TFile, normalizePath, Notice} from "obsidian";
+import { App, TFile, Notice, normalizePath } from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 
