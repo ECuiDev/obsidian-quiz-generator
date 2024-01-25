@@ -1,14 +1,14 @@
 {
 	"name": "obsidian-quiz-generator",
 	"version": "1.0.0",
-	"description": "placeholder",
+	"description": "Generate interactive quizzes from your notes using OpenAI's GPT-3.5 and GPT-4 models.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": [],
+	"keywords": ["obsidian", "quiz-generator", "openai"],
 	"author": "Edward Cui",
 	"license": "MIT",
 	"devDependencies": {
