@@ -64,7 +64,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					})
 			);
 
-		containerEl.createEl("h3", {text: `${("Generation")}`});
+		new Setting(containerEl).setName("Generation").setHeading();
 
 		new Setting(containerEl)
 			.setName("Multiple choice")
@@ -147,7 +147,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					.showTooltip()
 			);
 
-		containerEl.createEl("h3", {text: `${("Saving")}`});
+		new Setting(containerEl).setName("Saving").setHeading();
 
 		new Setting(containerEl)
 			.setName("Automatically save questions")
