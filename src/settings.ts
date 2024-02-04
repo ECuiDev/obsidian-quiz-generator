@@ -42,7 +42,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show note path")
-			.setDesc("Turn this off to only show note name.")
+			.setDesc("Turn this off to only show the name of selected notes.")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.showNotePath)
@@ -54,7 +54,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Show folder path")
-			.setDesc("Turn this off to only show folder name.")
+			.setDesc("Turn this off to only show the name of selected folders.")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.showFolderPath)
