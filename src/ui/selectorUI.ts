@@ -75,6 +75,10 @@ export default class SelectorUI extends Modal {
 			this.notesContainer.empty();
 			this.promptTokens = 0;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
+			this.folderPaths = this.app.vault.getAllLoadedFiles()
+				.filter(abstractFile => abstractFile instanceof TFolder)
+				.map(folder => folder.path);
 		}
 
 		this.quizListener = async (): Promise<void> => this.quiz.open();
@@ -183,6 +187,7 @@ export default class SelectorUI extends Modal {
 			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedNote instanceof TFile) {
+				this.notePaths.remove(selectedNote.path);
 				await this.showNoteAdder();
 				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
 				this.selectedNotes.set(selectedNote.path, noteContents);
@@ -200,6 +205,7 @@ export default class SelectorUI extends Modal {
 			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedFolder instanceof TFolder) {
+				this.folderPaths.remove(selectedFolder.path);
 				await this.showFolderAdder();
 
 				let folderContents: string[] = [];
@@ -242,8 +248,9 @@ export default class SelectorUI extends Modal {
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
-			this.notesContainer.removeChild(selectedNoteBox);
 			this.selectedNotes.delete(note.path);
+			this.notesContainer.removeChild(selectedNoteBox);
+			this.notePaths.push(note.path);
 			this.promptTokens -= noteTokens;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 
@@ -279,8 +286,9 @@ export default class SelectorUI extends Modal {
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
 		removeButton.addEventListener("click", async () => {
-			this.notesContainer.removeChild(selectedFolderBox);
 			this.selectedNotes.delete(folder.path);
+			this.notesContainer.removeChild(selectedFolderBox);
+			this.folderPaths.push(folder.path);
 			this.promptTokens -= noteTokens;
 			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 
