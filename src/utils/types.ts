@@ -21,11 +21,33 @@ export interface ParsedSA {
 	answer: string;
 }
 
+export const languages: Record<string, string> = {
+	English: "English",
+	German: "Deutsch",
+	Spanish: "Español",
+	French: "Français",
+	Russian: "Pусский",
+	Chinese: "中文",
+	Portuguese: "Português",
+	Korean: "한국어",
+	Japanese: "日本語",
+	Arabic: "العربية",
+	Danish: "Dansk",
+	Norwegian: "Norsk",
+	Dutch: "Nederlands",
+	Italian: "Italiano",
+	Polish: "Polski",
+	Hindi: "हिन्दी",
+	Vietnamese: "Tiếng Việt",
+	Ukrainian: "українська"
+};
+
 export interface QuizSettings {
 	apiKey: string;
 	model: string;
 	showNotePath: boolean;
 	showFolderPath: boolean;
+	language: string;
 	numberOfMultipleChoice: number;
 	numberOfTrueFalse: number;
 	numberOfShortAnswer: number;
@@ -45,6 +67,7 @@ export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	model: "gpt-3.5-turbo-1106",
 	showNotePath: false,
 	showFolderPath: false,
+	language: "English",
 	numberOfMultipleChoice: 1,
 	numberOfTrueFalse: 1,
 	numberOfShortAnswer: 1,

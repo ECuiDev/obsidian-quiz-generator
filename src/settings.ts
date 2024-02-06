@@ -1,5 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "./main";
+import { languages } from "./utils/types";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private plugin: QuizGenerator;
@@ -62,6 +63,19 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						this.plugin.settings.showFolderPath = value;
 						await this.plugin.saveSettings();
 					})
+			);
+
+		new Setting(containerEl)
+			.setName("Language")
+			.setDesc("Language questions are generated in.")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOptions(languages)
+					.setValue(this.plugin.settings.language)
+					.onChange(async (value: string) => {
+						this.plugin.settings.language = value;
+						await this.plugin.saveSettings();
+				})
 			);
 
 		new Setting(containerEl).setName("Generation").setHeading();
