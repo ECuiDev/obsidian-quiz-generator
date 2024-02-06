@@ -22,7 +22,7 @@ export default class QuestionSaver {
 		this.fileCreated = fileCreated;
 	}
 
-	public async saveQuestion() {
+	public async saveQuestion(): Promise<void> {
 		if (this.validPath) {
 			this.path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
 		} else {
@@ -49,15 +49,15 @@ export default class QuestionSaver {
 		}
 	}
 
-	private async saveForSpacedRepetition() {
+	private async saveForSpacedRepetition(): Promise<void> {
 		await this.app.vault.append(this.file, "\n\n" + this.formatSpacedRepQuestion(this.question));
 	}
 
-	private async saveAsCallout() {
+	private async saveAsCallout(): Promise<void> {
 		await this.app.vault.append(this.file, "\n\n" + this.formatCalloutQuestion(this.question));
 	}
 
-	private formatSpacedRepQuestion(question: ParsedMC | ParsedTF | ParsedSA) {
+	private formatSpacedRepQuestion(question: ParsedMC | ParsedTF | ParsedSA): string {
 		if ("QuestionMC" in question) {
 			return "**Multiple Choice:** " + question.QuestionMC +
 				`\na) ${question["1"]}` + `\nb) ${question["2"]}` +
@@ -75,7 +75,7 @@ export default class QuestionSaver {
 		}
 	}
 
-	private formatCalloutQuestion(question: ParsedMC | ParsedTF | ParsedSA) {
+	private formatCalloutQuestion(question: ParsedMC | ParsedTF | ParsedSA): string {
 		if ("QuestionMC" in question) {
 			return `> [!question] ${question.QuestionMC}` +
 				`\n> a) ${question["1"]}` + `\n> b) ${question["2"]}` +
@@ -91,7 +91,7 @@ export default class QuestionSaver {
 		}
 	}
 
-	private numberToAnswer(input: number, question: ParsedMC) {
+	private numberToAnswer(input: number, question: ParsedMC): string {
 		switch (input) {
 			case 1:
 				return "a) " + question["1"];

@@ -6,7 +6,7 @@ import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 export default class QuizGenerator extends Plugin {
 	settings: QuizSettings;
 
-	async onload() {
+	async onload(): Promise<void> {
 		this.addCommand({
 			id: "open-generator",
 			name: "Open generator",
@@ -23,11 +23,11 @@ export default class QuizGenerator extends Plugin {
 		this.addSettingTab(new QuizSettingsTab(this.app, this));
 	}
 
-	async loadSettings() {
+	async loadSettings(): Promise<void> {
 		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
-	async saveSettings() {
+	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 	}
 

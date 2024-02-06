@@ -9,7 +9,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
-	display() {
+	display(): void {
 		let { containerEl } = this;
 
 		containerEl.empty();

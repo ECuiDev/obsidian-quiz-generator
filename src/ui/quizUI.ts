@@ -27,7 +27,7 @@ export default class QuizUI extends Modal {
 		super(app);
 		this.plugin = plugin;
 		this.questionsAndAnswers = questionsAndAnswers;
-		this.saved = new Array(this.questionsAndAnswers.length).fill(false); // fill true if auto-save on
+		this.saved = new Array(this.questionsAndAnswers.length).fill(false);
 		this.questionIndex = 0;
 		this.fileCreated = false;
 
@@ -46,15 +46,15 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	public onOpen() {
+	public onOpen(): void {
 		this.showQuestion();
 	}
 
-	public onClose() {
+	public onClose(): void {
 		super.onClose();
 	}
 
-	private chooseFileName() {
+	private chooseFileName(): void {
 		let count = 1;
 		const folder =
 			this.app.vault.getAbstractFileByPath(normalizePath(this.plugin.settings.questionSavePath.trim()));
@@ -86,10 +86,10 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	private activateButtons() {
-		this.backListener = async () => this.showPreviousQuestion();
+	private activateButtons(): void {
+		this.backListener = async (): Promise<void> => this.showPreviousQuestion();
 
-		this.saveListener = async () => {
+		this.saveListener = async (): Promise<void> => {
 			this.saveButton.disabled = true;
 			this.saveAllButton.disabled = this.saved.every(value => value);
 
@@ -105,7 +105,7 @@ export default class QuizUI extends Modal {
 			}
 		}
 
-		this.saveAllListener = async () => {
+		this.saveAllListener = async (): Promise<void> => {
 			this.saveButton.disabled = true;
 			this.saveAllButton.disabled = true;
 
@@ -125,10 +125,10 @@ export default class QuizUI extends Modal {
 			}
 		}
 
-		this.nextListener = async () => this.showNextQuestion();
+		this.nextListener = async (): Promise<void> => this.showNextQuestion();
 	}
 
-	private displayButtons() {
+	private displayButtons(): void {
 		this.buttonContainer = this.contentEl.createDiv("quiz-button-container");
 
 		this.backButton = this.buttonContainer.createEl("button");
@@ -157,16 +157,16 @@ export default class QuizUI extends Modal {
 		this.nextButton.addEventListener("click", this.nextListener);
 	}
 
-	private displayLine() {
+	private displayLine(): void {
 		const line = this.contentEl.createEl("hr");
 		line.addClass("quiz-divider");
 	}
 
-	private displayQuestionContainer() {
+	private displayQuestionContainer(): void {
 		this.questionContainer = this.contentEl.createDiv("question-container");
 	}
 
-	private showQuestion() {
+	private showQuestion(): void {
 		this.backButton.disabled = this.questionIndex === 0;
 		this.saveButton.disabled = this.saved[this.questionIndex];
 		this.saveAllButton.disabled = this.saved.every(value => value);
@@ -204,7 +204,7 @@ export default class QuizUI extends Modal {
 		}
 	}
 	
-	private displayMC() {
+	private displayMC(): void {
 		let choices: string[] = [];
 
 		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["1"]);
@@ -222,7 +222,7 @@ export default class QuizUI extends Modal {
 		});
 	}
 	
-	private displayTF() {
+	private displayTF(): void {
 		const trueFalseContainer = this.questionContainer.createDiv("mc-tf-container");
 
 		const trueButton = trueFalseContainer.createEl("button");
@@ -238,7 +238,7 @@ export default class QuizUI extends Modal {
 			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, false));
 	}
 	
-	private displaySA() {
+	private displaySA(): void {
 		const showAnswerButton = this.questionContainer.createEl("button");
 		showAnswerButton.textContent = "Show answer";
 		showAnswerButton.classList.add("show-answer-button");
@@ -246,21 +246,21 @@ export default class QuizUI extends Modal {
 			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).Answer));
 	}
 
-	private showNextQuestion() {
+	private showNextQuestion(): void {
 		if (this.questionIndex < this.questionsAndAnswers.length - 1) {
 			this.questionIndex++;
 			this.showQuestion();
 		}
 	}
 
-	private showPreviousQuestion() {
+	private showPreviousQuestion(): void {
 		if (this.questionIndex > 0) {
 			this.questionIndex--;
 			this.showQuestion();
 		}
 	}
 
-	private selectMCQAnswer(answerNumber: number, choiceNumber: number) {
+	private selectMCQAnswer(answerNumber: number, choiceNumber: number): void {
 		const choicesContainer = this.questionContainer.querySelector(".mc-tf-container")!;
 		const choiceButtons = choicesContainer.querySelectorAll("button");
 
@@ -276,7 +276,7 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	private selectTFAnswer(answer: boolean, choice: boolean) {
+	private selectTFAnswer(answer: boolean, choice: boolean): void {
 		const trueFalseContainer = this.questionContainer.querySelector(".mc-tf-container")!;
 		const trueButton = trueFalseContainer.querySelector(".true-button")! as HTMLButtonElement;
 		const falseButton = trueFalseContainer.querySelector(".false-button")! as HTMLButtonElement;
@@ -292,13 +292,13 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	private showSAAnswer(answer: string) {
+	private showSAAnswer(answer: string): void {
 		const showAnswerButton = this.questionContainer.querySelector(".show-answer-button")! as HTMLButtonElement;
 		showAnswerButton.textContent = answer;
 		showAnswerButton.disabled = true;
 	}
 
-	private questionType(question: ParsedMC | ParsedTF | ParsedSA) {
+	private questionType(question: ParsedMC | ParsedTF | ParsedSA): "MC" | "TF" | "SA" | "Error" {
 		if ("QuestionMC" in question) {
 			return "MC";
 		} else if ("QuestionTF" in question) {

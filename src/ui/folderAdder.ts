@@ -13,14 +13,14 @@ export default class FolderAdder extends FuzzySuggestModal<string> {
 		this.onChooseItem = this.onChooseItem.bind(this);
 	}
 
-	public onOpen() {
+	public onOpen(): void {
 		super.onOpen();
 		this.containerEl.firstElementChild?.addClass("remove-opacity");
 		this.selectorContainer.addClass("move-left");
 		this.containerEl.children[1].addClass("move-right", "adder-modal");
 	}
 
-	public onClose() {
+	public onClose(): void {
 		super.onClose();
 		this.selectorContainer.removeClass("move-left");
 	}

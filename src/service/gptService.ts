@@ -12,7 +12,7 @@ export default class GptService {
 			dangerouslyAllowBrowser: true});
 	}
 
-	public async generateQuestions(contents: string[]) {
+	public async generateQuestions(contents: string[]): Promise<string | undefined> {
 		try {
 			const systemPrompt = "You are an assistant specialized in generating exam-style questions " +
 				"and answers. Your response must be a JSON object with the following property:\n" +
@@ -49,7 +49,7 @@ export default class GptService {
 		}
 	}
 
-	private systemPromptQuestions() {
+	private systemPromptQuestions(): string {
 		if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
 			!this.plugin.settings.generateShortAnswer) {
 			return "1 multiple choice question";
@@ -73,7 +73,7 @@ export default class GptService {
 		}
 	}
 
-	private userPromptQuestions() {
+	private userPromptQuestions(): string {
 		if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
 			!this.plugin.settings.generateShortAnswer) {
 			if (this.plugin.settings.numberOfMultipleChoice > 1) {
@@ -167,20 +167,20 @@ export default class GptService {
 		}
 	}
 
-	private multipleChoiceFormat() {
+	private multipleChoiceFormat(): string {
 		return `"QuestionMC": The question\n"1": The first choice\n"2": The second choice\n"3": The third choice\n` +
 		`"4": The fourth choice\n"Answer": The number corresponding to the correct choice\n`;
 	}
 
-	private trueFalseFormat() {
+	private trueFalseFormat(): string {
 		return `"QuestionTF": The question\n"Answer": A boolean representing the answer\n`;
 	}
 
-	private shortAnswerFormat() {
+	private shortAnswerFormat(): string {
 		return `"QuestionSA": The question\n"Answer": The answer\n`;
 	}
 
-	private exampleResponse() {
+	private exampleResponse(): string {
 		const multipleChoiceExample = `{"QuestionMC": "What is the capital city of Australia?", ` +
 			`"1": "Sydney", "2": "Melbourne", "3": "Canberra", "4": "Brisbane", "Answer": 3}`;
 
