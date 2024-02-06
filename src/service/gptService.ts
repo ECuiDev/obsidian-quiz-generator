@@ -168,27 +168,27 @@ export default class GptService {
 	}
 
 	private multipleChoiceFormat(): string {
-		return `"QuestionMC": The question\n"1": The first choice\n"2": The second choice\n"3": The third choice\n` +
-		`"4": The fourth choice\n"Answer": The number corresponding to the correct choice\n`;
+		return `"questionMC": The question\n"1": The first choice\n"2": The second choice\n"3": The third choice\n` +
+		`"4": The fourth choice\n"answer": The number corresponding to the correct choice\n`;
 	}
 
 	private trueFalseFormat(): string {
-		return `"QuestionTF": The question\n"Answer": A boolean representing the answer\n`;
+		return `"questionTF": The question\n"answer": A boolean representing the answer\n`;
 	}
 
 	private shortAnswerFormat(): string {
-		return `"QuestionSA": The question\n"Answer": The answer\n`;
+		return `"questionSA": The question\n"answer": The answer\n`;
 	}
 
 	private exampleResponse(): string {
-		const multipleChoiceExample = `{"QuestionMC": "What is the capital city of Australia?", ` +
-			`"1": "Sydney", "2": "Melbourne", "3": "Canberra", "4": "Brisbane", "Answer": 3}`;
+		const multipleChoiceExample = `{"questionMC": "What is the capital city of Australia?", ` +
+			`"1": "Sydney", "2": "Melbourne", "3": "Canberra", "4": "Brisbane", "answer": 3}`;
 
-		const trueFalseExample = `{"QuestionTF": "The Great Wall of China is visible from space.", ` +
-			`"Answer": false}`;
+		const trueFalseExample = `{"questionTF": "The Great Wall of China is visible from space.", ` +
+			`"answer": false}`;
 
-		const shortAnswerExample = `{"QuestionSA": "Explain the concept of photosynthesis in plants.", ` +
-			`"Answer": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light ` +
+		const shortAnswerExample = `{"questionSA": "Explain the concept of photosynthesis in plants.", ` +
+			`"answer": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light ` +
 			`energy into chemical energy, stored in the form of glucose or other organic compounds. It occurs in the ` +
 			`chloroplasts of cells and involves the absorption of light by chlorophyll, the conversion of carbon ` +
 			`dioxide and water into glucose, and the release of oxygen as a byproduct."}`;

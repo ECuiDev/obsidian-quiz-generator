@@ -103,11 +103,11 @@ export default class SelectorUI extends Modal {
 
 								if (Array.isArray(value)) {
 									value.forEach(element => {
-										if ("QuestionMC" in element) {
+										if ("questionMC" in element) {
 											this.questionsAndAnswers.push(element as ParsedMC);
-										} else if ("QuestionTF" in element) {
+										} else if ("questionTF" in element) {
 											this.questionsAndAnswers.push(element as ParsedTF);
-										} else if ("QuestionSA" in element) {
+										} else if ("questionSA" in element) {
 											this.questionsAndAnswers.push(element as ParsedSA);
 										} else {
 											new Notice("A question was generated incorrectly");

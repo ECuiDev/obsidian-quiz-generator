@@ -181,13 +181,13 @@ export default class QuizUI extends Modal {
 
 		switch(this.questionType(question)) {
 			case "MC":
-				questionText.textContent = (question as ParsedMC).QuestionMC;
+				questionText.textContent = (question as ParsedMC).questionMC;
 				break;
 			case "TF":
-				questionText.textContent = (question as ParsedTF).QuestionTF;
+				questionText.textContent = (question as ParsedTF).questionTF;
 				break;
 			case "SA":
-				questionText.textContent = (question as ParsedSA).QuestionSA;
+				questionText.textContent = (question as ParsedSA).questionSA;
 				break;
 			default:
 				break;
@@ -218,7 +218,7 @@ export default class QuizUI extends Modal {
 			const choiceButton = choicesContainer.createEl("button");
 			choiceButton.textContent = choice;
 			choiceButton.addEventListener("click", () =>
-				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).Answer, choiceNumber + 1));
+				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).answer, choiceNumber + 1));
 		});
 	}
 	
@@ -229,13 +229,13 @@ export default class QuizUI extends Modal {
 		trueButton.textContent = "True";
 		trueButton.addClass("true-button");
 		trueButton.addEventListener("click", () =>
-			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, true));
+			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).answer, true));
 
 		const falseButton = trueFalseContainer.createEl("button");
 		falseButton.textContent = "False";
 		falseButton.addClass("false-button");
 		falseButton.addEventListener("click", () =>
-			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).Answer, false));
+			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).answer, false));
 	}
 	
 	private displaySA(): void {
@@ -243,7 +243,7 @@ export default class QuizUI extends Modal {
 		showAnswerButton.textContent = "Show answer";
 		showAnswerButton.classList.add("show-answer-button");
 		showAnswerButton.addEventListener("click", () =>
-			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).Answer));
+			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).answer));
 	}
 
 	private showNextQuestion(): void {
@@ -299,11 +299,11 @@ export default class QuizUI extends Modal {
 	}
 
 	private questionType(question: ParsedMC | ParsedTF | ParsedSA): "MC" | "TF" | "SA" | "Error" {
-		if ("QuestionMC" in question) {
+		if ("questionMC" in question) {
 			return "MC";
-		} else if ("QuestionTF" in question) {
+		} else if ("questionTF" in question) {
 			return "TF";
-		} else if ("QuestionSA" in question) {
+		} else if ("questionSA" in question) {
 			return "SA";
 		} else {
 			return "Error";

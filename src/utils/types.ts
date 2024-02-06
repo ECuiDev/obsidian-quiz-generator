@@ -3,22 +3,22 @@ export interface ParsedQuestions {
 }
 
 export interface ParsedMC {
-	QuestionMC: string;
+	questionMC: string;
 	1: string;
 	2: string;
 	3: string;
 	4: string;
-	Answer: number;
+	answer: number;
 }
 
 export interface ParsedTF {
-	QuestionTF: string;
-	Answer: boolean;
+	questionTF: string;
+	answer: boolean;
 }
 
 export interface ParsedSA {
-	QuestionSA: string;
-	Answer: string;
+	questionSA: string;
+	answer: string;
 }
 
 export interface QuizSettings {

@@ -58,34 +58,34 @@ export default class QuestionSaver {
 	}
 
 	private formatSpacedRepQuestion(question: ParsedMC | ParsedTF | ParsedSA): string {
-		if ("QuestionMC" in question) {
-			return "**Multiple Choice:** " + question.QuestionMC +
+		if ("questionMC" in question) {
+			return "**Multiple Choice:** " + question.questionMC +
 				`\na) ${question["1"]}` + `\nb) ${question["2"]}` +
 				`\nc) ${question["3"]}` + `\nd) ${question["4"]}` +
 				`\n${this.plugin.settings.multilineSeparator}\n` +
-				this.numberToAnswer(question.Answer, question);
-		} else if ("QuestionTF" in question) {
-			return "**True/False:** " + question.QuestionTF +
-				` ${this.plugin.settings.inlineSeparator} ` + question.Answer;
-		} else if ("QuestionSA" in question) {
-			return "**Short Answer:** " + question.QuestionSA +
-				` ${this.plugin.settings.inlineSeparator} ` + question.Answer;
+				this.numberToAnswer(question.answer, question);
+		} else if ("questionTF" in question) {
+			return "**True/False:** " + question.questionTF +
+				` ${this.plugin.settings.inlineSeparator} ` + question.answer;
+		} else if ("questionSA" in question) {
+			return "**Short Answer:** " + question.questionSA +
+				` ${this.plugin.settings.inlineSeparator} ` + question.answer;
 		} else {
 			return "Error saving question.";
 		}
 	}
 
 	private formatCalloutQuestion(question: ParsedMC | ParsedTF | ParsedSA): string {
-		if ("QuestionMC" in question) {
-			return `> [!question] ${question.QuestionMC}` +
+		if ("questionMC" in question) {
+			return `> [!question] ${question.questionMC}` +
 				`\n> a) ${question["1"]}` + `\n> b) ${question["2"]}` +
 				`\n> c) ${question["3"]}` + `\n> d) ${question["4"]}` +
-				`\n>> [!success]- Answer\n>> ` + this.numberToAnswer(question.Answer, question);
-		} else if ("QuestionTF" in question) {
-			return `> [!question] ${question.QuestionTF}` + `\n> True or false?` +
-				`\n>> [!success]- Answer\n>> ${question.Answer}`;
-		} else if ("QuestionSA" in question) {
-			return `> [!question] ${question.QuestionSA}` + `\n>> [!success]- Answer\n>> ${question.Answer}`;
+				`\n>> [!success]- Answer\n>> ` + this.numberToAnswer(question.answer, question);
+		} else if ("questionTF" in question) {
+			return `> [!question] ${question.questionTF}` + `\n> True or false?` +
+				`\n>> [!success]- Answer\n>> ${question.answer}`;
+		} else if ("questionSA" in question) {
+			return `> [!question] ${question.questionSA}` + `\n>> [!success]- Answer\n>> ${question.answer}`;
 		} else {
 			return "> [!failure] Error saving question.";
 		}
