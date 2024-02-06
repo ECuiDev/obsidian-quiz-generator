@@ -84,7 +84,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfMultipleChoice)
-					.setLimits(1, 10, 1)
+					.setLimits(1, 20, 1)
 					.onChange(async (value) => {
 						this.plugin.settings.numberOfMultipleChoice = value;
 						await this.plugin.saveSettings();
@@ -111,7 +111,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfTrueFalse)
-					.setLimits(1, 10, 1)
+					.setLimits(1, 20, 1)
 					.onChange(async (value) => {
 						this.plugin.settings.numberOfTrueFalse = value;
 						await this.plugin.saveSettings();
@@ -138,7 +138,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfShortAnswer)
-					.setLimits(1, 10, 1)
+					.setLimits(1, 20, 1)
 					.onChange(async (value) => {
 						this.plugin.settings.numberOfShortAnswer = value;
 						await this.plugin.saveSettings();
