@@ -1,11 +1,11 @@
-import { App, Modal, TFile, TFolder, setIcon, setTooltip, normalizePath, Notice } from "obsidian";
+import { App, Modal, TFile, TFolder, setIcon, setTooltip, normalizePath, MarkdownRenderer, Notice } from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 import QuestionSaver from "../service/questionSaver";
 import "styles.css";
 
 export default class QuizUI extends Modal {
-	private plugin: QuizGenerator
+	private readonly plugin: QuizGenerator
 	private readonly questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private saved: boolean[];
 	private questionIndex: number;
@@ -46,8 +46,8 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	public onOpen(): void {
-		this.showQuestion();
+	public async onOpen(): Promise<void> {
+		await this.showQuestion();
 	}
 
 	public onClose(): void {
@@ -166,7 +166,7 @@ export default class QuizUI extends Modal {
 		this.questionContainer = this.contentEl.createDiv("question-container");
 	}
 
-	private showQuestion(): void {
+	private async showQuestion(): Promise<void> {
 		this.backButton.disabled = this.questionIndex === 0;
 		this.saveButton.disabled = this.saved[this.questionIndex];
 		this.saveAllButton.disabled = this.saved.every(value => value);
@@ -179,22 +179,22 @@ export default class QuizUI extends Modal {
 
 		const questionText = this.questionContainer.createDiv("question");
 
-		switch(this.questionType(question)) {
+		switch (this.questionType(question)) {
 			case "MC":
-				questionText.textContent = (question as ParsedMC).questionMC;
+				await MarkdownRenderer.render(this.app, (question as ParsedMC).questionMC, questionText, "", this.plugin);
 				break;
 			case "TF":
-				questionText.textContent = (question as ParsedTF).questionTF;
+				await MarkdownRenderer.render(this.app, (question as ParsedTF).questionTF, questionText, "", this.plugin);
 				break;
 			case "SA":
-				questionText.textContent = (question as ParsedSA).questionSA;
+				await MarkdownRenderer.render(this.app, (question as ParsedSA).questionSA, questionText, "", this.plugin);
 				break;
 			default:
 				break;
 		}
 
 		if (this.questionType(question) === "MC") {
-			this.displayMC();
+			await this.displayMC();
 		} else if (this.questionType(question) === "TF") {
 			this.displayTF();
 		} else if (this.questionType(question) === "SA") {
@@ -204,7 +204,7 @@ export default class QuizUI extends Modal {
 		}
 	}
 	
-	private displayMC(): void {
+	private async displayMC(): Promise<void> {
 		let choices: string[] = [];
 
 		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["1"]);
@@ -214,12 +214,13 @@ export default class QuizUI extends Modal {
 
 		const choicesContainer = this.questionContainer.createDiv("mc-tf-container");
 
-		choices.forEach((choice, choiceNumber) => {
+		for (const choice of choices) {
+			const choiceNumber = choices.indexOf(choice);
 			const choiceButton = choicesContainer.createEl("button");
-			choiceButton.textContent = choice;
+			await MarkdownRenderer.render(this.app, choice, choiceButton, "", this.plugin);
 			choiceButton.addEventListener("click", () =>
 				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).answer, choiceNumber + 1));
-		});
+		}
 	}
 	
 	private displayTF(): void {
@@ -246,17 +247,17 @@ export default class QuizUI extends Modal {
 			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).answer));
 	}
 
-	private showNextQuestion(): void {
+	private async showNextQuestion(): Promise<void> {
 		if (this.questionIndex < this.questionsAndAnswers.length - 1) {
 			this.questionIndex++;
-			this.showQuestion();
+			await this.showQuestion();
 		}
 	}
 
-	private showPreviousQuestion(): void {
+	private async showPreviousQuestion(): Promise<void> {
 		if (this.questionIndex > 0) {
 			this.questionIndex--;
-			this.showQuestion();
+			await this.showQuestion();
 		}
 	}
 
@@ -292,9 +293,10 @@ export default class QuizUI extends Modal {
 		}
 	}
 
-	private showSAAnswer(answer: string): void {
+	private async showSAAnswer(answer: string): Promise<void> {
 		const showAnswerButton = this.questionContainer.querySelector(".show-answer-button")! as HTMLButtonElement;
-		showAnswerButton.textContent = answer;
+		showAnswerButton.textContent = "";
+		await MarkdownRenderer.render(this.app, answer, showAnswerButton, "", this.plugin);
 		showAnswerButton.disabled = true;
 	}
 
