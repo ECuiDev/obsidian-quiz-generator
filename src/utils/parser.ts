@@ -36,7 +36,7 @@ function removeMarkdownFormatting(input: string): string {
 }
 
 function removeSpecialCharacters(input: string): string {
-	const regex = /[\n\\`\t]/g;
+	const regex = /[\n`\t]/g;
 	return input.replace(regex, "");
 }
 
