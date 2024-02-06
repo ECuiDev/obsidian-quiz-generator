@@ -26,7 +26,8 @@ export default class GptService {
 					"must have the following properties:\n" + `${this.shortAnswerFormat()}` : ""}` +
 				"\nFor example, if I ask you to generate " + this.systemPromptQuestions() +
 				" the structure of your response should look like this:\n" +
-				`${this.exampleResponse()}`;
+				`${this.exampleResponse()}\n` +
+				`${this.generationLanguage()}`;
 
 			const completion = await this.openai.chat.completions.create({
 				messages: [
@@ -200,6 +201,12 @@ export default class GptService {
 			`${this.plugin.settings.generateShortAnswer ? 
 				`${this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse ? 
 					`, ${shortAnswerExample}` : `${shortAnswerExample}`}` : ""}` + `]}`;
+	}
+
+	private generationLanguage(): string {
+		return `The generated questions and answers must be in ${this.plugin.settings.language}. However, your ` +
+			`response must still follow the JSON format provided above. This means that while the values should ` +
+			`be in ${this.plugin.settings.language}, the keys must be the exact same as given above, in English.`;
 	}
 
 }
