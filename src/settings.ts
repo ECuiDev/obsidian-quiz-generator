@@ -32,8 +32,8 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Model used for question generation.")
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption("gpt-3.5-turbo-1106", "gpt-3.5-turbo-1106")
-					.addOption("gpt-4-1106-preview", "gpt-4-1106-preview")
+					.addOption("gpt-3.5-turbo-0125", "gpt-3.5-turbo-0125")
+					.addOption("gpt-4-0125-preview", "gpt-4-0125-preview")
 					.setValue(this.plugin.settings.model)
 					.onChange(async (value) => {
 						this.plugin.settings.model = value;

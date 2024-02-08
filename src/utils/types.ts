@@ -64,7 +64,7 @@ export interface QuizSettings {
 
 export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	apiKey: "",
-	model: "gpt-3.5-turbo-1106",
+	model: "gpt-3.5-turbo-0125",
 	showNotePath: false,
 	showFolderPath: false,
 	language: "English",
