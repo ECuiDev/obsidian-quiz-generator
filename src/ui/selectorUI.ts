@@ -95,7 +95,8 @@ export default class SelectorUI extends Modal {
 				this.gpt = new GptService(this.plugin);
 
 				new Notice("Generating...");
-				const questions = await this.gpt.generateQuestions(await this.loadNoteContents());
+				let questions = await this.gpt.generateQuestions(await this.loadNoteContents());
+				questions = questions?.replace(/\\/g, "\\\\");
 
 				if (questions) {
 					try {
