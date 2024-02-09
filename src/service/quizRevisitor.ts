@@ -15,11 +15,9 @@ export default class QuizRevisitor {
 		this.questionsAndAnswers = [];
 	}
 
-	public async openQuiz(): Promise<void> {
-		const currentFile = this.app.workspace.getActiveFile();
-
-		if (currentFile instanceof TFile) {
-			const fileContents = await this.app.vault.cachedRead(currentFile);
+	public async openQuiz(file: TFile | null): Promise<void> {
+		if (file instanceof TFile) {
+			const fileContents = await this.app.vault.cachedRead(file);
 			this.calloutParser(fileContents);
 			this.spacedRepetitionParser(fileContents);
 			this.quiz = new QuizUI(this.app, this.plugin, this.questionsAndAnswers);

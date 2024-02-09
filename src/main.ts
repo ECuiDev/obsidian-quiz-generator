@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Plugin, TAbstractFile, TFile } from "obsidian";
 import SelectorUI from "./ui/selectorUI";
 import QuizSettingsTab from "./settings";
 import QuizRevisitor from "./service/quizRevisitor";
@@ -24,9 +24,24 @@ export default class QuizGenerator extends Plugin {
 			id: "open-quiz-from-current-note",
 			name: "Open quiz from current note",
 			callback: () => {
-				new QuizRevisitor(this.app, this).openQuiz();
+				new QuizRevisitor(this.app, this).openQuiz(this.app.workspace.getActiveFile());
 			}
 		});
+
+		this.registerEvent(
+			this.app.workspace.on("file-menu", (menu, file: TAbstractFile) => {
+				if (file instanceof TFile && file.extension === "md") {
+					menu.addItem((item) => {
+						item
+							.setTitle("Open quiz from this note")
+							.setIcon("scroll-text")
+							.onClick(() => {
+								new QuizRevisitor(this.app, this).openQuiz(file);
+							});
+					});
+				}
+			})
+		);
 
 		await this.loadSettings();
 		this.addSettingTab(new QuizSettingsTab(this.app, this));
