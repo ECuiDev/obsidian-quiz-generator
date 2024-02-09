@@ -47,6 +47,10 @@ export default class QuestionSaver {
 		if (this.plugin.settings.saveAsCallout) {
 			await this.saveAsCallout();
 		}
+		if (!this.plugin.settings.saveForSpacedRepetition && !this.plugin.settings.saveAsCallout) {
+			new Notice("No save format selected. Defaulting to callout.");
+			await this.saveAsCallout();
+		}
 	}
 
 	private async saveForSpacedRepetition(): Promise<void> {
@@ -66,7 +70,8 @@ export default class QuestionSaver {
 				this.numberToAnswer(question.answer, question);
 		} else if ("questionTF" in question) {
 			return "**True/False:** " + question.questionTF +
-				` ${this.plugin.settings.inlineSeparator} ` + question.answer;
+				` ${this.plugin.settings.inlineSeparator} ` + question.answer.toString().charAt(0).toUpperCase() +
+				question.answer.toString().slice(1);
 		} else if ("questionSA" in question) {
 			return "**Short Answer:** " + question.questionSA +
 				` ${this.plugin.settings.inlineSeparator} ` + question.answer;
@@ -83,7 +88,8 @@ export default class QuestionSaver {
 				`\n>> [!success]- Answer\n>> ` + this.numberToAnswer(question.answer, question);
 		} else if ("questionTF" in question) {
 			return `> [!question] ${question.questionTF}` + `\n> True or false?` +
-				`\n>> [!success]- Answer\n>> ${question.answer}`;
+				`\n>> [!success]- Answer\n>> ` + question.answer.toString().charAt(0).toUpperCase() +
+				question.answer.toString().slice(1);
 		} else if ("questionSA" in question) {
 			return `> [!question] ${question.questionSA}` + `\n>> [!success]- Answer\n>> ${question.answer}`;
 		} else {
