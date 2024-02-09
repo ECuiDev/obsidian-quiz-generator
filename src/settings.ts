@@ -66,6 +66,18 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
+			.setName("Randomize question order")
+			.setDesc("Turn this off to answer questions in their generated/saved order.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.randomizeQuestions)
+					.onChange(async (value) => {
+						this.plugin.settings.randomizeQuestions = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
 			.setName("Language")
 			.setDesc("Language questions are generated in.")
 			.addDropdown((dropdown) =>
