@@ -1,6 +1,7 @@
 import { Plugin } from "obsidian";
 import SelectorUI from "./ui/selectorUI";
 import QuizSettingsTab from "./settings";
+import QuizRevisitor from "./service/quizRevisitor";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 
 export default class QuizGenerator extends Plugin {
@@ -12,11 +13,19 @@ export default class QuizGenerator extends Plugin {
 			name: "Open generator",
 			callback: () => {
 				new SelectorUI(this.app, this).open();
-			},
+			}
 		});
 
 		this.addRibbonIcon("brain-circuit", "Open generator", async () => {
 			new SelectorUI(this.app, this).open();
+		});
+
+		this.addCommand({
+			id: "open-quiz-from-current-note",
+			name: "Open quiz from current note",
+			callback: () => {
+				new QuizRevisitor(this.app, this).openQuiz();
+			}
 		});
 
 		await this.loadSettings();
