@@ -15,9 +15,12 @@
 - **Question Saving:** Save generated questions in either (or both) of the following formats.
   - Inline and multiline flashcards to review with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
   - Markdown callouts for seamless integration with your notes.
-- **Model Options:** Choose between OpenAI's GPT-3.5 and GPT-4 models, depending on your needs.
-  - Use `gpt-3.5-turbo-1106` (16,385 token context window) for faster response times and efficient question generation with a moderate context window.
-  - Use `gpt-4-1106-preview` (128,000 token context window) for more extensive content and in-depth question generation, suitable for complex educational materials and detailed assessments.
+- **Quiz Revisiting:** Re-open saved questions in the interactive Quiz UI (or write your own questions and open them with the UI).
+- **Multiple Languages:** Generate questions in the same language as your notes.
+- **Math Support:** Generate questions from notes that contain LaTeX.
+- **Model Options:** Choose between OpenAI's latest GPT-3.5 and GPT-4 models, depending on your needs.
+  - Use `gpt-3.5-turbo-0125` (16,385 token context window) for faster response times and efficient question generation with a moderate context window.
+  - Use `gpt-4-0125-preview` (128,000 token context window) for more extensive content and in-depth question generation, suitable for complex educational materials and detailed assessments.
 
 ## Usage
 
@@ -77,16 +80,15 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 
 ### Sequentially Being Developed
 
-- **Multi-Language Support:** Generate questions in the same language as your notes.
-- **Math Mode:** Generate questions from notes that contain LaTeX.
-- **Quiz Revisiting:** Re-open saved questions in the interactive Quiz UI.
-- **Improved Folders:** Added folders have a dropdown that display the notes they contain.
+- **Improved Folders:** Click added folders to view the notes they contain.
+- **Improved Notes:** Click added notes to view their contents.
 - **More Question Types:** Fill in the blank, matching, essay/long answer, and select all that apply.
 - **Dynamic Analysis:** Get real-time feedback on your response to short/long answer questions.
 - **Adjustable Difficulty:** Set the difficulty of generated questions.
-- **Question Randomization:** Randomize the question order each time you open the Quiz UI.
+- **Tag Adder:** Add notes by tag.
+- **Dataview Adder:** Add notes using [Dataview](https://github.com/blacksmithgu/obsidian-dataview) queries.
+- **More Models:** Support for local LLM's and other LLM providers.
 - **Advanced Question Types:** Numerical response and image-based.
-- **Tag Adder**: Add notes by tag.
 - **Note Links:** Adding a note also adds the notes it links to.
 - **Extended Files:** Generate questions from PDF and image files.
 
