@@ -15,7 +15,7 @@
 - **Question Saving:** Save generated questions in either (or both) of the following formats.
   - Inline and multiline flashcards to review with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
   - Markdown callouts for seamless integration with your notes.
-- **Quiz Revisiting:** Re-open saved questions in the interactive Quiz UI (or write your own questions and open them with the UI).
+- **Quiz Revisiting:** Re-open saved questions in the interactive UI (you can also write your own questions and open them in the UI).
 - **Multiple Languages:** Generate questions in the same language as your notes.
 - **Math Support:** Generate questions from notes that contain LaTeX.
 - **Model Options:** Choose between OpenAI's latest GPT-3.5 and GPT-4 models, depending on your needs.
@@ -68,6 +68,88 @@ This plugin is currently under review to be added to the **Community plugins** p
 - Select the [save](https://lucide.dev/icons/save) icon to save the current question.
 - Select the [save-all](https://lucide.dev/icons/save-all) icon to save all questions.
 - If the "Automatically save questions" setting is enabled, all questions will be immediately saved upon generation.
+
+### Opening Saved Quizzes
+
+- Open the command palette and select "Quiz Generator: Open quiz from current note" or right-click a note in the file explorer and select "Open quiz from this note" in the file menu.
+
+### Question Formatting
+
+If you want to modify any saved questions or write your own questions from scratch, they must follow the format below to be opened in the interactive UI. Any text not enclosed by quotation marks must be written exactly as shown. However, deviations in spacing and capitalization are okay (the parser is case-insensitive and ignores whitespace). Text enclosed by quotation marks can be anything.
+
+#### Callout Format
+
+```
+> [!question] "Multiple choice question goes here"
+> a) "Choice 1"
+> b) "Choice 2"
+> c) "Choice 3"
+> d) "Choice 4"
+>> [!success]"- Answer"
+>> One of a), b), c), or d) "You may optionally add the text of the correct choice in addition to the letter"
+
+> [!question] "True/false question goes here"
+> True or false?
+>> [!success]"- Answer"
+>> One of true or false
+
+> [!question] "Short answer question goes here"
+>> [!success]"- Answer"
+>> "Answer goes here"
+
+Note: The hyphen being inside the quotations marks in the nested callout is not a typo. It's optional whether you include it or not.
+```
+
+**Example**
+```
+> [!question] In the realm of artificial intelligence ethics, consider the development of autonomous weapon systems (AWS). Advocates argue that AWS can minimize human casualties in warfare, while critics express concerns about the lack of human control and potential ethical implications. Applying an ethical framework, which option aligns with a consequentialist perspective?
+> a) Reject the use of AWS to preserve human control and uphold moral principles.
+> b) Implement strict regulations and oversight to balance the benefits and risks of AWS.
+> c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
+> d) Encourage international collaboration to establish a global consensus on AWS usage.
+>> [!success]- Answer
+>> c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
+
+> [!question] In the context of the nature vs. nurture debate in psychology, the consensus among researchers is that intelligence is solely determined by genetic factors.
+> True or false?
+>> [!success]- Answer
+>> False
+
+> [!question] Explain the concept of the "butterfly effect" in chaos theory and provide an example illustrating its significance.
+>> [!success]- Answer
+>> The "butterfly effect" is a phenomenon in chaos theory that suggests small initial changes can lead to vastly different outcomes over time. It is metaphorically expressed as the idea that the flap of a butterfly's wings in Brazil could set off a chain of events leading to a tornado in Texas. Essentially, tiny variations in the initial conditions of a complex system can have profound and unpredictable effects on its future state. An example of the butterfly effect is the weather, where a minor disturbance can influence atmospheric conditions, potentially leading to significant changes in weather patterns over time.
+```
+
+#### Spaced Repetition Format
+
+```
+**Multiple Choice:** "Multiple choice question goes here"
+a) "Choice 1"
+b) "Choice 2"
+c) "Choice 3"
+d) "Choice 4"
+Multiline separator you chose in the settings goes here
+One of a), b), c), or d) "You may optionally add the text of the correct choice in addition to the letter"
+
+**True/False:** "True/false question goes here" Inline separator you chose in the settings goes here One of true or false
+
+**Short Answer:** "Short answer question goes here" Inline separator you chose in the settings goes here "Answer goes here"
+```
+
+**Example**
+```
+**Multiple Choice:** In the realm of artificial intelligence ethics, consider the development of autonomous weapon systems (AWS). Advocates argue that AWS can minimize human casualties in warfare, while critics express concerns about the lack of human control and potential ethical implications. Applying an ethical framework, which option aligns with a consequentialist perspective?
+a) Reject the use of AWS to preserve human control and uphold moral principles.
+b) Implement strict regulations and oversight to balance the benefits and risks of AWS.
+c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
+d) Encourage international collaboration to establish a global consensus on AWS usage.
+?
+c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
+
+**True/False:** In the context of the nature vs. nurture debate in psychology, the consensus among researchers is that intelligence is solely determined by genetic factors. :: False
+
+**Short Answer:** Explain the concept of the "butterfly effect" in chaos theory and provide an example illustrating its significance. :: The "butterfly effect" is a phenomenon in chaos theory that suggests small initial changes can lead to vastly different outcomes over time. It is metaphorically expressed as the idea that the flap of a butterfly's wings in Brazil could set off a chain of events leading to a tornado in Texas. Essentially, tiny variations in the initial conditions of a complex system can have profound and unpredictable effects on its future state. An example of the butterfly effect is the weather, where a minor disturbance can influence atmospheric conditions, potentially leading to significant changes in weather patterns over time.
+```
 
 ### Miscellaneous
 
