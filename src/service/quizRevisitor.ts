@@ -4,8 +4,9 @@ import QuizUI from "../ui/quizUI";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 
 export default class QuizRevisitor {
-	private app: App;
+	private readonly app: App;
 	private readonly plugin: QuizGenerator;
+	private quiz: QuizUI;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 
 	constructor(app: App, plugin: QuizGenerator) {
@@ -19,17 +20,11 @@ export default class QuizRevisitor {
 
 		if (currentFile instanceof TFile) {
 			const fileContents = await this.app.vault.cachedRead(currentFile);
-			console.log(fileContents);
 			this.calloutParser(fileContents);
-			new QuizUI(this.app, this.plugin, this.questionsAndAnswers).open();
-		}
-	}
-
-	private async parseCurrentFile(): Promise<void> {
-		const currentFile = this.app.workspace.getActiveFile();
-
-		if (currentFile instanceof TFile) {
-			const fileContents = await this.app.vault.cachedRead(currentFile);
+			this.spacedRepetitionParser(fileContents);
+			this.quiz = new QuizUI(this.app, this.plugin, this.questionsAndAnswers);
+			this.quiz.disableSave();
+			this.quiz.open();
 		} else {
 			new Notice("No active file.");
 		}
@@ -41,30 +36,11 @@ export default class QuizRevisitor {
 		let match;
 		while ((match = regexMC.exec(fileContents)) !== null) {
 			const question = match[1];
-			const choice1 = match[2].replace("a) ", "");
-			const choice2 = match[3].replace("b) ", "");
-			const choice3 = match[4].replace("c) ", "");
-			const choice4 = match[5].replace("d) ", "");
+			const choice1 = match[2];
+			const choice2 = match[3];
+			const choice3 = match[4];
+			const choice4 = match[5];
 			const answerString = match[7];
-
-			let answer = -1;
-			switch (answerString) {
-				case "a":
-					answer = 1;
-					break;
-				case "b":
-					answer = 2;
-					break;
-				case "c":
-					answer = 3;
-					break;
-				case "d":
-					answer = 4;
-					break;
-				default:
-					new Notice("Invalid multiple choice callout format.");
-					break;
-			}
 
 			this.questionsAndAnswers.push({
 				questionMC: question,
@@ -72,7 +48,7 @@ export default class QuizRevisitor {
 				2: choice2,
 				3: choice3,
 				4: choice4,
-				answer: answer
+				answer: this.multipleChoiceAnswer(answerString)
 			} as ParsedMC);
 		}
 
@@ -102,6 +78,65 @@ export default class QuizRevisitor {
 	}
 
 	private spacedRepetitionParser(fileContents: string): void {
+		const regexMC = new RegExp(`\\*\\*Multiple Choice:\\*\\*\\s*(.+)\\s*a\\)\\s*(.+)\\s*b\\)\\s*(.+)\\s*c\\)\\s*(.+)\\s*d\\)\\s*(.+)\\s*\\${this.plugin.settings.multilineSeparator}\\s*([abcd])\\)\\s*(.+)`, "gim");
 
+		let match;
+		while ((match = regexMC.exec(fileContents)) !== null) {
+			const question = match[1];
+			const choice1 = match[2];
+			const choice2 = match[3];
+			const choice3 = match[4];
+			const choice4 = match[5];
+			const answerString = match[6];
+
+			this.questionsAndAnswers.push({
+				questionMC: question,
+				1: choice1,
+				2: choice2,
+				3: choice3,
+				4: choice4,
+				answer: this.multipleChoiceAnswer(answerString)
+			} as ParsedMC);
+		}
+
+		const regexTF = new RegExp(`\\*\\*True\\/False:\\*\\*\\s*(.+)\\s*${this.plugin.settings.inlineSeparator}\\s*(true|false)`, "gim");
+
+		while ((match = regexTF.exec(fileContents)) !== null) {
+			const question = match[1];
+			const answerString = match[2];
+
+			this.questionsAndAnswers.push({
+				questionTF: question,
+				answer: answerString.toLowerCase() === "true"
+			} as ParsedTF);
+		}
+
+		const regexSA = new RegExp(`\\*\\*Short Answer:\\*\\*\\s*(.+)\\s*${this.plugin.settings.inlineSeparator}\\s*(.+)`, "gim");
+
+		while ((match = regexSA.exec(fileContents)) !== null) {
+			const question = match[1];
+			const answerString = match[2];
+
+			this.questionsAndAnswers.push({
+				questionSA: question,
+				answer: answerString
+			} as ParsedSA);
+		}
+	}
+
+	private multipleChoiceAnswer(answerString: string): number {
+		switch (answerString) {
+			case "a":
+				return 1;
+			case "b":
+				return 2;
+			case "c":
+				return 3;
+			case "d":
+				return 4;
+			default:
+				new Notice("Invalid multiple choice callout format.");
+				return -1;
+		}
 	}
 }
