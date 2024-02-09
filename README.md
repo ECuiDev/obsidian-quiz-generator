@@ -154,7 +154,6 @@ c) Embrace AWS deployment to reduce overall casualties and enhance military effe
 ### Miscellaneous
 
 - Select the [scroll](https://lucide.dev/icons/scroll-text) icon in the Generator UI to re-open the most recently generated quiz.
-- I recommend saving all generated questions because you cannot re-open them in the Quiz UI once you close the Generator UI.
 
 ## Coming Soon
 
