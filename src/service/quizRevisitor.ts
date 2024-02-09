@@ -14,8 +14,13 @@ export default class QuizRevisitor {
 		this.plugin = plugin;
 	}
 
-	public openQuiz(): void {
+	public async openQuiz(): Promise<void> {
+		const currentFile = this.app.workspace.getActiveFile();
 
+		if (currentFile instanceof TFile) {
+			const fileContents = await this.app.vault.cachedRead(currentFile);
+			console.log(JSON.stringify(fileContents));
+		}
 	}
 
 	private async parseCurrentFile(): Promise<void> {
@@ -29,10 +34,10 @@ export default class QuizRevisitor {
 	}
 
 	private calloutParser(fileContents: string): void {
-		const mcRegex = /> \[!question]\s*([^]*?)\n> a\)\s*([^]*?)\n> b\)\s*([^]*?)\n> c\)\s*([^]*?)\n> d\) \s*([^]*?)\n>> \[!success]\s*([^]*?)\n>> b\) \s*([^]*)/gm;
+		const regexMC = />\s*\[!question]\s*(.+)\\n>\s*(.+)\\n>\s*(.+)\\n>\s*(.+)\\n>\s*(.+)\\n>>\s*\[!success]\s*(.+)\\n>>(.+?)\\n/gim;
 
 		let match;
-		while ((match = mcRegex.exec(fileContents)) !== null) {
+		while ((match = regexMC.exec(fileContents)) !== null) {
 			const [, questionMC, , , choice1, choice2, choice3, choice4, answer] = match;
 			this.questionsAndAnswers.push({
 				questionMC,
@@ -44,9 +49,9 @@ export default class QuizRevisitor {
 			});
 		}
 
-		const tfRegex = /^\[!question]\s*(.*?)\.\s*True\s*or\s*false\?\s*>>\s*\[!success]-\s*Answer\s*\n>>\s*(\w+)/gm;
+		const regexTF = />\s*\[!question]\s*(.+)\\n>\s*True or false\?\\n>>\s*\[!success]\s*(.+)\\n>>\s*(.+?)\\n/gim;
 
-		while ((match = tfRegex.exec(fileContents)) !== null) {
+		while ((match = regexTF.exec(fileContents)) !== null) {
 			const [, questionTF, answer] = match;
 			this.questionsAndAnswers.push({
 				questionTF,
@@ -54,9 +59,9 @@ export default class QuizRevisitor {
 			});
 		}
 
-		const saRegex = /^\[!question]\s*(.*?)\.\s*>>\s*\[!success]-\s*Answer\s*\n>>\s*(.*)/gm;
+		const regexSA = />\s*\[!question]\s*([^>]+?)\\n>>\s*\[!success]\s*(.+)\\n>>\s*(.+?)\\n/gim;
 
-		while ((match = saRegex.exec(fileContents)) !== null) {
+		while ((match = regexSA.exec(fileContents)) !== null) {
 			const [, questionSA, answer] = match;
 			this.questionsAndAnswers.push({
 				questionSA,
