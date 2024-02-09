@@ -54,6 +54,10 @@ export default class QuizUI extends Modal {
 		super.onClose();
 	}
 
+	public disableSave(): void {
+		this.saved.fill(true);
+	}
+
 	private chooseFileName(): void {
 		let count = 1;
 		const folder =
