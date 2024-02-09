@@ -6,7 +6,7 @@ import "styles.css";
 
 export default class QuizUI extends Modal {
 	private readonly plugin: QuizGenerator
-	private readonly questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
+	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private saved: boolean[];
 	private questionIndex: number;
 	private questionContainer: HTMLDivElement;
@@ -28,7 +28,6 @@ export default class QuizUI extends Modal {
 		this.plugin = plugin;
 		this.questionsAndAnswers = questionsAndAnswers;
 		this.saved = new Array(this.questionsAndAnswers.length).fill(false);
-		this.questionIndex = 0;
 		this.fileCreated = false;
 
 		this.modalEl.addClass("modal-el-container");
@@ -47,6 +46,11 @@ export default class QuizUI extends Modal {
 	}
 
 	public async onOpen(): Promise<void> {
+		if (this.plugin.settings.randomizeQuestions) {
+			this.shuffleQuestions(this.questionsAndAnswers);
+		}
+
+		this.questionIndex = 0;
 		await this.showQuestion();
 	}
 
@@ -56,6 +60,15 @@ export default class QuizUI extends Modal {
 
 	public disableSave(): void {
 		this.saved.fill(true);
+	}
+
+	private shuffleQuestions(questions: (ParsedMC | ParsedTF | ParsedSA)[]): void {
+		this.questionsAndAnswers = questions.slice();
+
+		for (let i = this.questionsAndAnswers.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[this.questionsAndAnswers[i], this.questionsAndAnswers[j]] = [this.questionsAndAnswers[j], this.questionsAndAnswers[i]];
+		}
 	}
 
 	private chooseFileName(): void {
