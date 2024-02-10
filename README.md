@@ -69,7 +69,7 @@ This plugin is currently under review to be added to the **Community plugins** p
 - Select the [save-all](https://lucide.dev/icons/save-all) icon to save all questions.
 - If the "Automatically save questions" setting is enabled, all questions will be immediately saved upon generation.
 
-### Opening Saved Quizzes
+### Reviewing Saved Quizzes
 
 - Open the command palette and select "Quiz Generator: Open quiz from current note" or right-click a note in the file explorer and select "Open quiz from this note" in the file menu.
 
