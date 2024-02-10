@@ -15,7 +15,7 @@
 - **Question Saving:** Save generated questions in either (or both) of the following formats.
   - Inline and multiline flashcards to review with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
   - Markdown callouts for seamless integration with your notes.
-- **Quiz Revisiting:** Review saved questions in the interactive UI (you can also write your own questions and open them in the UI).
+- **Reviewable Quizzes:** Review saved questions in the interactive UI (you can also write your own questions and open them in the UI).
 - **Multiple Languages:** Generate questions in the same language as your notes.
 - **Math Support:** Generate questions from notes that contain LaTeX.
 - **Model Options:** Choose between OpenAI's latest GPT-3.5 and GPT-4 models, depending on your needs.
