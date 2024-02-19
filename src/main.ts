@@ -1,7 +1,7 @@
 import { Plugin, TAbstractFile, TFile } from "obsidian";
 import SelectorUI from "./ui/selectorUI";
 import QuizSettingsTab from "./settings";
-import QuizReviewer from "./service/quizReviewer";
+import QuizReviewer from "./services/quizReviewer";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 
 export default class QuizGenerator extends Plugin {

@@ -1,5 +1,5 @@
 import { App, Vault, Modal, Notice, TFile, TFolder, setIcon, setTooltip } from "obsidian";
-import GptGenerator from "../service/gptGenerator";
+import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA } from "../utils/types";

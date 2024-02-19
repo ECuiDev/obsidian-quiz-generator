@@ -1,7 +1,7 @@
 import { App, Modal, TFile, TFolder, setIcon, setTooltip, normalizePath, MarkdownRenderer, Notice } from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
-import QuestionSaver from "../service/questionSaver";
+import QuestionSaver from "../services/questionSaver";
 import "styles.css";
 
 export default class QuizUI extends Modal {
