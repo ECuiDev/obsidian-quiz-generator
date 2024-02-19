@@ -3,7 +3,7 @@ import QuizGenerator from "../main";
 import QuizUI from "../ui/quizUI";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 
-export default class QuizRevisitor {
+export default class QuizReviewer {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
 	private quiz: QuizUI;

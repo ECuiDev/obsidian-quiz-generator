@@ -1,7 +1,7 @@
 import { Plugin, TAbstractFile, TFile } from "obsidian";
 import SelectorUI from "./ui/selectorUI";
 import QuizSettingsTab from "./settings";
-import QuizRevisitor from "./service/quizRevisitor";
+import QuizReviewer from "./service/quizReviewer";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
 
 export default class QuizGenerator extends Plugin {
@@ -24,7 +24,7 @@ export default class QuizGenerator extends Plugin {
 			id: "open-quiz-from-current-note",
 			name: "Open quiz from current note",
 			callback: () => {
-				new QuizRevisitor(this.app, this).openQuiz(this.app.workspace.getActiveFile());
+				new QuizReviewer(this.app, this).openQuiz(this.app.workspace.getActiveFile());
 			}
 		});
 
@@ -36,7 +36,7 @@ export default class QuizGenerator extends Plugin {
 							.setTitle("Open quiz from this note")
 							.setIcon("scroll-text")
 							.onClick(() => {
-								new QuizRevisitor(this.app, this).openQuiz(file);
+								new QuizReviewer(this.app, this).openQuiz(file);
 							});
 					});
 				}
