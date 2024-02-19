@@ -1,5 +1,5 @@
 import { App, Vault, Modal, Notice, TFile, TFolder, setIcon, setTooltip } from "obsidian";
-import GptService from "../service/gptService";
+import GptGenerator from "../service/gptGenerator";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
@@ -28,7 +28,7 @@ export default class SelectorUI extends Modal {
 	private addNoteListener: () => void;
 	private addFolderListener: () => void;
 	private generateListener: () => void;
-	private gpt: GptService;
+	private gpt: GptGenerator;
 	private quiz: QuizUI;
 
 	constructor(app: App, plugin: QuizGenerator) {
@@ -92,7 +92,7 @@ export default class SelectorUI extends Modal {
 				|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0) {
 				this.generateButton.disabled = true;
 				this.questionsAndAnswers.length = 0;
-				this.gpt = new GptService(this.plugin);
+				this.gpt = new GptGenerator(this.plugin);
 
 				new Notice("Generating...");
 				let questions = await this.gpt.generateQuestions(await this.loadNoteContents());

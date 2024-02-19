@@ -2,7 +2,7 @@ import { Notice } from "obsidian";
 import OpenAI from "openai";
 import QuizGenerator from "../main";
 
-export default class GptService {
+export default class GptGenerator {
 	private plugin: QuizGenerator;
 	private openai: OpenAI;
 
