@@ -29,7 +29,7 @@ export default class QuizRevisitor {
 	}
 
 	private calloutParser(fileContents: string): void {
-		const regexMC = />\s*\[!question]\s*(.+)\s*>\s*a\)\s*(.+)\s*>\s*b\)\s*(.+)\s*>\s*c\)\s*(.+)\s*>\s*d\)\s*(.+)\s*>>\s*\[!success]\s*(.+)\s*>>\s*([abcd])\)\s*(.+)/gim;
+		const regexMC = />\s*\[!question]\+?\s*(.+)\s*>\s*a\)\s*(.+)\s*>\s*b\)\s*(.+)\s*>\s*c\)\s*(.+)\s*>\s*d\)\s*(.+)\s*>>\s*\[!success]\s*(.+)\s*>>\s*([abcd])\)\s*(.+)/gim;
 
 		let match;
 		while ((match = regexMC.exec(fileContents)) !== null) {
@@ -50,7 +50,7 @@ export default class QuizRevisitor {
 			} as ParsedMC);
 		}
 
-		const regexTF = />\s*\[!question]\s*(.+)\s*>\s*True or false\?\s*>>\s*\[!success]\s*(.+)\s*>>\s*(.+)/gim;
+		const regexTF = />\s*\[!question]\+?\s*(.+)\s*>\s*True or false\?\s*>>\s*\[!success]\s*(.+)\s*>>\s*(.+)/gim;
 
 		while ((match = regexTF.exec(fileContents)) !== null) {
 			const question = match[1];
@@ -62,7 +62,7 @@ export default class QuizRevisitor {
 			} as ParsedTF);
 		}
 
-		const regexSA = />\s*\[!question]\s*([^>]+)\s*>>\s*\[!success]\s*(.+)\s*>>\s*(.+)/gim;
+		const regexSA = />\s*\[!question]\+?\s*([^>]+)\s*>>\s*\[!success]\s*(.+)\s*>>\s*(.+)/gim;
 
 		while ((match = regexSA.exec(fileContents)) !== null) {
 			const question = match[1];
