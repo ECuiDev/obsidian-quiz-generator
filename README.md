@@ -19,8 +19,8 @@
 - **Multiple Languages:** Generate questions in the same language as your notes.
 - **Math Support:** Generate questions from notes that contain LaTeX.
 - **Model Options:** Choose between OpenAI's latest GPT-3.5 and GPT-4 models, depending on your needs.
-  - Use `gpt-3.5-turbo-0125` (16,385 token context window) for faster response times and efficient question generation with a moderate context window.
-  - Use `gpt-4-0125-preview` (128,000 token context window) for more extensive content and in-depth question generation, suitable for complex educational materials and detailed assessments.
+  - Use `GPT-3.5` (16,385 token context window) for faster response times and efficient question generation with a moderate context window.
+  - Use `GPT-4` (128,000 token context window) for more extensive content and in-depth question generation, suitable for complex educational materials and detailed assessments.
 
 ## Usage
 
