@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "./main";
-import { languages } from "./utils/types";
+import { models, languages } from "./utils/types";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private plugin: QuizGenerator;
@@ -32,8 +32,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.setDesc("Model used for question generation.")
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOption("gpt-3.5-turbo-0125", "gpt-3.5-turbo-0125")
-					.addOption("gpt-4-0125-preview", "gpt-4-0125-preview")
+					.addOptions(models)
 					.setValue(this.plugin.settings.model)
 					.onChange(async (value) => {
 						this.plugin.settings.model = value;
