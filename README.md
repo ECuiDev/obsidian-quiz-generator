@@ -1,6 +1,6 @@
 # Quiz Generator
 
-<img src="https://img.shields.io/github/downloads/ECuiDev/obsidian-quiz-generator/total" /> <img src="https://img.shields.io/github/manifest-json/v/ECuiDev/obsidian-quiz-generator" />
+[![Downloads](https://img.shields.io/github/downloads/ECuiDev/obsidian-quiz-generator/total?style=for-the-badge&labelColor=21262d&color=238636)](https://github.com/ECuiDev/obsidian-quiz-generator/releases) [![Release](https://img.shields.io/github/v/release/ECuiDev/obsidian-quiz-generator?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/ECuiDev/obsidian-quiz-generator/releases/latest)
 
 **Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of OpenAI's GPT-3.5 and GPT-4 models to automatically generate interactive, exam-style questions (with answers) based on your notes. Whether you're a student looking to quiz yourself or an educator creating assessments, this plugin streamlines the question creation process.
 
