@@ -8,11 +8,17 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
 		"version": "node version-bump.mjs && git add manifest.json versions.json"
 	},
-	"keywords": ["obsidian", "quiz-generator", "openai"],
+	"keywords": [
+		"obsidian",
+		"quiz-generator",
+		"openai"
+	],
 	"author": "Edward Cui",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^20.11.19",
+		"@types/react": "^18.2.57",
+		"@types/react-dom": "^18.2.19",
 		"@typescript-eslint/eslint-plugin": "7.0.2",
 		"@typescript-eslint/parser": "7.0.2",
 		"builtin-modules": "3.3.0",
@@ -22,6 +28,8 @@
 		"typescript": "5.3.3"
 	},
 	"dependencies": {
-		"openai": "^4.28.0"
+		"openai": "^4.28.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0"
 	}
 }
