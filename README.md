@@ -165,10 +165,11 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 - **Improved Notes:** Click added notes to view their contents.
 - **More Question Types:** Fill in the blank, matching, essay/long answer, and select all that apply.
 - **Dynamic Analysis:** Get real-time feedback on your response to short/long answer questions.
+- **More Models:** Support for local LLM's and other LLM providers.
+- **Better Question Creation:** Custom UI to streamline creating your own questions from scratch.
 - **Adjustable Difficulty:** Set the difficulty of generated questions.
 - **Tag Adder:** Add notes by tag.
 - **Dataview Adder:** Add notes using [Dataview](https://github.com/blacksmithgu/obsidian-dataview) queries.
-- **More Models:** Support for local LLM's and other LLM providers.
 - **Advanced Question Types:** Numerical response and image-based.
 - **Note Links:** Adding a note also adds the notes it links to.
 - **Extended Files:** Generate questions from PDF and image files.
