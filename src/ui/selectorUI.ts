@@ -185,7 +185,7 @@ export default class SelectorUI extends Modal {
 		const modal = new NoteAdder(this.app, this.notePaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
-			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
+			const selectedNote = this.app.vault.getFileByPath(selectedItem);
 
 			if (selectedNote instanceof TFile) {
 				this.notePaths.remove(selectedNote.path);
@@ -203,7 +203,7 @@ export default class SelectorUI extends Modal {
 		const modal = new FolderAdder(this.app, this.folderPaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
-			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
+			const selectedFolder = this.app.vault.getFolderByPath(selectedItem);
 
 			if (selectedFolder instanceof TFolder) {
 				this.folderPaths.remove(selectedFolder.path);

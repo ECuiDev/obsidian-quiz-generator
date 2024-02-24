@@ -32,12 +32,12 @@ export default class QuestionSaver {
 		if (!this.fileCreated) {
 			this.file = await this.app.vault.create(this.path, "#flashcards");
 		} else {
-			const abstractFile = this.app.vault.getAbstractFileByPath(this.path);
+			const file = this.app.vault.getFileByPath(this.path);
 
-			if (abstractFile instanceof TFile) {
-				this.file = abstractFile;
+			if (file instanceof TFile) {
+				this.file = file;
 			} else {
-				new Notice("Created file no longer exists");
+				this.file = await this.app.vault.create(this.path, "#flashcards");
 			}
 		}
 

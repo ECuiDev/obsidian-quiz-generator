@@ -16,14 +16,14 @@
 	"author": "Edward Cui",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^20.11.19",
-		"@types/react": "^18.2.57",
+		"@types/node": "^20.11.20",
+		"@types/react": "^18.2.58",
 		"@types/react-dom": "^18.2.19",
 		"@typescript-eslint/eslint-plugin": "7.0.2",
 		"@typescript-eslint/parser": "7.0.2",
 		"builtin-modules": "3.3.0",
 		"esbuild": "0.20.1",
-		"obsidian": "latest",
+		"obsidian": "^1.5.7-1",
 		"tslib": "2.6.2",
 		"typescript": "5.3.3"
 	},
