@@ -26,21 +26,18 @@
 
 ### Installation
 
-This plugin is currently under review to be added to the **Community plugins** page in Obsidian. Meanwhile, you can install it using either of the following methods.
+This plugin is now available in the **Community plugins** page in Obsidian. You can install it using either of the following methods.
 
-#### BRAT Installation
+#### Obsidian Installation
 
-1. Install [BRAT](https://github.com/TfTHacker/obsidian42-brat) from the **Community plugins** page in Obsidian.
+1. Install the plugin from the **Community plugins** page in Obsidian.
    - **Settings** → **Community plugins** → **Browse**.
-   - Search for `Obsidian42 - BRAT`.
+   - Search for `Quiz Generator`.
    - Select the plugin to open its page and then select **Install**.
    - Select **Enable** on the plugin page or go back to the **Community plugins** page and toggle the switch.
-2. Select `Add Beta plugin` in BRAT's settings.
-3. Enter this repository's URL: `https://github.com/ECuiDev/obsidian-quiz-generator`.
-4. Enable the plugin.
-5. Open the plugin settings and enter your API key.
+2. Open the plugin settings and enter your API key.
    - If you don't have an API key, create an account at [OpenAI](https://platform.openai.com/) and retrieve your API key from [API keys](https://platform.openai.com/api-keys).
-6. Configure the other settings as desired.
+3. Configure the other settings as desired.
 
 #### Manual Installation
 
