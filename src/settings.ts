@@ -28,6 +28,18 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
+			.setName("API base url")
+			.setDesc("Enter your OpenAI API base URL here.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.apiBaseURL)
+					.onChange(async (value) => {
+						this.plugin.settings.apiBaseURL = value.trim();
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
 			.setName("Model")
 			.setDesc("Model used for question generation.")
 			.addDropdown((dropdown) =>
