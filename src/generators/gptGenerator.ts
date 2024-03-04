@@ -8,8 +8,11 @@ export default class GptGenerator extends Generator {
 
 	constructor(plugin: QuizGenerator) {
 		super(plugin);
-		this.openai = new OpenAI({apiKey: this.plugin.settings.apiKey,
-			dangerouslyAllowBrowser: true});
+		this.openai = new OpenAI({
+			apiKey: this.plugin.settings.apiKey,
+			baseURL: this.plugin.settings.apiBaseURL,
+			dangerouslyAllowBrowser: true,
+		});
 	}
 
 	public async generateQuestions(contents: string[]): Promise<string | undefined> {

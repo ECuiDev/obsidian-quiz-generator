@@ -49,6 +49,7 @@ export const languages: Record<string, string> = {
 
 export interface QuizSettings {
 	apiKey: string;
+	apiBaseURL: string;
 	model: string;
 	showNotePath: boolean;
 	showFolderPath: boolean;
@@ -70,6 +71,7 @@ export interface QuizSettings {
 
 export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	apiKey: "",
+	apiBaseURL: "https://api.openai.com/v1",
 	model: "gpt-3.5-turbo-0125",
 	showNotePath: false,
 	showFolderPath: false,
