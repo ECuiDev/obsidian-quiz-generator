@@ -1,4 +1,4 @@
-import { App, TFile, Notice, normalizePath } from "obsidian";
+import { App, TFile, normalizePath } from "obsidian";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 import QuizGenerator from "../main";
 
@@ -41,14 +41,9 @@ export default class QuestionSaver {
 			}
 		}
 
-		if (this.plugin.settings.saveForSpacedRepetition) {
+		if (this.plugin.settings.questionSaveFormat === "Spaced Repetition") {
 			await this.saveForSpacedRepetition();
-		}
-		if (this.plugin.settings.saveAsCallout) {
-			await this.saveAsCallout();
-		}
-		if (!this.plugin.settings.saveForSpacedRepetition && !this.plugin.settings.saveAsCallout) {
-			new Notice("No save format selected. Defaulting to callout.");
+		} else {
 			await this.saveAsCallout();
 		}
 	}

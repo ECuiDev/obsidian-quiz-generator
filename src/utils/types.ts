@@ -47,6 +47,11 @@ export const languages: Record<string, string> = {
 	Ukrainian: "українська"
 };
 
+export const saveFormats: Record<string, string> = {
+	"Callout": "Callout",
+	"Spaced Repetition": "Spaced Repetition"
+};
+
 export interface QuizSettings {
 	apiKey: string;
 	model: string;
@@ -62,10 +67,9 @@ export interface QuizSettings {
 	generateShortAnswer: boolean;
 	autoSave: boolean;
 	questionSavePath: string;
-	saveForSpacedRepetition: boolean;
+	questionSaveFormat: string;
 	inlineSeparator: string;
 	multilineSeparator: string;
-	saveAsCallout: boolean;
 }
 
 export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
@@ -83,8 +87,7 @@ export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
 	generateShortAnswer: true,
 	autoSave: false,
 	questionSavePath: "",
-	saveForSpacedRepetition: false,
+	questionSaveFormat: "Callout",
 	inlineSeparator: "::",
 	multilineSeparator: "?",
-	saveAsCallout: true
 };

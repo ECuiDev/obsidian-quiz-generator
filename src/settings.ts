@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "./main";
-import { models, languages } from "./utils/types";
+import { models, languages, saveFormats } from "./utils/types";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private plugin: QuizGenerator;
@@ -199,13 +199,14 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName("Spaced repetition")
-			.setDesc("Save questions in spaced repetition format.")
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.saveForSpacedRepetition)
+			.setName("Save format")
+			.setDesc("Format questions are saved as.")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOptions(saveFormats)
+					.setValue(this.plugin.settings.questionSaveFormat)
 					.onChange(async (value) => {
-						this.plugin.settings.saveForSpacedRepetition = value;
+						this.plugin.settings.questionSaveFormat = value;
 						await this.plugin.saveSettings();
 					})
 			);
@@ -230,18 +231,6 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.multilineSeparator)
 					.onChange(async (value) => {
 						this.plugin.settings.multilineSeparator = value;
-						await this.plugin.saveSettings();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName("Callout")
-			.setDesc("Save questions as callouts.")
-			.addToggle((toggle) =>
-				toggle
-					.setValue(this.plugin.settings.saveAsCallout)
-					.onChange(async (value) => {
-						this.plugin.settings.saveAsCallout = value;
 						await this.plugin.saveSettings();
 					})
 			);
