@@ -18,7 +18,7 @@ interface SelectorModalProps {
 	parent: HTMLDivElement;
 }
 
-const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) => {
+const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const modalRef = useRef<HTMLDivElement>(null);
 	const [notePaths, setNotePaths] = useState<string[]>(app.vault.getMarkdownFiles().map(file => file.path));
 	const [folderPaths, setFolderPaths] = useState<string[]>(
@@ -34,7 +34,10 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 	const [quiz, setQuiz] = useState<QuizUI>();
 	const [notesContainerChildren, setNotesContainerChildren] = useState<ReactElement[]>([]); // add type here
 
-	const close = () => {
+	// turn the onOpen function into a useEffect hook
+	// this lets you initialize all your state variables with empty values and initialize them properly when the component mounts
+
+	const close = (): void => {
 		document.body.removeChild(parent);
 	};
 
@@ -45,8 +48,8 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 		setNotesContainerChildren([]);
 		setPromptTokens(0);
 		// update tokenSection text content (should be done automatically when setPromptTokens runs?)
-		setNotePaths(app.vault.getMarkdownFiles().map(file => file.path));
-		setFolderPaths(app.vault.getAllLoadedFiles().filter(abstractFile => abstractFile instanceof TFolder).map(folder => folder.path));
+		setNotePaths(app.vault.getMarkdownFiles().map(file => file.path)); // create new array and then call setter
+		setFolderPaths(app.vault.getAllLoadedFiles().filter(abstractFile => abstractFile instanceof TFolder).map(folder => folder.path)); // create new array and then call setter
 	};
 
 	const quizListener = async (): Promise<void> => {
@@ -69,7 +72,7 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 			const generator = new GptGenerator(plugin);
 
 			new Notice("Generating...");
-			let questions = await generator.generateQuestions(await loadNoteContents());
+			let questions = await generator.generateQuestions(loadNoteContents());
 			questions = questions?.replace(/\\/g, "\\\\");
 
 			if (questions) {
@@ -122,10 +125,10 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 				const selectedNote = app.vault.getFileByPath(selectedItem);
 
 				if (selectedNote instanceof TFile) {
-					setNotePaths(notePaths => notePaths.filter(element => element !== selectedNote.path));
+					setNotePaths(notePaths => notePaths.filter(element => element !== selectedNote.path)); // create new array then set
 					await showNoteAdder();
 					const noteContents = cleanUpString(await app.vault.cachedRead(selectedNote));
-					setSelectedNotes(new Map<string, string>(selectedNotes.set(selectedNote.path, noteContents)));
+					setSelectedNotes(new Map<string, string>(selectedNotes.set(selectedNote.path, noteContents))); // create new map then set
 					console.log(selectedNotes);
 					await displayNote(selectedNote);
 				}
@@ -143,7 +146,7 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 				const selectedFolder = app.vault.getFolderByPath(selectedItem);
 
 				if (selectedFolder instanceof TFolder) {
-					setFolderPaths(folderPaths => folderPaths.filter(element => element !== selectedFolder.path));
+					setFolderPaths(folderPaths => folderPaths.filter(element => element !== selectedFolder.path)); // create new array then set
 					await showFolderAdder();
 
 					let folderContents: string[] = [];
@@ -161,7 +164,7 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 
 					await Promise.all(promises);
 
-					setSelectedNotes(selectedNotes => new Map<string, string>(selectedNotes).set(selectedFolder.path, folderContents.join(" ")));
+					setSelectedNotes(selectedNotes => new Map<string, string>(selectedNotes).set(selectedFolder.path, folderContents.join(" "))); // create new map then set
 					await displayFolder(selectedFolder);
 				}
 			});
@@ -173,38 +176,38 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 	const displayNote = async (note: TFile): Promise<void> => {
 		setClearButtonDisabled(false);
 		setGenerateButtonDisabled(false);
-		const noteTokens = await countNoteTokens(selectedNotes.get(note.path));
+		const noteTokens = countNoteTokens(selectedNotes.get(note.path));
 
 		await addNoteContainer(note, noteTokens);
 
-		setPromptTokens(promptTokens + noteTokens);
+		setPromptTokens(promptTokens + noteTokens); // change to the arrow function promptTokens => promptTokens + noteTokens thing?
 		// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 	};
 
 	const displayFolder = async (folder: TFolder): Promise<void> => {
 		setClearButtonDisabled(false);
 		setGenerateButtonDisabled(false);
-		const noteTokens = await countNoteTokens(selectedNotes.get(folder.path));
+		const noteTokens = countNoteTokens(selectedNotes.get(folder.path));
 
 		await addFolderContainer(folder, noteTokens);
 
-		setPromptTokens(promptTokens + noteTokens);
+		setPromptTokens(promptTokens + noteTokens); // change to the arrow function promptTokens => promptTokens + noteTokens thing?
 		// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 	};
 
 	const addNoteContainer = async (note: TFile, tokens: number): Promise<void> => {
-		const key = new Date().getTime().toString();
+		const key = new Date().getTime().toString(); // bad key, fix this
 
 		const removeListener = async (): Promise<void> => {
-			const updatedSelectedNotes = new Map<string, string>(selectedNotes);
+			const updatedSelectedNotes = new Map<string, string>(selectedNotes); // check if this creates a shallow copy or not
 			updatedSelectedNotes.delete(note.path);
-			setSelectedNotes(new Map<string, string>(updatedSelectedNotes));
+			setSelectedNotes(new Map<string, string>(updatedSelectedNotes)); // double check this
 
-			setNotesContainerChildren(notesContainerChildren => notesContainerChildren.filter(child => child.key !== key));
+			setNotesContainerChildren(notesContainerChildren => notesContainerChildren.filter(child => child.key !== key)); // create new array then set
 
 			const updatedNotePaths = [...notePaths, note.path];
 			setNotePaths(updatedNotePaths);
-			setPromptTokens(promptTokens - tokens);
+			setPromptTokens(promptTokens - tokens); // arrow function?
 			// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 
 			if (selectedNotes.size === 0) {
@@ -213,23 +216,23 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 			}
 		};
 
-		const newNoteContainer = <NoteContainer showPath={plugin.settings.showNotePath} path={note.path} basename={note.basename} tokens={tokens} onClick={removeListener} key={key}></NoteContainer>;
-		setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newNoteContainer]);
+		const newNoteContainer = <NoteContainer key={key} showPath={plugin.settings.showNotePath} path={note.path} basename={note.basename} tokens={tokens} onClick={removeListener}></NoteContainer>;
+		setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newNoteContainer]); // double check this
 	};
 
 	const addFolderContainer = async (folder: TFolder, tokens: number): Promise<void> => {
-		const key = new Date().getTime().toString();
+		const key = new Date().getTime().toString(); // bad key, fix this
 
 		const removeListener = async (): Promise<void> => {
-			const updatedSelectedNotes = new Map<string, string>(selectedNotes);
+			const updatedSelectedNotes = new Map<string, string>(selectedNotes); // check this
 			updatedSelectedNotes.delete(folder.path);
 			setSelectedNotes(updatedSelectedNotes);
 
-			setNotesContainerChildren(notesContainerChildren => notesContainerChildren.filter(child => child.key !== key));
+			setNotesContainerChildren(notesContainerChildren => notesContainerChildren.filter(child => child.key !== key)); // check this
 
 			const updatedFolderPaths = [...folderPaths, folder.path];
 			setFolderPaths(updatedFolderPaths);
-			setPromptTokens(promptTokens - tokens);
+			setPromptTokens(promptTokens - tokens); // arrow function?
 			// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 
 			if (selectedNotes.size === 0) {
@@ -239,15 +242,15 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 		};
 
 		if (folder.path === "/") {
-			const newFolderContainer = <FolderContainer showPath={true} path={app.vault.getName() + " (Vault)"} basename={folder.name} tokens={tokens} onClick={removeListener} key={key}></FolderContainer>;
-			setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newFolderContainer]);
+			const newFolderContainer = <FolderContainer key={key} showPath={true} path={app.vault.getName() + " (Vault)"} basename={folder.name} tokens={tokens} onClick={removeListener}></FolderContainer>;
+			setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newFolderContainer]); // check this
 		} else {
-			const newFolderContainer = <FolderContainer showPath={plugin.settings.showFolderPath} path={folder.path} basename={folder.name} tokens={tokens} onClick={removeListener} key={key}></FolderContainer>;
-			setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newFolderContainer]);
+			const newFolderContainer = <FolderContainer key={key} showPath={plugin.settings.showFolderPath} path={folder.path} basename={folder.name} tokens={tokens} onClick={removeListener}></FolderContainer>;
+			setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newFolderContainer]); // check this
 		}
 	};
 
-	const countNoteTokens = async (noteContents: string | undefined): Promise<number> => {
+	const countNoteTokens = (noteContents: string | undefined): number => {
 		if (typeof noteContents === "string") {
 			return Math.round(noteContents.length / 4);
 		} else {
@@ -255,7 +258,7 @@ const SelectorModal: React.FC<SelectorModalProps> = ({ app, plugin, parent }) =>
 		}
 	};
 
-	const loadNoteContents = async (): Promise<string[]> => {
+	const loadNoteContents = (): string[] => {
 		const noteContents: string[] = [];
 
 		for (const noteContent of selectedNotes.values()) {
