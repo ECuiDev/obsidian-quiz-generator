@@ -8,7 +8,7 @@ interface FolderContainerProps {
 	tokens: number;
 	onClick: () => Promise<void>;
 }
-
+// Refactor into single file/component with NoteContainer?
 const FolderContainer: React.FC<FolderContainerProps> = ({ showPath, path, basename, tokens, onClick }) => {
 	return (
 		<div className={"notes-container-element"}>

@@ -1,5 +1,5 @@
 import { App, FuzzySuggestModal } from "obsidian";
-
+// Refactor into a single file/class with folderAdder?
 export default class NoteAdder extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
 	private readonly notePaths: string[];
