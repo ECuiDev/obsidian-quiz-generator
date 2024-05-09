@@ -8,7 +8,7 @@ interface SelectorButtonProps {
 	isDisabled: boolean;
 }
 
-const SelectorButton: React.FC<SelectorButtonProps> = ({ icon, toolTip, onClick, isDisabled }) => {
+const SelectorButton = ({ icon, toolTip, onClick, isDisabled }: SelectorButtonProps) => {
 	const buttonRef = useRef(null);
 
 	useEffect(() => {
@@ -19,7 +19,7 @@ const SelectorButton: React.FC<SelectorButtonProps> = ({ icon, toolTip, onClick,
 	}, []);
 
 	return (
-		<button ref={buttonRef} className={"ui-button"} onClick={onClick} disabled={isDisabled}></button>
+		<button ref={buttonRef} className="ui-button" onClick={onClick} disabled={isDisabled}></button>
 	);
 };
 

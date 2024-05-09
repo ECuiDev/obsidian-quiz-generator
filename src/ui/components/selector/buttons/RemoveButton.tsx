@@ -5,7 +5,7 @@ interface RemoveButtonProps {
 	onClick: () => Promise<void>
 }
 
-const RemoveButton: React.FC<RemoveButtonProps> = ({ onClick }) => {
+const RemoveButton = ({ onClick }: RemoveButtonProps) => {
 	const buttonRef = useRef(null);
 
 	useEffect(() => {
@@ -16,7 +16,7 @@ const RemoveButton: React.FC<RemoveButtonProps> = ({ onClick }) => {
 	}, []);
 
 	return (
-		<button ref={buttonRef} className={"remove-button"} onClick={onClick}></button>
+		<button ref={buttonRef} className="remove-button" onClick={onClick}></button>
 	);
 };
 
