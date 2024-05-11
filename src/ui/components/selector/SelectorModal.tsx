@@ -1,4 +1,4 @@
-import React, { useState, useRef, ReactElement } from 'react';
+import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { App, Vault, Notice, TFile, TFolder } from "obsidian";
 import GptGenerator from "../../../generators/gptGenerator";
 import QuizGenerator from "../../../main";
@@ -20,11 +20,8 @@ interface SelectorModalProps {
 
 const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const modalRef = useRef<HTMLDivElement>(null);
-	const [notePaths, setNotePaths] = useState<string[]>(app.vault.getMarkdownFiles().map(file => file.path));
-	const [folderPaths, setFolderPaths] = useState<string[]>(
-		app.vault.getAllLoadedFiles()
-			.filter(abstractFile => abstractFile instanceof TFolder)
-			.map(folder => folder.path));
+	const [notePaths, setNotePaths] = useState<string[]>([]);
+	const [folderPaths, setFolderPaths] = useState<string[]>([]);
 	const [selectedNotes, setSelectedNotes] = useState<Map<string, string>>(new Map<string, string>());
 	const [questionsAndAnswers, setQuestionsAndAnswers] = useState<(ParsedMC | ParsedTF | ParsedSA)[]>([]);
 	const [promptTokens, setPromptTokens] = useState<number>(0);
@@ -32,39 +29,41 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const [quizButtonDisabled, setQuizButtonDisabled] = useState<boolean>(true);
 	const [generateButtonDisabled, setGenerateButtonDisabled] = useState<boolean>(true);
 	const [quiz, setQuiz] = useState<QuizUI>();
-	const [notesContainerChildren, setNotesContainerChildren] = useState<ReactElement[]>([]); // add type here
+	const [notesContainerChildren, setNotesContainerChildren] = useState<ReactElement[]>([]);
 
-	// turn the onOpen function into a useEffect hook
-	// this lets you initialize all your state variables with empty values and initialize them properly when the component mounts
+	useEffect(() => {
+		setNotePaths(app.vault.getMarkdownFiles().map(file => file.path));
+		setFolderPaths(app.vault.getAllLoadedFiles().filter(abstractFile => abstractFile instanceof TFolder).map(folder => folder.path));
+	}, []);
 
 	const close = (): void => {
 		document.body.removeChild(parent);
 	};
 
-	const clearListener = async (): Promise<void> => {
+	const clearHandler = async (): Promise<void> => {
 		setClearButtonDisabled(true);
 		setGenerateButtonDisabled(true);
 		setSelectedNotes(new Map<string, string>());
 		setNotesContainerChildren([]);
 		setPromptTokens(0);
 		// update tokenSection text content (should be done automatically when setPromptTokens runs?)
-		setNotePaths(app.vault.getMarkdownFiles().map(file => file.path)); // create new array and then call setter
-		setFolderPaths(app.vault.getAllLoadedFiles().filter(abstractFile => abstractFile instanceof TFolder).map(folder => folder.path)); // create new array and then call setter
+		setNotePaths(app.vault.getMarkdownFiles().map(file => file.path)); // good
+		setFolderPaths(app.vault.getAllLoadedFiles().filter(abstractFile => abstractFile instanceof TFolder).map(folder => folder.path)); // good
 	};
 
-	const quizListener = async (): Promise<void> => {
+	const quizHandler = async (): Promise<void> => {
 		quiz?.open();
 	};
 
-	const addNoteListener = async (): Promise<void> => {
+	const addNoteHandler = async (): Promise<void> => {
 		await showNoteAdder();
 	};
 
-	const addFolderListener = async (): Promise<void> => {
+	const addFolderHandler = async (): Promise<void> => {
 		await showFolderAdder();
 	};
 
-	const generateListener = async (): Promise<void> => {
+	const generateHandler = async (): Promise<void> => {
 		if ((plugin.settings.generateMultipleChoice || plugin.settings.generateTrueFalse
 			|| plugin.settings.generateShortAnswer) && promptTokens > 0) {
 			setGenerateButtonDisabled(true);
@@ -125,10 +124,12 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 				const selectedNote = app.vault.getFileByPath(selectedItem);
 
 				if (selectedNote instanceof TFile) {
-					setNotePaths(notePaths => notePaths.filter(element => element !== selectedNote.path)); // create new array then set
+					setNotePaths(paths => paths.filter(element => element !== selectedNote.path)); // good
 					await showNoteAdder();
+					const newSelectedNotes = new Map<string, string>(selectedNotes);
 					const noteContents = cleanUpString(await app.vault.cachedRead(selectedNote));
-					setSelectedNotes(new Map<string, string>(selectedNotes.set(selectedNote.path, noteContents))); // create new map then set
+					newSelectedNotes.set(selectedNote.path, noteContents);
+					setSelectedNotes(newSelectedNotes); // good
 					console.log(selectedNotes);
 					await displayNote(selectedNote);
 				}
@@ -146,7 +147,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 				const selectedFolder = app.vault.getFolderByPath(selectedItem);
 
 				if (selectedFolder instanceof TFolder) {
-					setFolderPaths(folderPaths => folderPaths.filter(element => element !== selectedFolder.path)); // create new array then set
+					setFolderPaths(paths => paths.filter(element => element !== selectedFolder.path)); // good
 					await showFolderAdder();
 
 					let folderContents: string[] = [];
@@ -164,7 +165,9 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 					await Promise.all(promises);
 
-					setSelectedNotes(selectedNotes => new Map<string, string>(selectedNotes).set(selectedFolder.path, folderContents.join(" "))); // create new map then set
+					const newSelectedNotes = new Map<string, string>(selectedNotes);
+					newSelectedNotes.set(selectedFolder.path, folderContents.join(" "));
+					setSelectedNotes(newSelectedNotes); // good
 					await displayFolder(selectedFolder);
 				}
 			});
@@ -180,7 +183,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 		await addNoteContainer(note, noteTokens);
 
-		setPromptTokens(promptTokens + noteTokens); // change to the arrow function promptTokens => promptTokens + noteTokens thing?
+		setPromptTokens(prevPromptTokens => prevPromptTokens + noteTokens); // good
 		// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 	};
 
@@ -191,23 +194,22 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 		await addFolderContainer(folder, noteTokens);
 
-		setPromptTokens(promptTokens + noteTokens); // change to the arrow function promptTokens => promptTokens + noteTokens thing?
+		setPromptTokens(prevPromptTokens => prevPromptTokens + noteTokens); // good
 		// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 	};
 
 	const addNoteContainer = async (note: TFile, tokens: number): Promise<void> => {
-		const key = new Date().getTime().toString(); // bad key, fix this
+		const key = note.path; // good
 
-		const removeListener = async (): Promise<void> => {
-			const updatedSelectedNotes = new Map<string, string>(selectedNotes); // check if this creates a shallow copy or not
-			updatedSelectedNotes.delete(note.path);
-			setSelectedNotes(new Map<string, string>(updatedSelectedNotes)); // double check this
+		const removeHandler = async (): Promise<void> => {
+			const newSelectedNotes = new Map<string, string>(selectedNotes); // good
+			newSelectedNotes.delete(note.path);
+			setSelectedNotes(newSelectedNotes); // good
 
-			setNotesContainerChildren(notesContainerChildren => notesContainerChildren.filter(child => child.key !== key)); // create new array then set
-
-			const updatedNotePaths = [...notePaths, note.path];
-			setNotePaths(updatedNotePaths);
-			setPromptTokens(promptTokens - tokens); // arrow function?
+			setNotesContainerChildren(children => children.filter(child => child.key !== key)); // good
+			
+			setNotePaths(paths => [...paths, note.path]);
+			setPromptTokens(prevPromptTokens => prevPromptTokens + tokens); // good
 			// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 
 			if (selectedNotes.size === 0) {
@@ -216,23 +218,22 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 			}
 		};
 
-		const newNoteContainer = <NoteContainer key={key} showPath={plugin.settings.showNotePath} path={note.path} basename={note.basename} tokens={tokens} onClick={removeListener}></NoteContainer>;
-		setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newNoteContainer]); // double check this
+		const newNoteContainer = <NoteContainer key={key} showPath={plugin.settings.showNotePath} path={note.path} basename={note.basename} tokens={tokens} onClick={removeHandler}></NoteContainer>;
+		setNotesContainerChildren(children => [...children, newNoteContainer]); // good
 	};
 
 	const addFolderContainer = async (folder: TFolder, tokens: number): Promise<void> => {
-		const key = new Date().getTime().toString(); // bad key, fix this
+		const key = folder.path; // good
 
-		const removeListener = async (): Promise<void> => {
-			const updatedSelectedNotes = new Map<string, string>(selectedNotes); // check this
-			updatedSelectedNotes.delete(folder.path);
-			setSelectedNotes(updatedSelectedNotes);
+		const removeHandler = async (): Promise<void> => {
+			const newSelectedNotes = new Map<string, string>(selectedNotes); // good
+			newSelectedNotes.delete(folder.path);
+			setSelectedNotes(newSelectedNotes);
 
-			setNotesContainerChildren(notesContainerChildren => notesContainerChildren.filter(child => child.key !== key)); // check this
+			setNotesContainerChildren(children => children.filter(child => child.key !== key)); // good
 
-			const updatedFolderPaths = [...folderPaths, folder.path];
-			setFolderPaths(updatedFolderPaths);
-			setPromptTokens(promptTokens - tokens); // arrow function?
+			setFolderPaths(paths => [...paths, folder.path]);
+			setPromptTokens(prevPromptTokens => prevPromptTokens + tokens); // good
 			// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 
 			if (selectedNotes.size === 0) {
@@ -242,11 +243,11 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 		};
 
 		if (folder.path === "/") {
-			const newFolderContainer = <FolderContainer key={key} showPath={true} path={app.vault.getName() + " (Vault)"} basename={folder.name} tokens={tokens} onClick={removeListener}></FolderContainer>;
-			setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newFolderContainer]); // check this
+			const newFolderContainer = <FolderContainer key={key} showPath={true} path={app.vault.getName() + " (Vault)"} basename={folder.name} tokens={tokens} onClick={removeHandler}></FolderContainer>;
+			setNotesContainerChildren(children => [...children, newFolderContainer]); // good
 		} else {
-			const newFolderContainer = <FolderContainer key={key} showPath={plugin.settings.showFolderPath} path={folder.path} basename={folder.name} tokens={tokens} onClick={removeListener}></FolderContainer>;
-			setNotesContainerChildren(notesContainerChildren => [...notesContainerChildren, newFolderContainer]); // check this
+			const newFolderContainer = <FolderContainer key={key} showPath={plugin.settings.showFolderPath} path={folder.path} basename={folder.name} tokens={tokens} onClick={removeHandler}></FolderContainer>;
+			setNotesContainerChildren(children => [...children, newFolderContainer]); // good
 		}
 	};
 
@@ -270,21 +271,21 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 	return (
 		<>
-			<div className={"modal-bg"} style={{opacity: 0.85}}></div>
-			<div ref={modalRef} className={"modal modal-el-container"}>
-				<div className={"modal-close-button"} onClick={close}></div>
-				<div className={"modal-title title-style"}>Selected Notes</div>
-				<div className={"modal-content modal-content-container"}>
-					<div className={"notes-container"}>
+			<div className="modal-bg" style={{opacity: 0.85}}></div>
+			<div ref={modalRef} className="modal modal-el-container">
+				<div className="modal-close-button" onClick={close}></div>
+				<div className="modal-title title-style">Selected Notes</div>
+				<div className="modal-content modal-content-container">
+					<div className="notes-container">
 						{notesContainerChildren}
 					</div>
-					<span className={"token-container"}>Prompt tokens: {promptTokens}</span>
-					<div className={"selector-button-container"}>
-						<SelectorButton icon={"book-x"} toolTip={"Remove all"} onClick={clearListener} isDisabled={clearButtonDisabled}></SelectorButton>
-						<SelectorButton icon={"scroll-text"} toolTip={"Open quiz"} onClick={quizListener} isDisabled={quizButtonDisabled}></SelectorButton>
-						<SelectorButton icon={"file-plus-2"} toolTip={"Add note"} onClick={addNoteListener} isDisabled={false}></SelectorButton>
-						<SelectorButton icon={"folder-plus"} toolTip={"Add folder"} onClick={addFolderListener} isDisabled={false}></SelectorButton>
-						<SelectorButton icon={"webhook"} toolTip={"Generate"} onClick={generateListener} isDisabled={generateButtonDisabled}></SelectorButton>
+					<span className="token-container">Prompt tokens: {promptTokens}</span>
+					<div className="selector-button-container">
+						<SelectorButton icon="book-x" toolTip="Remove all" onClick={clearHandler} isDisabled={clearButtonDisabled}></SelectorButton>
+						<SelectorButton icon="scroll-text" toolTip="Open quiz" onClick={quizHandler} isDisabled={quizButtonDisabled}></SelectorButton>
+						<SelectorButton icon="file-plus-2" toolTip="Add note" onClick={addNoteHandler} isDisabled={false}></SelectorButton>
+						<SelectorButton icon="folder-plus" toolTip="Add folder" onClick={addFolderHandler} isDisabled={false}></SelectorButton>
+						<SelectorButton icon="webhook" toolTip="Generate" onClick={generateHandler} isDisabled={generateButtonDisabled}></SelectorButton>
 					</div>
 				</div>
 			</div>
