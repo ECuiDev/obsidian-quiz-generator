@@ -3,7 +3,7 @@ import { App, Vault, Notice, TFile, TFolder } from "obsidian";
 import GptGenerator from "../../../generators/gptGenerator";
 import QuizGenerator from "../../../main";
 import { cleanUpString } from "../../../utils/parser";
-import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA } from "../../../utils/types";
+import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../../../utils/types";
 import NoteAdder from "../../noteAdder";
 import FolderAdder from "../../folderAdder";
 import "styles.css";
@@ -22,8 +22,8 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const modalRef = useRef<HTMLDivElement>(null);
 	const [notePaths, setNotePaths] = useState<string[]>([]);
 	const [folderPaths, setFolderPaths] = useState<string[]>([]);
-	const [selectedNotes, setSelectedNotes] = useState<Map<string, string>>(new Map<string, string>());
-	const [questionsAndAnswers, setQuestionsAndAnswers] = useState<(ParsedMC | ParsedTF | ParsedSA)[]>([]);
+	const [selectedNotes, setSelectedNotes] = useState<SelectedNote[]>([]);
+	const [questionsAndAnswers, setQuestionsAndAnswers] = useState<(ParsedMC | ParsedTF | ParsedSA)[]>([]); // PRETTY SURE THIS ACTUALLY ISN'T NEEDED (CHANGE TO LOCAL VAR)
 	const [promptTokens, setPromptTokens] = useState<number>(0);
 	const [clearButtonDisabled, setClearButtonDisabled] = useState<boolean>(true);
 	const [quizButtonDisabled, setQuizButtonDisabled] = useState<boolean>(true);
@@ -43,7 +43,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const clearHandler = async (): Promise<void> => {
 		setClearButtonDisabled(true);
 		setGenerateButtonDisabled(true);
-		setSelectedNotes(new Map<string, string>());
+		setSelectedNotes([]);
 		setNotesContainerChildren([]);
 		setPromptTokens(0);
 		// update tokenSection text content (should be done automatically when setPromptTokens runs?)
@@ -56,7 +56,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	};
 
 	const addNoteHandler = async (): Promise<void> => {
-		await showNoteAdder();
+		await showNoteAdder(); // when merging pass notePaths or folderPaths as arguments
 	};
 
 	const addFolderHandler = async (): Promise<void> => {
@@ -126,10 +126,9 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 				if (selectedNote instanceof TFile) {
 					setNotePaths(paths => paths.filter(element => element !== selectedNote.path)); // good
 					await showNoteAdder();
-					const newSelectedNotes = new Map<string, string>(selectedNotes);
-					const noteContents = cleanUpString(await app.vault.cachedRead(selectedNote));
-					newSelectedNotes.set(selectedNote.path, noteContents);
-					setSelectedNotes(newSelectedNotes); // good
+					const path = selectedNote.path;
+					const contents = cleanUpString(await app.vault.cachedRead(selectedNote));
+					setSelectedNotes(prevNotes => [...prevNotes, { path, contents }]); // FIX THIS
 					console.log(selectedNotes);
 					await displayNote(selectedNote);
 				}
@@ -165,9 +164,9 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 					await Promise.all(promises);
 
-					const newSelectedNotes = new Map<string, string>(selectedNotes);
-					newSelectedNotes.set(selectedFolder.path, folderContents.join(" "));
-					setSelectedNotes(newSelectedNotes); // good
+					const path = selectedFolder.path;
+					const contents = folderContents.join(" ");
+					setSelectedNotes(prevNotes => [...prevNotes, { path, contents }]); // FIX
 					await displayFolder(selectedFolder);
 				}
 			});
@@ -179,10 +178,10 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const displayNote = async (note: TFile): Promise<void> => {
 		setClearButtonDisabled(false);
 		setGenerateButtonDisabled(false);
-		const noteTokens = countNoteTokens(selectedNotes.get(note.path));
+		const noteTokens = countNoteTokens(selectedNotes.find(entry => entry.path === note.path)?.contents);
 
 		await addNoteContainer(note, noteTokens);
-
+		// when merging can use TAbstractFile? or maybe just TFile | TFolder
 		setPromptTokens(prevPromptTokens => prevPromptTokens + noteTokens); // good
 		// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 	};
@@ -190,7 +189,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const displayFolder = async (folder: TFolder): Promise<void> => {
 		setClearButtonDisabled(false);
 		setGenerateButtonDisabled(false);
-		const noteTokens = countNoteTokens(selectedNotes.get(folder.path));
+		const noteTokens = countNoteTokens(selectedNotes.find(entry => entry.path === folder.path)?.contents);
 
 		await addFolderContainer(folder, noteTokens);
 
@@ -202,17 +201,15 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 		const key = note.path; // good
 
 		const removeHandler = async (): Promise<void> => {
-			const newSelectedNotes = new Map<string, string>(selectedNotes); // good
-			newSelectedNotes.delete(note.path);
-			setSelectedNotes(newSelectedNotes); // good
+			setSelectedNotes(prevNotes => prevNotes.filter(entry => entry.path !== note.path)); // good, replace with key
 
 			setNotesContainerChildren(children => children.filter(child => child.key !== key)); // good
 			
 			setNotePaths(paths => [...paths, note.path]);
-			setPromptTokens(prevPromptTokens => prevPromptTokens + tokens); // good
+			setPromptTokens(prevPromptTokens => prevPromptTokens - tokens); // good
 			// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 
-			if (selectedNotes.size === 0) {
+			if (selectedNotes.length === 0) {
 				setClearButtonDisabled(true);
 				setGenerateButtonDisabled(true);
 			}
@@ -226,17 +223,15 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 		const key = folder.path; // good
 
 		const removeHandler = async (): Promise<void> => {
-			const newSelectedNotes = new Map<string, string>(selectedNotes); // good
-			newSelectedNotes.delete(folder.path);
-			setSelectedNotes(newSelectedNotes);
+			setSelectedNotes(prevNotes => prevNotes.filter(entry => entry.path !== folder.path)); // good
 
 			setNotesContainerChildren(children => children.filter(child => child.key !== key)); // good
 
 			setFolderPaths(paths => [...paths, folder.path]);
-			setPromptTokens(prevPromptTokens => prevPromptTokens + tokens); // good
+			setPromptTokens(prevPromptTokens => prevPromptTokens - tokens); // good
 			// this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens; might not need this
 
-			if (selectedNotes.size === 0) {
+			if (selectedNotes.length === 0) {
 				setClearButtonDisabled(true);
 				setGenerateButtonDisabled(true);
 			}
@@ -262,8 +257,8 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const loadNoteContents = (): string[] => {
 		const noteContents: string[] = [];
 
-		for (const noteContent of selectedNotes.values()) {
-			noteContents.push(noteContent);
+		for (const note of selectedNotes) {
+			noteContents.push(note.contents);
 		}
 
 		return noteContents;

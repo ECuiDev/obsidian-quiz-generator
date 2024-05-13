@@ -21,6 +21,11 @@ export interface ParsedSA {
 	answer: string;
 }
 
+export interface SelectedNote {
+	path: string;
+	contents: string;
+}
+
 export const models: Record<string, string> = {
 	"gpt-3.5-turbo-0125": "GPT-3.5",
 	"gpt-4-0125-preview": "GPT-4"
