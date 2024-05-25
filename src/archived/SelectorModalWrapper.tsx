@@ -1,5 +1,5 @@
 import { App } from "obsidian";
-import QuizGenerator from "../../../main";
+import QuizGenerator from "../main";
 import SelectorModal from "./SelectorModal";
 import React from "react";
 

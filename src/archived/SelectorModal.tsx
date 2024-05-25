@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { App, Vault, Notice, TFile, TFolder, getFrontMatterInfo } from "obsidian";
-import GptGenerator from "../../../generators/gptGenerator";
-import QuizGenerator from "../../../main";
-import { cleanUpNoteContents } from "../../../utils/parser";
-import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../../../utils/types";
-import NoteAndFolderSelector from "../../noteAndFolderSelector";
+import GptGenerator from "../generators/gptGenerator";
+import QuizGenerator from "../main";
+import { cleanUpNoteContents } from "../utils/parser";
+import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../utils/types";
+import NoteAndFolderSelector from "../ui/noteAndFolderSelector";
 import "styles.css";
-import QuizModal from "../../quizModal";
-import SelectorButton from "./buttons/SelectorButton";
+import QuizModal from "../ui/quizModal";
+import SelectorButton from "../ui/components/selector/buttons/SelectorButton";
 import NoteContainer from "./NoteContainer";
 import FolderContainer from "./FolderContainer";
 

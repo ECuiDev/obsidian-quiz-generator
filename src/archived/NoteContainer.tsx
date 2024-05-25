@@ -1,15 +1,15 @@
 import React from "react";
-import RemoveButton from "./buttons/RemoveButton";
+import RemoveButton from "./RemoveButton";
 
-interface FolderContainerProps {
+interface NoteContainerProps {
 	showPath: boolean;
 	path: string;
 	basename: string;
 	tokens: number;
 	onClick: () => Promise<void>;
 }
-// Refactor into single file/component with NoteContainer?
-const FolderContainer: React.FC<FolderContainerProps> = ({ showPath, path, basename, tokens, onClick }) => {
+// Refactor into single file/component with FolderContainer?
+const NoteContainer: React.FC<NoteContainerProps> = ({ showPath, path, basename, tokens, onClick }) => {
 	return (
 		<div className={"notes-container-element"}>
 			{showPath ? path : basename}
@@ -19,4 +19,4 @@ const FolderContainer: React.FC<FolderContainerProps> = ({ showPath, path, basen
 	);
 }
 
-export default FolderContainer;
+export default NoteContainer;
