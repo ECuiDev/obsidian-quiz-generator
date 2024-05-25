@@ -1,28 +1,28 @@
 import { App, FuzzySuggestModal } from "obsidian";
-// Refactor into a single file/class with noteAdder?
-export default class FolderAdder extends FuzzySuggestModal<string> {
-	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | null = null;
-	private readonly folderPaths: string[];
-	private selectorContainer: HTMLElement;
 
-	constructor(app: App, folderPaths: string[], selectorContainer: HTMLElement) {
+export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
+	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void); // evt unnecessary?
+	private readonly paths: string[];
+	private selectorModal: HTMLElement;
+
+	constructor(app: App, paths: string[], selectorModal: HTMLElement) {
 		super(app);
-		this.folderPaths = folderPaths;
-		this.selectorContainer = selectorContainer;
+		this.paths = paths;
+		this.selectorModal = selectorModal;
 
-		this.onChooseItem = this.onChooseItem.bind(this);
+		this.onChooseItem = this.onChooseItem.bind(this); // unnecessary?
 	}
 
 	public onOpen(): void {
 		super.onOpen();
 		this.containerEl.firstElementChild?.addClass("remove-opacity");
-		this.selectorContainer.addClass("move-left");
+		this.selectorModal.addClass("move-left");
 		this.containerEl.children[1].addClass("move-right", "adder-modal");
 	}
 
 	public onClose(): void {
 		super.onClose();
-		this.selectorContainer.removeClass("move-left");
+		this.selectorModal.removeClass("move-left");
 	}
 
 	public setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
@@ -40,7 +40,7 @@ export default class FolderAdder extends FuzzySuggestModal<string> {
 	}
 
 	public getItems(): string[] {
-		return this.folderPaths;
+		return this.paths;
 	}
 
 }

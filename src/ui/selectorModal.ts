@@ -3,8 +3,7 @@ import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
 import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
-import NoteAdder from "./noteAdder";
-import FolderAdder from "./folderAdder";
+import NoteAndFolderSelector from "./noteAndFolderSelector";
 import "styles.css";
 import QuizModal from "./quizModal";
 
@@ -182,7 +181,7 @@ export default class SelectorModal extends Modal {
 	}
 
 	private showNoteAdder(): void {
-		const modal = new NoteAdder(this.app, this.notePaths, this.modalEl);
+		const modal = new NoteAndFolderSelector(this.app, this.notePaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
 			const selectedNote = this.app.vault.getFileByPath(selectedItem);
@@ -200,7 +199,7 @@ export default class SelectorModal extends Modal {
 	}
 
 	private showFolderAdder(): void {
-		const modal = new FolderAdder(this.app, this.folderPaths, this.modalEl);
+		const modal = new NoteAndFolderSelector(this.app, this.folderPaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
 			const selectedFolder = this.app.vault.getFolderByPath(selectedItem);

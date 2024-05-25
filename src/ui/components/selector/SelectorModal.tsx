@@ -4,8 +4,7 @@ import GptGenerator from "../../../generators/gptGenerator";
 import QuizGenerator from "../../../main";
 import { cleanUpString } from "../../../utils/parser";
 import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../../../utils/types";
-import NoteAdder from "../../noteAdder";
-import FolderAdder from "../../folderAdder";
+import NoteAndFolderSelector from "../../noteAndFolderSelector";
 import "styles.css";
 import QuizModal from "../../quizModal";
 import SelectorButton from "./buttons/SelectorButton";
@@ -118,7 +117,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 	const showNoteAdder = async (): Promise<void> => {
 		if (modalRef.current) {
-			const modal = new NoteAdder(app, notePaths, modalRef.current);
+			const modal = new NoteAndFolderSelector(app, notePaths, modalRef.current);
 
 			modal.setCallback(async (selectedItem: string) => {
 				const selectedNote = app.vault.getFileByPath(selectedItem);
@@ -140,7 +139,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 	const showFolderAdder = async (): Promise<void> => {
 		if (modalRef.current) {
-			const modal = new FolderAdder(app, folderPaths, modalRef.current);
+			const modal = new NoteAndFolderSelector(app, folderPaths, modalRef.current);
 
 			modal.setCallback(async (selectedItem: string) => {
 				const selectedFolder = app.vault.getFolderByPath(selectedItem);
