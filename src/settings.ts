@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
+import { languages, models, saveFormats } from "./utils/types";
 import QuizGenerator from "./main";
-import { models, languages, saveFormats } from "./utils/types";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private plugin: QuizGenerator;

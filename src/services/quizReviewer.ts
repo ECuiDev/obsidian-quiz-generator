@@ -1,7 +1,7 @@
-import { App, TFile, Notice } from "obsidian";
+import { App, Notice, TFile } from "obsidian";
+import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
 import QuizGenerator from "../main";
 import QuizModal from "../ui/quizModal";
-import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 
 export default class QuizReviewer {
 	private readonly app: App;

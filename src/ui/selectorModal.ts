@@ -1,11 +1,11 @@
 import { App, getFrontMatterInfo, Modal, Notice, setIcon, setTooltip, TFile, TFolder, Vault } from "obsidian";
+import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
+import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
-import { cleanUpNoteContents } from "../utils/parser";
-import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
-import "styles.css";
 import QuizModal from "./quizModal";
+import "styles.css";
 
 export default class SelectorModal extends Modal {
 	private readonly plugin: QuizGenerator;

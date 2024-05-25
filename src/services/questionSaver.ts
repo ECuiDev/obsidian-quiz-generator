@@ -1,5 +1,5 @@
-import { App, TFile, normalizePath } from "obsidian";
-import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
+import { App, normalizePath, TFile } from "obsidian";
+import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
 import QuizGenerator from "../main";
 
 export default class QuestionSaver {
