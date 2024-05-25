@@ -21,8 +21,8 @@ export default class QuizGenerator extends Plugin {
 		});
 
 		this.addCommand({
-			id: "open-quiz-from-current-note",
-			name: "Open quiz from current note",
+			id: "open-quiz-from-active-note",
+			name: "Open quiz from active note",
 			callback: () => {
 				new QuizReviewer(this.app, this).openQuiz(this.app.workspace.getActiveFile());
 			}
