@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
-import { App, Vault, Notice, TFile, TFolder } from "obsidian";
+import { App, Vault, Notice, TFile, TFolder, getFrontMatterInfo } from "obsidian";
 import GptGenerator from "../../../generators/gptGenerator";
 import QuizGenerator from "../../../main";
-import { cleanUpString } from "../../../utils/parser";
+import { cleanUpNoteContents } from "../../../utils/parser";
 import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../../../utils/types";
 import NoteAndFolderSelector from "../../noteAndFolderSelector";
 import "styles.css";
@@ -126,7 +126,9 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 					setNotePaths(paths => paths.filter(element => element !== selectedNote.path)); // good
 					await showNoteAdder();
 					const path = selectedNote.path;
-					const contents = cleanUpString(await app.vault.cachedRead(selectedNote));
+					let contents = await app.vault.cachedRead(selectedNote);
+					const hasFrontMatter = getFrontMatterInfo(contents).exists;
+					contents = cleanUpNoteContents(contents, hasFrontMatter);
 					setSelectedNotes(prevNotes => [...prevNotes, { path, contents }]); // FIX THIS
 					console.log(selectedNotes);
 					await displayNote(selectedNote);
@@ -155,7 +157,9 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 						if (file instanceof TFile && file.extension === "md") {
 							promises.push(
 								(async () => {
-									folderContents.push(cleanUpString(await app.vault.cachedRead(file)));
+									const noteContents = await app.vault.cachedRead(file);
+									const hasFrontMatter = getFrontMatterInfo(noteContents).exists;
+									folderContents.push(cleanUpNoteContents(noteContents, hasFrontMatter));
 								})()
 							);
 						}

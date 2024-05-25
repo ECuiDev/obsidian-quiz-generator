@@ -1,11 +1,13 @@
-export function cleanUpString(input: string): string {
-	let cleanedString = removeFrontMatter(input);
-	cleanedString = cleanUpLinks(cleanedString);
-	cleanedString = removeMarkdownHeadings(cleanedString);
-	cleanedString = removeMarkdownFormatting(cleanedString);
-	cleanedString = removeSpecialCharacters(cleanedString);
-
-	return cleanUpWhiteSpace(cleanedString);
+export function cleanUpNoteContents(noteContents: string, hasFrontMatter: boolean): string {
+	let cleanedContents = noteContents;
+	if (hasFrontMatter) {
+		cleanedContents = removeFrontMatter(cleanedContents);
+	}
+	cleanedContents = cleanUpLinks(cleanedContents);
+	cleanedContents = removeMarkdownHeadings(cleanedContents);
+	cleanedContents = removeMarkdownFormatting(cleanedContents);
+	cleanedContents = removeSpecialCharacters(cleanedContents);
+	return cleanUpWhiteSpace(cleanedContents);
 }
 
 function removeFrontMatter(input: string): string {

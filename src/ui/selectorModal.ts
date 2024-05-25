@@ -1,7 +1,7 @@
-import { App, Modal, Notice, setIcon, setTooltip, TFile, TFolder, Vault } from "obsidian";
+import { App, getFrontMatterInfo, Modal, Notice, setIcon, setTooltip, TFile, TFolder, Vault } from "obsidian";
 import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
-import { cleanUpString } from "../utils/parser";
+import { cleanUpNoteContents } from "../utils/parser";
 import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import "styles.css";
@@ -189,8 +189,9 @@ export default class SelectorModal extends Modal {
 			if (selectedNote instanceof TFile) {
 				this.notePaths.remove(selectedNote.path);
 				this.showNoteAdder();
-				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
-				this.selectedNotes.set(selectedNote.path, noteContents);
+				const noteContents = await this.app.vault.cachedRead(selectedNote);
+				const hasFrontMatter = getFrontMatterInfo(noteContents).exists;
+				this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, hasFrontMatter));
 				this.displayNote(selectedNote);
 			}
 		});
@@ -215,7 +216,9 @@ export default class SelectorModal extends Modal {
 					if (file instanceof TFile && file.extension === "md") {
 						promises.push(
 							(async () => {
-								folderContents.push(cleanUpString(await this.app.vault.cachedRead(file)));
+								const noteContents = await this.app.vault.cachedRead(file);
+								const hasFrontMatter = getFrontMatterInfo(noteContents).exists;
+								folderContents.push(cleanUpNoteContents(noteContents, hasFrontMatter));
 							})()
 						);
 					}
