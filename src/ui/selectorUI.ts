@@ -23,11 +23,11 @@ export default class SelectorUI extends Modal {
 	private addNoteButton: HTMLButtonElement;
 	private addFolderButton: HTMLButtonElement;
 	private generateButton: HTMLButtonElement;
-	private clearListener: () => void;
-	private quizListener: () => void;
-	private addNoteListener: () => void;
-	private addFolderListener: () => void;
-	private generateListener: () => void;
+	private clearHandler: () => void;
+	private openQuizHandler: () => void;
+	private addNoteHandler: () => void;
+	private addFolderHandler: () => void;
+	private generateQuizHandler: () => void;
 	private gpt: GptGenerator;
 	private quiz: QuizUI;
 
@@ -68,7 +68,7 @@ export default class SelectorUI extends Modal {
 	}
 
 	private activateButtons(): void {
-		this.clearListener = async (): Promise<void> => {
+		this.clearHandler = (): void => {
 			this.generateButton.disabled = true;
 			this.clearButton.disabled = true;
 			this.selectedNotes.clear();
@@ -79,15 +79,15 @@ export default class SelectorUI extends Modal {
 			this.folderPaths = this.app.vault.getAllLoadedFiles()
 				.filter(abstractFile => abstractFile instanceof TFolder)
 				.map(folder => folder.path);
-		}
+		};
 
-		this.quizListener = async (): Promise<void> => this.quiz.open();
+		this.openQuizHandler = (): void => this.quiz.open();
 
-		this.addNoteListener = async (): Promise<void> => await this.showNoteAdder();
+		this.addNoteHandler = (): void => this.showNoteAdder();
 
-		this.addFolderListener = async (): Promise<void> => await this.showFolderAdder();
+		this.addFolderHandler = (): void => this.showFolderAdder();
 
-		this.generateListener = async (): Promise<void> => {
+		this.generateQuizHandler = async (): Promise<void> => {
 			if ((this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0) {
 				this.generateButton.disabled = true;
@@ -95,7 +95,7 @@ export default class SelectorUI extends Modal {
 				this.gpt = new GptGenerator(this.plugin);
 
 				new Notice("Generating...");
-				let questions = await this.gpt.generateQuestions(await this.loadNoteContents());
+				let questions = await this.gpt.generateQuestions(this.loadNoteContents());
 				questions = questions?.replace(/\\/g, "\\\\");
 
 				if (questions) {
@@ -169,11 +169,11 @@ export default class SelectorUI extends Modal {
 		setIcon(this.generateButton, "webhook");
 		setTooltip(this.generateButton, "Generate");
 
-		this.clearButton.addEventListener("click", this.clearListener);
-		this.quizButton.addEventListener("click", this.quizListener);
-		this.addNoteButton.addEventListener("click", this.addNoteListener);
-		this.addFolderButton.addEventListener("click", this.addFolderListener);
-		this.generateButton.addEventListener("click", this.generateListener);
+		this.clearButton.addEventListener("click", this.clearHandler);
+		this.quizButton.addEventListener("click", this.openQuizHandler);
+		this.addNoteButton.addEventListener("click", this.addNoteHandler);
+		this.addFolderButton.addEventListener("click", this.addFolderHandler);
+		this.generateButton.addEventListener("click", this.generateQuizHandler);
 	}
 
 	private displayTokens(): void {
@@ -181,7 +181,7 @@ export default class SelectorUI extends Modal {
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
-	private async showNoteAdder(): Promise<void> {
+	private showNoteAdder(): void {
 		const modal = new NoteAdder(this.app, this.notePaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
@@ -189,17 +189,17 @@ export default class SelectorUI extends Modal {
 
 			if (selectedNote instanceof TFile) {
 				this.notePaths.remove(selectedNote.path);
-				await this.showNoteAdder();
+				this.showNoteAdder();
 				const noteContents = cleanUpString(await this.app.vault.cachedRead(selectedNote));
 				this.selectedNotes.set(selectedNote.path, noteContents);
-				await this.displayNote(selectedNote);
+				this.displayNote(selectedNote);
 			}
 		});
 
 		modal.open();
 	}
 
-	private async showFolderAdder(): Promise<void> {
+	private showFolderAdder(): void {
 		const modal = new FolderAdder(this.app, this.folderPaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string) => {
@@ -207,7 +207,7 @@ export default class SelectorUI extends Modal {
 
 			if (selectedFolder instanceof TFolder) {
 				this.folderPaths.remove(selectedFolder.path);
-				await this.showFolderAdder();
+				this.showFolderAdder();
 
 				let folderContents: string[] = [];
 				const promises: any[] = [];
@@ -225,14 +225,14 @@ export default class SelectorUI extends Modal {
 				await Promise.all(promises);
 
 				this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
-				await this.displayFolder(selectedFolder);
+				this.displayFolder(selectedFolder);
 			}
 		});
 
 		modal.open();
 	}
 
-	private async displayNote(note: TFile): Promise<void> {
+	private displayNote(note: TFile): void {
 		this.clearButton.disabled = false;
 		this.generateButton.disabled = false;
 
@@ -241,14 +241,14 @@ export default class SelectorUI extends Modal {
 			selectedNoteBox.textContent = note.path : selectedNoteBox.textContent = note.basename;
 
 		const noteTokensElement = selectedNoteBox.createDiv("note-tokens");
-		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(note.path));
+		const noteTokens = this.countNoteTokens(this.selectedNotes.get(note.path));
 		noteTokensElement.textContent = noteTokens + " tokens";
 
 		const removeButton = selectedNoteBox.createEl("button");
 		removeButton.addClass("remove-button");
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
-		removeButton.addEventListener("click", async () => {
+		removeButton.addEventListener("click", () => {
 			this.selectedNotes.delete(note.path);
 			this.notesContainer.removeChild(selectedNoteBox);
 			this.notePaths.push(note.path);
@@ -265,7 +265,7 @@ export default class SelectorUI extends Modal {
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
-	private async displayFolder(folder: TFolder): Promise<void> {
+	private displayFolder(folder: TFolder): void {
 		this.clearButton.disabled = false;
 		this.generateButton.disabled = false;
 
@@ -279,14 +279,14 @@ export default class SelectorUI extends Modal {
 		}
 
 		const noteTokensElement = selectedFolderBox.createDiv("note-tokens");
-		const noteTokens = await this.countNoteTokens(this.selectedNotes.get(folder.path));
+		const noteTokens = this.countNoteTokens(this.selectedNotes.get(folder.path));
 		noteTokensElement.textContent = noteTokens + " tokens";
 
 		const removeButton = selectedFolderBox.createEl("button");
 		removeButton.addClass("remove-button");
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
-		removeButton.addEventListener("click", async () => {
+		removeButton.addEventListener("click", () => {
 			this.selectedNotes.delete(folder.path);
 			this.notesContainer.removeChild(selectedFolderBox);
 			this.folderPaths.push(folder.path);
@@ -303,7 +303,7 @@ export default class SelectorUI extends Modal {
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
-	private async countNoteTokens(noteContents: string | undefined): Promise<number> {
+	private countNoteTokens(noteContents: string | undefined): number {
 		if (typeof noteContents === "string") {
 			return Math.round(noteContents.length / 4);
 		} else {
@@ -311,7 +311,7 @@ export default class SelectorUI extends Modal {
 		}
 	}
 
-	private async loadNoteContents(): Promise<string[]> {
+	private loadNoteContents(): string[] {
 		const noteContents: string[] = [];
 
 		for (const noteContent of this.selectedNotes.values()) {
