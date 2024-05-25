@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import { setIcon, setTooltip } from "obsidian";
 
-interface SelectorButtonProps {
+interface CustomizableButtonProps {
 	icon: string;
 	toolTip: string;
 	onClick: () => Promise<void>;
 	isDisabled: boolean;
 }
 
-const SelectorButton = ({ icon, toolTip, onClick, isDisabled }: SelectorButtonProps) => {
+const CustomizableButton = ({ icon, toolTip, onClick, isDisabled }: CustomizableButtonProps) => {
 	const buttonRef = useRef(null);
 
 	useEffect(() => {
@@ -23,4 +23,4 @@ const SelectorButton = ({ icon, toolTip, onClick, isDisabled }: SelectorButtonPr
 	);
 };
 
-export default SelectorButton;
+export default CustomizableButton;

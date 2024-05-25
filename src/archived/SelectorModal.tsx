@@ -7,7 +7,7 @@ import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../
 import NoteAndFolderSelector from "../ui/noteAndFolderSelector";
 import "styles.css";
 import QuizModal from "../ui/quizModal";
-import SelectorButton from "../ui/components/selector/buttons/SelectorButton";
+import CustomizableButton from "../ui/components/buttons/CustomizableButton";
 import NoteContainer from "./NoteContainer";
 import FolderContainer from "./FolderContainer";
 
@@ -279,11 +279,11 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 					</div>
 					<span className="token-container">Prompt tokens: {promptTokens}</span>
 					<div className="selector-button-container">
-						<SelectorButton icon="book-x" toolTip="Remove all" onClick={clearHandler} isDisabled={clearButtonDisabled}></SelectorButton>
-						<SelectorButton icon="scroll-text" toolTip="Open quiz" onClick={quizHandler} isDisabled={quizButtonDisabled}></SelectorButton>
-						<SelectorButton icon="file-plus-2" toolTip="Add note" onClick={addNoteHandler} isDisabled={false}></SelectorButton>
-						<SelectorButton icon="folder-plus" toolTip="Add folder" onClick={addFolderHandler} isDisabled={false}></SelectorButton>
-						<SelectorButton icon="webhook" toolTip="Generate" onClick={generateHandler} isDisabled={generateButtonDisabled}></SelectorButton>
+						<CustomizableButton icon="book-x" toolTip="Remove all" onClick={clearHandler} isDisabled={clearButtonDisabled}></CustomizableButton>
+						<CustomizableButton icon="scroll-text" toolTip="Open quiz" onClick={quizHandler} isDisabled={quizButtonDisabled}></CustomizableButton>
+						<CustomizableButton icon="file-plus-2" toolTip="Add note" onClick={addNoteHandler} isDisabled={false}></CustomizableButton>
+						<CustomizableButton icon="folder-plus" toolTip="Add folder" onClick={addFolderHandler} isDisabled={false}></CustomizableButton>
+						<CustomizableButton icon="webhook" toolTip="Generate" onClick={generateHandler} isDisabled={generateButtonDisabled}></CustomizableButton>
 					</div>
 				</div>
 			</div>
