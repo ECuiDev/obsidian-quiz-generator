@@ -1,5 +1,5 @@
 import { Plugin, TAbstractFile, TFile } from "obsidian";
-import SelectorUI from "./ui/selectorUI";
+import SelectorModal from "./ui/selectorModal";
 import QuizSettingsTab from "./settings";
 import QuizReviewer from "./services/quizReviewer";
 import { QuizSettings, DEFAULT_SETTINGS } from "./utils/types";
@@ -26,12 +26,12 @@ export default class QuizGenerator extends Plugin {
 			id: "open-generator",
 			name: "Open generator",
 			callback: () => {
-				new SelectorUI(this.app, this).open();
+				new SelectorModal(this.app, this).open();
 			}
 		});
 
 		this.addRibbonIcon("brain-circuit", "Open generator", async () => {
-			new SelectorUI(this.app, this).open();
+			new SelectorModal(this.app, this).open();
 		});
 
 		this.addCommand({

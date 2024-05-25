@@ -1,12 +1,12 @@
 import { App, TFile, Notice } from "obsidian";
 import QuizGenerator from "../main";
-import QuizUI from "../ui/quizUI";
+import QuizModal from "../ui/quizModal";
 import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
 
 export default class QuizReviewer {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
-	private quiz: QuizUI;
+	private quiz: QuizModal;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 
 	constructor(app: App, plugin: QuizGenerator) {
@@ -20,7 +20,7 @@ export default class QuizReviewer {
 			const fileContents = await this.app.vault.cachedRead(file);
 			this.calloutParser(fileContents);
 			this.spacedRepetitionParser(fileContents);
-			this.quiz = new QuizUI(this.app, this.plugin, this.questionsAndAnswers);
+			this.quiz = new QuizModal(this.app, this.plugin, this.questionsAndAnswers);
 			this.quiz.disableSave();
 			this.quiz.open();
 		} else {

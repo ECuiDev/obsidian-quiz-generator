@@ -1,10 +1,10 @@
-import { App, Modal, TFile, TFolder, setIcon, setTooltip, normalizePath, MarkdownRenderer, Notice } from "obsidian";
-import { ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
+import { App, MarkdownRenderer, Modal, normalizePath, Notice, setIcon, setTooltip, TFile, TFolder } from "obsidian";
+import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
 import QuizGenerator from "../main";
 import QuestionSaver from "../services/questionSaver";
 import "styles.css";
 
-export default class QuizUI extends Modal {
+export default class QuizModal extends Modal {
 	private readonly plugin: QuizGenerator
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private saved: boolean[];

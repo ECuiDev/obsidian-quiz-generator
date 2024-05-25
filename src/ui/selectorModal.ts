@@ -1,14 +1,14 @@
-import { App, Vault, Modal, Notice, TFile, TFolder, setIcon, setTooltip } from "obsidian";
+import { App, Modal, Notice, setIcon, setTooltip, TFile, TFolder, Vault } from "obsidian";
 import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
 import { cleanUpString } from "../utils/parser";
-import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA } from "../utils/types";
+import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
 import NoteAdder from "./noteAdder";
 import FolderAdder from "./folderAdder";
 import "styles.css";
-import QuizUI from "./quizUI";
+import QuizModal from "./quizModal";
 
-export default class SelectorUI extends Modal {
+export default class SelectorModal extends Modal {
 	private readonly plugin: QuizGenerator;
 	private notePaths: string[];
 	private folderPaths: string[];
@@ -29,7 +29,7 @@ export default class SelectorUI extends Modal {
 	private addFolderHandler: () => void;
 	private generateQuizHandler: () => void;
 	private gpt: GptGenerator;
-	private quiz: QuizUI;
+	private quiz: QuizModal;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		super(app);
@@ -124,7 +124,7 @@ export default class SelectorUI extends Modal {
 							}
 						}
 
-						this.quiz = new QuizUI(this.app, this.plugin, this.questionsAndAnswers);
+						this.quiz = new QuizModal(this.app, this.plugin, this.questionsAndAnswers);
 						this.quiz.open();
 					} catch (error) {
 						new Notice(error);

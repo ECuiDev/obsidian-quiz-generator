@@ -7,7 +7,7 @@ import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../
 import NoteAdder from "../../noteAdder";
 import FolderAdder from "../../folderAdder";
 import "styles.css";
-import QuizUI from "../../quizUI";
+import QuizModal from "../../quizModal";
 import SelectorButton from "./buttons/SelectorButton";
 import NoteContainer from "./NoteContainer";
 import FolderContainer from "./FolderContainer";
@@ -28,7 +28,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	const [clearButtonDisabled, setClearButtonDisabled] = useState<boolean>(true);
 	const [quizButtonDisabled, setQuizButtonDisabled] = useState<boolean>(true);
 	const [generateButtonDisabled, setGenerateButtonDisabled] = useState<boolean>(true);
-	const [quiz, setQuiz] = useState<QuizUI>();
+	const [quiz, setQuiz] = useState<QuizModal>();
 	const [notesContainerChildren, setNotesContainerChildren] = useState<ReactElement[]>([]);
 
 	useEffect(() => {
@@ -100,7 +100,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 						}
 					}
 
-					setQuiz(new QuizUI(app, plugin, questionsAndAnswers));
+					setQuiz(new QuizModal(app, plugin, questionsAndAnswers));
 					quiz?.open();
 				} catch (error) {
 					new Notice(error);
