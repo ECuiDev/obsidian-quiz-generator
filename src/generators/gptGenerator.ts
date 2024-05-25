@@ -30,7 +30,7 @@ export default class GptGenerator extends Generator {
 			}
 
 			return completion.choices[0].message.content?.replace(/```json\n?|```/g, "");
-		} catch (error) {
+		} catch (error: any) {
 			new Notice(error);
 		}
 	}

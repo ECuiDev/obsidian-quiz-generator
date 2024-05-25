@@ -6,7 +6,6 @@ import QuizModal from "../ui/quizModal";
 export default class QuizReviewer {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
-	private quiz: QuizModal;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 
 	constructor(app: App, plugin: QuizGenerator) {
@@ -20,9 +19,9 @@ export default class QuizReviewer {
 			const fileContents = await this.app.vault.cachedRead(file);
 			this.calloutParser(fileContents);
 			this.spacedRepetitionParser(fileContents);
-			this.quiz = new QuizModal(this.app, this.plugin, this.questionsAndAnswers);
-			this.quiz.disableSave();
-			this.quiz.open();
+			const quiz = new QuizModal(this.app, this.plugin, this.questionsAndAnswers);
+			quiz.disableSave();
+			quiz.open();
 		} else {
 			new Notice("No active file.");
 		}

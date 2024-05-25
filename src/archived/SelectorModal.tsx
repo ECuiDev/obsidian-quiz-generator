@@ -101,7 +101,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 
 					setQuiz(new QuizModal(app, plugin, questionsAndAnswers));
 					quiz?.open();
-				} catch (error) {
+				} catch (error: any) {
 					new Notice(error);
 				}
 			} else {

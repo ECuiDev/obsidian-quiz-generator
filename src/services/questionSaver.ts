@@ -6,11 +6,9 @@ export default class QuestionSaver {
 	private app: App;
 	private readonly plugin: QuizGenerator;
 	private readonly question: ParsedMC | ParsedTF | ParsedSA;
-	private path: string;
 	private readonly fileName: string;
 	private readonly validPath: boolean;
 	private readonly fileCreated: boolean;
-	private file: TFile;
 
 	constructor(app: App, plugin: QuizGenerator, question: ParsedMC | ParsedTF | ParsedSA,
 				fileName: string, validPath: boolean, fileCreated: boolean) {
@@ -23,37 +21,39 @@ export default class QuestionSaver {
 	}
 
 	public async saveQuestion(): Promise<void> {
+		let path;
+		let quizFile;
 		if (this.validPath) {
-			this.path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
+			path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
 		} else {
-			this.path = this.fileName;
+			path = this.fileName;
 		}
 
 		if (!this.fileCreated) {
-			this.file = await this.app.vault.create(this.path, "#flashcards");
+			quizFile = await this.app.vault.create(path, "#flashcards");
 		} else {
-			const file = this.app.vault.getFileByPath(this.path);
+			const file = this.app.vault.getFileByPath(path);
 
 			if (file instanceof TFile) {
-				this.file = file;
+				quizFile = file;
 			} else {
-				this.file = await this.app.vault.create(this.path, "#flashcards");
+				quizFile = await this.app.vault.create(path, "#flashcards");
 			}
 		}
 
 		if (this.plugin.settings.questionSaveFormat === "Spaced Repetition") {
-			await this.saveForSpacedRepetition();
+			await this.saveForSpacedRepetition(quizFile);
 		} else {
-			await this.saveAsCallout();
+			await this.saveAsCallout(quizFile);
 		}
 	}
 
-	private async saveForSpacedRepetition(): Promise<void> {
-		await this.app.vault.append(this.file, "\n\n" + this.formatSpacedRepQuestion(this.question));
+	private async saveForSpacedRepetition(file: TFile): Promise<void> {
+		await this.app.vault.append(file, "\n\n" + this.formatSpacedRepQuestion(this.question));
 	}
 
-	private async saveAsCallout(): Promise<void> {
-		await this.app.vault.append(this.file, "\n\n" + this.formatCalloutQuestion(this.question));
+	private async saveAsCallout(file: TFile): Promise<void> {
+		await this.app.vault.append(file, "\n\n" + this.formatCalloutQuestion(this.question));
 	}
 
 	private formatSpacedRepQuestion(question: ParsedMC | ParsedTF | ParsedSA): string {

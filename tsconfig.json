@@ -18,7 +18,8 @@
       "ES7"
     ],
 	"jsx": "react",
-	"esModuleInterop": true
+	"esModuleInterop": true,
+	"strict": true
   },
   "include": [
 	"**/*.ts",
