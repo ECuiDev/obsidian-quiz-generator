@@ -78,7 +78,7 @@ export interface QuizSettings {
 	multilineSeparator: string;
 }
 
-export const DEFAULT_SETTINGS: Partial<QuizSettings> = {
+export const DEFAULT_SETTINGS: QuizSettings = {
 	apiKey: "",
 	apiBaseURL: "https://api.openai.com/v1",
 	model: "gpt-3.5-turbo-0125",

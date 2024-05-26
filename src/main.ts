@@ -5,7 +5,7 @@ import QuizSettingsTab from "./settings";
 import QuizReviewer from "./services/quizReviewer";
 
 export default class QuizGenerator extends Plugin {
-	settings: QuizSettings;
+	public settings: QuizSettings = DEFAULT_SETTINGS;
 
 	async onload(): Promise<void> {
 		// this.addCommand({
