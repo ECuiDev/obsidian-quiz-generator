@@ -6,7 +6,7 @@ import QuizModal from "../ui/quizModal";
 export default class QuizReviewer {
 	private readonly app: App;
 	private readonly plugin: QuizGenerator;
-	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
+	private readonly questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 
 	constructor(app: App, plugin: QuizGenerator) {
 		this.app = app;
@@ -30,7 +30,7 @@ export default class QuizReviewer {
 	private calloutParser(fileContents: string): void {
 		const regexMC = />\s*\[!question]\+?\s*(.+)\s*>\s*a\)\s*(.+)\s*>\s*b\)\s*(.+)\s*>\s*c\)\s*(.+)\s*>\s*d\)\s*(.+)\s*>>\s*\[!success]\s*(.+)\s*>>\s*([abcd])\)\s*(.+)/gim;
 
-		let match;
+		let match: RegExpExecArray | null;
 		while ((match = regexMC.exec(fileContents)) !== null) {
 			const question = match[1];
 			const choice1 = match[2];
@@ -77,7 +77,7 @@ export default class QuizReviewer {
 	private spacedRepetitionParser(fileContents: string): void {
 		const regexMC = new RegExp(`\\*\\*Multiple Choice:\\*\\*\\s*(.+)\\s*a\\)\\s*(.+)\\s*b\\)\\s*(.+)\\s*c\\)\\s*(.+)\\s*d\\)\\s*(.+)\\s*\\${this.plugin.settings.multilineSeparator}\\s*([abcd])\\)\\s*(.+)`, "gim");
 
-		let match;
+		let match: RegExpExecArray | null;
 		while ((match = regexMC.exec(fileContents)) !== null) {
 			const question = match[1];
 			const choice1 = match[2];

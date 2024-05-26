@@ -21,8 +21,8 @@ export default class QuestionSaver {
 	}
 
 	public async saveQuestion(): Promise<void> {
-		let path;
-		let quizFile;
+		let path: string;
+		let quizFile: TFile;
 		if (this.validPath) {
 			path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
 		} else {

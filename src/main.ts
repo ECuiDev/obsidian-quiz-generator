@@ -1,4 +1,4 @@
-import { Plugin, TAbstractFile, TFile } from "obsidian";
+import { Menu, MenuItem, Plugin, TAbstractFile, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, QuizSettings } from "./utils/types";
 import SelectorModal from "./ui/selectorModal";
 import QuizSettingsTab from "./settings";
@@ -25,31 +25,31 @@ export default class QuizGenerator extends Plugin {
 		this.addCommand({
 			id: "open-generator",
 			name: "Open generator",
-			callback: () => {
+			callback: (): void => {
 				new SelectorModal(this.app, this).open();
 			}
 		});
 
-		this.addRibbonIcon("brain-circuit", "Open generator", async () => {
+		this.addRibbonIcon("brain-circuit", "Open generator", (): void => {
 			new SelectorModal(this.app, this).open();
 		});
 
 		this.addCommand({
 			id: "open-quiz-from-active-note",
 			name: "Open quiz from active note",
-			callback: () => {
+			callback: (): void => {
 				new QuizReviewer(this.app, this).openQuiz(this.app.workspace.getActiveFile());
 			}
 		});
 
 		this.registerEvent(
-			this.app.workspace.on("file-menu", (menu, file: TAbstractFile) => {
+			this.app.workspace.on("file-menu", (menu: Menu, file: TAbstractFile): void => {
 				if (file instanceof TFile && file.extension === "md") {
-					menu.addItem((item) => {
+					menu.addItem((item: MenuItem): void => {
 						item
 							.setTitle("Open quiz from this note")
 							.setIcon("scroll-text")
-							.onClick(() => {
+							.onClick((): void => {
 								new QuizReviewer(this.app, this).openQuiz(file);
 							});
 					});

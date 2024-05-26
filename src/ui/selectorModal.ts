@@ -1,4 +1,4 @@
-import { App, getFrontMatterInfo, Modal, Notice, setIcon, setTooltip, TFile, TFolder, Vault } from "obsidian";
+import { App, getFrontMatterInfo, Modal, Notice, setIcon, setTooltip, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
 import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
@@ -11,64 +11,43 @@ export default class SelectorModal extends Modal {
 	private readonly plugin: QuizGenerator;
 	private notePaths: string[];
 	private folderPaths: string[];
-	private selectedNotes: Map<string, string>;
+	private selectedNotes: Map<string, string> = new Map<string, string>();
 	private notesContainer: HTMLDivElement;
 	private buttonContainer: HTMLDivElement;
 	private tokenSection: HTMLSpanElement;
 	private promptTokens: number = 0;
-	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
-	private clearButton: HTMLButtonElement;
-	private quizButton: HTMLButtonElement;
-	private addNoteButton: HTMLButtonElement;
-	private addFolderButton: HTMLButtonElement;
-	private generateButton: HTMLButtonElement;
-	private clearHandler: () => void;
-	private openQuizHandler: () => void;
-	private addNoteHandler: () => void;
-	private addFolderHandler: () => void;
-	private generateQuizHandler: () => void;
-	private gpt: GptGenerator;
-	private quiz: QuizModal;
+	private readonly clearButton: HTMLButtonElement;
+	private readonly openQuizButton: HTMLButtonElement;
+	private readonly addNoteButton: HTMLButtonElement;
+	private readonly addFolderButton: HTMLButtonElement;
+	private readonly generateQuizButton: HTMLButtonElement;
+	private readonly clearHandler: () => void;
+	private readonly openQuizHandler: () => void;
+	private readonly addNoteHandler: () => void;
+	private readonly addFolderHandler: () => void;
+	private readonly generateQuizHandler: () => void;
+	private quiz: QuizModal | undefined;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		super(app);
 		this.plugin = plugin;
-	}
-
-	public onOpen(): void {
 		this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
 		this.folderPaths = this.app.vault.getAllLoadedFiles()
 			.filter(abstractFile => abstractFile instanceof TFolder)
 			.map(folder => folder.path);
-		this.selectedNotes = new Map<string, string>();
-		this.questionsAndAnswers = [];
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
 		this.titleEl.setText("Selected Notes");
 		this.titleEl.addClass("title-style");
 
-		this.displayNoteContainer();
-		this.displayTokens();
-		this.activateButtons();
-		this.displayButtons();
-
-		this.clearButton.disabled = true;
-		this.quizButton.disabled = true;
-		this.generateButton.disabled = true;
-	}
-
-	public onClose(): void {
-		super.onClose();
-	}
-
-	private displayNoteContainer(): void {
 		this.notesContainer = this.contentEl.createDiv("notes-container");
-	}
 
-	private activateButtons(): void {
+		this.tokenSection = this.contentEl.createSpan("token-container");
+		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+
 		this.clearHandler = (): void => {
-			this.generateButton.disabled = true;
+			this.generateQuizButton.disabled = true;
 			this.clearButton.disabled = true;
 			this.selectedNotes.clear();
 			this.notesContainer.empty();
@@ -79,22 +58,18 @@ export default class SelectorModal extends Modal {
 				.filter(abstractFile => abstractFile instanceof TFolder)
 				.map(folder => folder.path);
 		};
-
-		this.openQuizHandler = (): void => this.quiz.open();
-
+		this.openQuizHandler = (): void => this.quiz?.open();
 		this.addNoteHandler = (): void => this.showNoteAdder();
-
 		this.addFolderHandler = (): void => this.showFolderAdder();
-
 		this.generateQuizHandler = async (): Promise<void> => {
 			if ((this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
 				|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0) {
-				this.generateButton.disabled = true;
-				this.questionsAndAnswers.length = 0;
-				this.gpt = new GptGenerator(this.plugin);
+				this.generateQuizButton.disabled = true;
+				const questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[] = [];
+				const generator = new GptGenerator(this.plugin);
 
 				new Notice("Generating...");
-				let questions = await this.gpt.generateQuestions(this.loadNoteContents());
+				let questions = await generator.generateQuestions(this.loadNoteContents());
 				questions = questions?.replace(/\\/g, "\\\\");
 
 				if (questions) {
@@ -108,11 +83,11 @@ export default class SelectorModal extends Modal {
 								if (Array.isArray(value)) {
 									value.forEach(element => {
 										if ("questionMC" in element) {
-											this.questionsAndAnswers.push(element as ParsedMC);
+											questionsAndAnswers.push(element as ParsedMC);
 										} else if ("questionTF" in element) {
-											this.questionsAndAnswers.push(element as ParsedTF);
+											questionsAndAnswers.push(element as ParsedTF);
 										} else if ("questionSA" in element) {
-											this.questionsAndAnswers.push(element as ParsedSA);
+											questionsAndAnswers.push(element as ParsedSA);
 										} else {
 											new Notice("A question was generated incorrectly");
 										}
@@ -123,67 +98,74 @@ export default class SelectorModal extends Modal {
 							}
 						}
 
-						this.quiz = new QuizModal(this.app, this.plugin, this.questionsAndAnswers);
+						this.quiz = new QuizModal(this.app, this.plugin, questionsAndAnswers);
 						this.quiz.open();
-					} catch (error) {
+					} catch (error: any) {
 						new Notice(error);
 					}
 				} else {
 					new Notice("Failure: Generation returned null");
 				}
 
-				this.generateButton.disabled = false;
-				this.quizButton.disabled = false;
+				this.generateQuizButton.disabled = false;
+				this.openQuizButton.disabled = false;
 			} else {
 				new Notice("Generation cancelled because all question types are set to false or prompt contains 0 tokens");
 			}
-		}
+		};
+
+		this.buttonContainer = this.contentEl.createDiv("selector-button-container");
+		this.clearButton = this.buttonContainer.createEl("button");
+		this.openQuizButton = this.buttonContainer.createEl("button");
+		this.addNoteButton = this.buttonContainer.createEl("button");
+		this.addFolderButton = this.buttonContainer.createEl("button");
+		this.generateQuizButton = this.buttonContainer.createEl("button");
+		this.activateButtons();
 	}
 
-	private displayButtons(): void {
-		this.buttonContainer = this.contentEl.createDiv("selector-button-container");
+	public onOpen(): void {
+		super.onOpen();
+		this.clearButton.disabled = true;
+		this.openQuizButton.disabled = true;
+		this.generateQuizButton.disabled = true;
+	}
 
-		this.clearButton = this.buttonContainer.createEl("button");
+	public onClose(): void {
+		super.onClose();
+	}
+
+	private activateButtons(): void {
 		this.clearButton.addClass("ui-button");
 		setIcon(this.clearButton, "book-x");
 		setTooltip(this.clearButton, "Remove all");
 
-		this.quizButton = this.buttonContainer.createEl("button");
-		this.quizButton.addClass("ui-button");
-		setIcon(this.quizButton, "scroll-text");
-		setTooltip(this.quizButton, "Open quiz");
+		this.openQuizButton.addClass("ui-button");
+		setIcon(this.openQuizButton, "scroll-text");
+		setTooltip(this.openQuizButton, "Open quiz");
 
-		this.addNoteButton = this.buttonContainer.createEl("button");
 		this.addNoteButton.addClass("ui-button");
 		setIcon(this.addNoteButton, "file-plus-2");
 		setTooltip(this.addNoteButton, "Add note");
 
-		this.addFolderButton = this.buttonContainer.createEl("button");
 		this.addFolderButton.addClass("ui-button");
 		setIcon(this.addFolderButton, "folder-plus");
 		setTooltip(this.addFolderButton, "Add folder");
 
-		this.generateButton = this.buttonContainer.createEl("button");
-		this.generateButton.addClass("ui-button");
-		setIcon(this.generateButton, "webhook");
-		setTooltip(this.generateButton, "Generate");
+		this.generateQuizButton.addClass("ui-button");
+		setIcon(this.generateQuizButton, "webhook");
+		setTooltip(this.generateQuizButton, "Generate");
 
 		this.clearButton.addEventListener("click", this.clearHandler);
-		this.quizButton.addEventListener("click", this.openQuizHandler);
+		this.openQuizButton.addEventListener("click", this.openQuizHandler);
 		this.addNoteButton.addEventListener("click", this.addNoteHandler);
 		this.addFolderButton.addEventListener("click", this.addFolderHandler);
-		this.generateButton.addEventListener("click", this.generateQuizHandler);
-	}
-
-	private displayTokens(): void {
-		this.tokenSection = this.contentEl.createSpan("token-container");
-		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+		this.generateQuizButton.addEventListener("click", this.generateQuizHandler);
 	}
 
 	private showNoteAdder(): void {
 		const modal = new NoteAndFolderSelector(this.app, this.notePaths, this.modalEl);
 
-		modal.setCallback(async (selectedItem: string) => {
+		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedNote = this.app.vault.getFileByPath(selectedItem);
 
 			if (selectedNote instanceof TFile) {
@@ -202,7 +184,7 @@ export default class SelectorModal extends Modal {
 	private showFolderAdder(): void {
 		const modal = new NoteAndFolderSelector(this.app, this.folderPaths, this.modalEl);
 
-		modal.setCallback(async (selectedItem: string) => {
+		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedFolder = this.app.vault.getFolderByPath(selectedItem);
 
 			if (selectedFolder instanceof TFolder) {
@@ -212,10 +194,10 @@ export default class SelectorModal extends Modal {
 				let folderContents: string[] = [];
 				const promises: any[] = [];
 
-				Vault.recurseChildren(selectedFolder, (file) => {
+				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
 					if (file instanceof TFile && file.extension === "md") {
 						promises.push(
-							(async () => {
+							(async (): Promise<void> => {
 								const noteContents = await this.app.vault.cachedRead(file);
 								const hasFrontMatter = getFrontMatterInfo(noteContents).exists;
 								folderContents.push(cleanUpNoteContents(noteContents, hasFrontMatter));
@@ -236,7 +218,7 @@ export default class SelectorModal extends Modal {
 
 	private displayNote(note: TFile): void {
 		this.clearButton.disabled = false;
-		this.generateButton.disabled = false;
+		this.generateQuizButton.disabled = false;
 
 		const selectedNoteBox = this.notesContainer.createDiv("notes-container-element");
 		this.plugin.settings.showNotePath ?
@@ -250,7 +232,7 @@ export default class SelectorModal extends Modal {
 		removeButton.addClass("remove-button");
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
-		removeButton.addEventListener("click", () => {
+		removeButton.addEventListener("click", (): void => {
 			this.selectedNotes.delete(note.path);
 			this.notesContainer.removeChild(selectedNoteBox);
 			this.notePaths.push(note.path);
@@ -259,7 +241,7 @@ export default class SelectorModal extends Modal {
 
 			if (this.selectedNotes.size === 0) {
 				this.clearButton.disabled = true;
-				this.generateButton.disabled = true;
+				this.generateQuizButton.disabled = true;
 			}
 		});
 
@@ -269,7 +251,7 @@ export default class SelectorModal extends Modal {
 
 	private displayFolder(folder: TFolder): void {
 		this.clearButton.disabled = false;
-		this.generateButton.disabled = false;
+		this.generateQuizButton.disabled = false;
 
 		const selectedFolderBox = this.notesContainer.createDiv("notes-container-element");
 
@@ -288,7 +270,7 @@ export default class SelectorModal extends Modal {
 		removeButton.addClass("remove-button");
 		setIcon(removeButton, "x");
 		setTooltip(removeButton, "Remove");
-		removeButton.addEventListener("click", () => {
+		removeButton.addEventListener("click", (): void => {
 			this.selectedNotes.delete(folder.path);
 			this.notesContainer.removeChild(selectedFolderBox);
 			this.folderPaths.push(folder.path);
@@ -297,7 +279,7 @@ export default class SelectorModal extends Modal {
 
 			if (this.selectedNotes.size === 0) {
 				this.clearButton.disabled = true;
-				this.generateButton.disabled = true;
+				this.generateQuizButton.disabled = true;
 			}
 		});
 

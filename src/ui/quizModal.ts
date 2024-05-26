@@ -5,52 +5,93 @@ import QuestionSaver from "../services/questionSaver";
 import "styles.css";
 
 export default class QuizModal extends Modal {
-	private readonly plugin: QuizGenerator
+	private readonly plugin: QuizGenerator;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
-	private saved: boolean[];
-	private questionIndex: number;
+	private readonly saved: boolean[];
+	private questionIndex: number = 0;
 	private questionContainer: HTMLDivElement;
 	private buttonContainer: HTMLDivElement;
-	private backButton: HTMLButtonElement;
-	private saveButton: HTMLButtonElement;
-	private saveAllButton: HTMLButtonElement;
-	private nextButton: HTMLButtonElement;
-	private backListener: () => void;
-	private saveListener: () => void;
-	private saveAllListener: () => void;
-	private nextListener: () => void;
-	private fileName: string;
-	private validPath: boolean;
-	private fileCreated: boolean;
+	private readonly previousButton: HTMLButtonElement;
+	private readonly saveButton: HTMLButtonElement;
+	private readonly saveAllButton: HTMLButtonElement;
+	private readonly nextButton: HTMLButtonElement;
+	private readonly previousQuestionHandler: () => void;
+	private readonly saveQuestionHandler: () => void;
+	private readonly saveAllQuestionsHandler: () => void;
+	private readonly nextQuestionHandler: () => void;
+	private fileName: string = "Quiz 0.md";
+	private validPath: boolean = false;
+	private fileCreated: boolean = false;
 
 	constructor(app: App, plugin: QuizGenerator, questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[]) {
 		super(app);
 		this.plugin = plugin;
 		this.questionsAndAnswers = questionsAndAnswers;
 		this.saved = new Array(this.questionsAndAnswers.length).fill(false);
-		this.fileCreated = false;
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
 		this.titleEl.addClass("title-style");
 
 		this.chooseFileName();
-		this.activateButtons();
-		this.displayButtons();
-		this.displayLine();
-		this.displayQuestionContainer();
 
-		if (this.plugin.settings.autoSave) {
-			this.saveAllListener();
-		}
+		this.previousQuestionHandler = async (): Promise<void> => await this.showPreviousQuestion();
+		this.saveQuestionHandler = async (): Promise<void> => {
+			this.saveButton.disabled = true;
+			this.saveAllButton.disabled = this.saved.every(value => value);
+
+			this.saved[this.questionIndex] = true;
+			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
+				this.fileName, this.validPath, this.fileCreated).saveQuestion();
+			this.fileCreated = true;
+
+			if (this.validPath) {
+				new Notice("Question saved");
+			} else {
+				new Notice("Invalid path: Question saved in vault root folder");
+			}
+		};
+		this.saveAllQuestionsHandler = async (): Promise<void> => {
+			this.saveButton.disabled = true;
+			this.saveAllButton.disabled = true;
+
+			for (let index = 0; index < this.questionsAndAnswers.length; index++) {
+				if (!this.saved[index]) {
+					this.saved[index] = true;
+					await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[index],
+						this.fileName, this.validPath, this.fileCreated).saveQuestion();
+					this.fileCreated = true;
+				}
+			}
+
+			if (this.validPath) {
+				new Notice("All questions saved");
+			} else {
+				new Notice("Invalid path: All questions saved in vault root folder");
+			}
+		};
+		this.nextQuestionHandler = async (): Promise<void> => await this.showNextQuestion();
+
+		this.buttonContainer = this.contentEl.createDiv("quiz-button-container");
+		this.previousButton = this.buttonContainer.createEl("button");
+		this.saveButton = this.buttonContainer.createEl("button");
+		this.saveAllButton = this.buttonContainer.createEl("button");
+		this.nextButton = this.buttonContainer.createEl("button");
+		this.activateButtons();
+
+		this.contentEl.createEl("hr").addClass("quiz-divider");
+
+		this.questionContainer = this.contentEl.createDiv("question-container");
 	}
 
 	public async onOpen(): Promise<void> {
+		super.onOpen();
 		if (this.plugin.settings.randomizeQuestions) {
 			this.shuffleQuestions(this.questionsAndAnswers);
 		}
-
-		this.questionIndex = 0;
+		if (this.plugin.settings.autoSave) {
+			this.saveAllQuestionsHandler();
+		}
 		await this.showQuestion();
 	}
 
@@ -103,87 +144,30 @@ export default class QuizModal extends Modal {
 	}
 
 	private activateButtons(): void {
-		this.backListener = async (): Promise<void> => this.showPreviousQuestion();
+		this.previousButton.addClass("ui-button");
+		setIcon(this.previousButton, "arrow-left");
+		setTooltip(this.previousButton, "Back");
 
-		this.saveListener = async (): Promise<void> => {
-			this.saveButton.disabled = true;
-			this.saveAllButton.disabled = this.saved.every(value => value);
-
-			this.saved[this.questionIndex] = true;
-			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
-				this.fileName, this.validPath, this.fileCreated).saveQuestion();
-			this.fileCreated = true;
-
-			if (this.validPath) {
-				new Notice("Question saved");
-			} else {
-				new Notice("Invalid path: Question saved in vault root folder");
-			}
-		}
-
-		this.saveAllListener = async (): Promise<void> => {
-			this.saveButton.disabled = true;
-			this.saveAllButton.disabled = true;
-
-			for (let index = 0; index < this.questionsAndAnswers.length; index++) {
-				if (!this.saved[index]) {
-					this.saved[index] = true;
-					await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[index],
-						this.fileName, this.validPath, this.fileCreated).saveQuestion();
-					this.fileCreated = true;
-				}
-			}
-
-			if (this.validPath) {
-				new Notice("All questions saved");
-			} else {
-				new Notice("Invalid path: All questions saved in vault root folder");
-			}
-		}
-
-		this.nextListener = async (): Promise<void> => this.showNextQuestion();
-	}
-
-	private displayButtons(): void {
-		this.buttonContainer = this.contentEl.createDiv("quiz-button-container");
-
-		this.backButton = this.buttonContainer.createEl("button");
-		this.backButton.addClass("ui-button");
-		setIcon(this.backButton, "arrow-left");
-		setTooltip(this.backButton, "Back");
-
-		this.saveButton = this.buttonContainer.createEl("button");
 		this.saveButton.addClass("ui-button");
 		setIcon(this.saveButton, "save");
 		setTooltip(this.saveButton, "Save");
 
-		this.saveAllButton = this.buttonContainer.createEl("button");
 		this.saveAllButton.addClass("ui-button");
 		setIcon(this.saveAllButton, "save-all");
 		setTooltip(this.saveAllButton, "Save all");
 
-		this.nextButton = this.buttonContainer.createEl("button");
 		this.nextButton.addClass("ui-button");
 		setIcon(this.nextButton, "arrow-right");
 		setTooltip(this.nextButton, "Next");
 
-		this.backButton.addEventListener("click", this.backListener);
-		this.saveButton.addEventListener("click", this.saveListener);
-		this.saveAllButton.addEventListener("click", this.saveAllListener);
-		this.nextButton.addEventListener("click", this.nextListener);
-	}
-
-	private displayLine(): void {
-		const line = this.contentEl.createEl("hr");
-		line.addClass("quiz-divider");
-	}
-
-	private displayQuestionContainer(): void {
-		this.questionContainer = this.contentEl.createDiv("question-container");
+		this.previousButton.addEventListener("click", this.previousQuestionHandler);
+		this.saveButton.addEventListener("click", this.saveQuestionHandler);
+		this.saveAllButton.addEventListener("click", this.saveAllQuestionsHandler);
+		this.nextButton.addEventListener("click", this.nextQuestionHandler);
 	}
 
 	private async showQuestion(): Promise<void> {
-		this.backButton.disabled = this.questionIndex === 0;
+		this.previousButton.disabled = this.questionIndex === 0;
 		this.saveButton.disabled = this.saved[this.questionIndex];
 		this.saveAllButton.disabled = this.saved.every(value => value);
 		this.nextButton.disabled = this.questionIndex === this.questionsAndAnswers.length - 1;
@@ -234,7 +218,7 @@ export default class QuizModal extends Modal {
 			const choiceNumber = choices.indexOf(choice);
 			const choiceButton = choicesContainer.createEl("button");
 			await MarkdownRenderer.render(this.app, choice, choiceButton, "", this.plugin);
-			choiceButton.addEventListener("click", () =>
+			choiceButton.addEventListener("click", (): void =>
 				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).answer, choiceNumber + 1));
 		}
 	}
@@ -245,13 +229,13 @@ export default class QuizModal extends Modal {
 		const trueButton = trueFalseContainer.createEl("button");
 		trueButton.textContent = "True";
 		trueButton.addClass("true-button");
-		trueButton.addEventListener("click", () =>
+		trueButton.addEventListener("click", (): void =>
 			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).answer, true));
 
 		const falseButton = trueFalseContainer.createEl("button");
 		falseButton.textContent = "False";
 		falseButton.addClass("false-button");
-		falseButton.addEventListener("click", () =>
+		falseButton.addEventListener("click", (): void =>
 			this.selectTFAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedTF).answer, false));
 	}
 	
@@ -259,8 +243,8 @@ export default class QuizModal extends Modal {
 		const showAnswerButton = this.questionContainer.createEl("button");
 		showAnswerButton.textContent = "Show answer";
 		showAnswerButton.classList.add("show-answer-button");
-		showAnswerButton.addEventListener("click", () =>
-			this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).answer));
+		showAnswerButton.addEventListener("click", async (): Promise<void> =>
+			await this.showSAAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedSA).answer));
 	}
 
 	private async showNextQuestion(): Promise<void> {
