@@ -173,6 +173,7 @@
 	text-align: left;
 	white-space: normal !important;
 	font-size: 100%;
+	opacity: 1 !important;
 }
 
 .show-answer-button:hover {
@@ -186,6 +187,7 @@
 }
 
 .correct-choice {
+	opacity: 1 !important;
 	background-color: #28a745 !important;
 }
 
