@@ -28,7 +28,7 @@ export interface SelectedNote {
 
 export const models: Record<string, string> = {
 	"gpt-3.5-turbo-0125": "GPT-3.5",
-	"gpt-4-0125-preview": "GPT-4"
+	"gpt-4-0125-preview": "GPT-4",
 }
 
 export const languages: Record<string, string> = {
@@ -49,12 +49,15 @@ export const languages: Record<string, string> = {
 	Polish: "Polski",
 	Hindi: "हिन्दी",
 	Vietnamese: "Tiếng Việt",
-	Ukrainian: "українська"
+	Ukrainian: "українська",
+	Swedish: "Svenska",
+	Persian: "فارسی",
+	Greek: "Ελληνικά",
 };
 
 export const saveFormats: Record<string, string> = {
 	"Callout": "Callout",
-	"Spaced Repetition": "Spaced Repetition"
+	"Spaced Repetition": "Spaced Repetition",
 };
 
 export interface QuizSettings {
