@@ -1,6 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import { languages, models, saveFormats } from "./utils/types";
-import QuizGenerator from "./main";
+import { languages, models, saveFormats } from "../utils/types";
+import QuizGenerator from "../main";
+import FolderSuggester from "./folderSuggester";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private plugin: QuizGenerator;
@@ -200,15 +201,16 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Save location")
-			.setDesc("Enter vault absolute path to folder where questions are saved (leave blank to save in vault root folder).")
-			.addText((text) =>
-				text
+			.setDesc("Enter vault path to folder where questions are saved (leave blank to save in vault root folder).")
+			.addSearch((search) => {
+				new FolderSuggester(this.app, search.inputEl);
+				search
 					.setValue(this.plugin.settings.questionSavePath)
 					.onChange(async (value) => {
 						this.plugin.settings.questionSavePath = value;
 						await this.plugin.saveSettings();
 					})
-			);
+			});
 
 		new Setting(containerEl)
 			.setName("Save format")
