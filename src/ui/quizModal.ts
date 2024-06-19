@@ -114,7 +114,7 @@ export default class QuizModal extends Modal {
 
 	private chooseFileName(): void {
 		let count = 1;
-		const folder = this.app.vault.getFolderByPath(normalizePath(this.plugin.settings.questionSavePath.trim()));
+		const folder = this.app.vault.getAbstractFileByPath(normalizePath(this.plugin.settings.questionSavePath.trim()));
 
 		if (folder instanceof TFolder) {
 			const fileNames = folder.children

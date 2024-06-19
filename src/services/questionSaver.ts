@@ -32,7 +32,7 @@ export default class QuestionSaver {
 		if (!this.fileCreated) {
 			quizFile = await this.app.vault.create(path, "#flashcards");
 		} else {
-			const file = this.app.vault.getFileByPath(path);
+			const file = this.app.vault.getAbstractFileByPath(path);
 
 			if (file instanceof TFile) {
 				quizFile = file;

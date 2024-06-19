@@ -166,7 +166,7 @@ export default class SelectorModal extends Modal {
 		const modal = new NoteAndFolderSelector(this.app, this.notePaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
-			const selectedNote = this.app.vault.getFileByPath(selectedItem);
+			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedNote instanceof TFile) {
 				this.notePaths.remove(selectedNote.path);
@@ -185,7 +185,7 @@ export default class SelectorModal extends Modal {
 		const modal = new NoteAndFolderSelector(this.app, this.folderPaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
-			const selectedFolder = this.app.vault.getFolderByPath(selectedItem);
+			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
 
 			if (selectedFolder instanceof TFolder) {
 				this.folderPaths.remove(selectedFolder.path);
