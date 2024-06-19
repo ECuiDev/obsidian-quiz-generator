@@ -69,7 +69,7 @@ export default class SelectorModal extends Modal {
 				const generator = new GptGenerator(this.plugin);
 
 				new Notice("Generating...");
-				let questions = await generator.generateQuestions(this.loadNoteContents());
+				let questions = await generator.generateQuestions([...this.selectedNotes.values()]);
 				questions = questions?.replace(/\\/g, "\\\\");
 
 				if (questions) {
@@ -293,16 +293,6 @@ export default class SelectorModal extends Modal {
 		} else {
 			return 0;
 		}
-	}
-
-	private loadNoteContents(): string[] {
-		const noteContents: string[] = [];
-
-		for (const noteContent of this.selectedNotes.values()) {
-			noteContents.push(noteContent);
-		}
-
-		return noteContents;
 	}
 
 }
