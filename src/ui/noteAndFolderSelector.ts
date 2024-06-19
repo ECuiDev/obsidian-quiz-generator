@@ -25,8 +25,12 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 		this.selectorModal.removeClass("move-left");
 	}
 
-	public setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
-		this.callback = callback;
+	public getItems(): string[] {
+		return this.paths;
+	}
+
+	public getItemText(item: string): string {
+		return item;
 	}
 
 	public onChooseItem(item: string, evt: MouseEvent | KeyboardEvent): void {
@@ -35,12 +39,8 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 		}
 	}
 
-	public getItemText(item: string): string {
-		return item;
-	}
-
-	public getItems(): string[] {
-		return this.paths;
+	public setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
+		this.callback = callback;
 	}
 
 }
