@@ -194,3 +194,15 @@
 .incorrect-choice {
 	background-color: #dc3545 !important;
 }
+
+/* settings */
+.generation-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 1rem;
+}
+
+.first-item {
+	padding-top: 0.75em !important;
+	border-top: 1px solid var(--background-modifier-border) !important;
+}

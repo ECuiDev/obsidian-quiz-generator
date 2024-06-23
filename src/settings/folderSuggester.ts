@@ -11,7 +11,7 @@ export default class FolderSuggester extends AbstractInputSuggest<string> {
 	protected getSuggestions(query: string): string[] {
 		return this.app.vault.getAllLoadedFiles()
 			.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
-			.map((folder: TAbstractFile) => folder.path)
+			.map((folder: TFolder) => folder.path)
 			.filter((path: string) => path.toLowerCase().contains(query.toLowerCase()));
 	}
 

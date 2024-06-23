@@ -258,8 +258,7 @@ export default class SelectorModal extends Modal {
 		if (folder.path === "/") {
 			selectedFolderBox.textContent = this.app.vault.getName() + " (Vault)";
 		} else {
-			this.plugin.settings.showFolderPath ?
-				selectedFolderBox.textContent = folder.path : selectedFolderBox.textContent = folder.name;
+			selectedFolderBox.textContent = this.plugin.settings.showFolderPath ? folder.path : folder.name;
 		}
 
 		const noteTokensElement = selectedFolderBox.createDiv("note-tokens");

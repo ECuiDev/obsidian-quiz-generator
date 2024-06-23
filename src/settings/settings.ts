@@ -104,7 +104,10 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl).setName("Generation").setHeading();
 
-		new Setting(containerEl)
+		const generationSection = containerEl.createDiv("generation-container");
+
+		new Setting(generationSection)
+			.setClass("first-item")
 			.setName("Multiple choice")
 			.setDesc("Generate multiple choice questions.")
 			.addToggle((toggle) =>
@@ -116,9 +119,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl)
+		new Setting(generationSection)
 			.setName("Multiple choice quantity")
-			.setDesc("Number of multiple choice questions to generate.")
+			.setDesc("Number of questions to generate.")
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfMultipleChoice)
@@ -131,7 +134,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					.showTooltip()
 			);
 
-		new Setting(containerEl)
+		new Setting(generationSection)
 			.setName("True/false")
 			.setDesc("Generate true/false questions.")
 			.addToggle((toggle) =>
@@ -143,9 +146,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl)
+		new Setting(generationSection)
 			.setName("True/false quantity")
-			.setDesc("Number of true/false questions to generate.")
+			.setDesc("Number of questions to generate.")
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfTrueFalse)
@@ -158,7 +161,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					.showTooltip()
 			);
 
-		new Setting(containerEl)
+		new Setting(generationSection)
 			.setName("Short answer")
 			.setDesc("Generate short answer questions.")
 			.addToggle((toggle) =>
@@ -170,9 +173,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					})
 			);
 
-		new Setting(containerEl)
+		new Setting(generationSection)
 			.setName("Short answer quantity")
-			.setDesc("Number of short answer questions to generate.")
+			.setDesc("Number of questions to generate.")
 			.addSlider((slider) =>
 				slider
 					.setValue(this.plugin.settings.numberOfShortAnswer)
