@@ -1,5 +1,5 @@
 import { App, getFrontMatterInfo, Modal, Notice, setIcon, setTooltip, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
-import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF } from "../utils/types";
+import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF, SelectorModalButtons } from "../utils/types";
 import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
@@ -31,10 +31,10 @@ export default class SelectorModal extends Modal {
 	constructor(app: App, plugin: QuizGenerator) {
 		super(app);
 		this.plugin = plugin;
-		this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
+		this.notePaths = this.app.vault.getMarkdownFiles().map((file: TFile) => file.path);
 		this.folderPaths = this.app.vault.getAllLoadedFiles()
-			.filter(abstractFile => abstractFile instanceof TFolder)
-			.map(folder => folder.path);
+			.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
+			.map((folder: TFolder) => folder.path);
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
@@ -47,70 +47,66 @@ export default class SelectorModal extends Modal {
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
 
 		this.clearHandler = (): void => {
-			this.generateQuizButton.disabled = true;
-			this.clearButton.disabled = true;
+			this.toggleButtons(["clear", "generate"], true);
 			this.selectedNotes.clear();
 			this.notesContainer.empty();
-			this.promptTokens = 0;
-			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
-			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
+			this.updatePromptTokens(0);
+			this.notePaths = this.app.vault.getMarkdownFiles().map((file: TFile) => file.path);
 			this.folderPaths = this.app.vault.getAllLoadedFiles()
-				.filter(abstractFile => abstractFile instanceof TFolder)
-				.map(folder => folder.path);
+				.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
+				.map((folder: TFolder) => folder.path);
 		};
 		this.openQuizHandler = (): void => this.quiz?.open();
 		this.addNoteHandler = (): void => this.showNoteAdder();
 		this.addFolderHandler = (): void => this.showFolderAdder();
 		this.generateQuizHandler = async (): Promise<void> => {
-			if ((this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
-				|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0) {
-				this.generateQuizButton.disabled = true;
-				const questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[] = [];
-				const generator = new GptGenerator(this.plugin);
+			if (!this.validGenerationSettings()) {
+				new Notice("Invalid generation settings or prompt contains 0 tokens");
+				return;
+			}
 
-				new Notice("Generating...");
-				let questions = await generator.generateQuestions([...this.selectedNotes.values()]);
-				questions = questions?.replace(/\\/g, "\\\\");
+			this.toggleButtons(["generate"], true);
+			const questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[] = [];
+			const generator = new GptGenerator(this.plugin);
 
-				if (questions) {
-					try {
-						const parsedQuestions: ParsedQuestions = JSON.parse(questions);
+			new Notice("Generating...");
 
-						for (const key in parsedQuestions) {
-							if (parsedQuestions.hasOwnProperty(key)) {
-								const value = parsedQuestions[key];
+			const questions = await generator.generateQuestions([...this.selectedNotes.values()]);
+			if (!questions) {
+				this.toggleButtons(["generate"], false);
+				new Notice("Failure: Generation returned nothing");
+				return;
+			}
 
-								if (Array.isArray(value)) {
-									value.forEach(element => {
-										if ("questionMC" in element) {
-											questionsAndAnswers.push(element as ParsedMC);
-										} else if ("questionTF" in element) {
-											questionsAndAnswers.push(element as ParsedTF);
-										} else if ("questionSA" in element) {
-											questionsAndAnswers.push(element as ParsedSA);
-										} else {
-											new Notice("A question was generated incorrectly");
-										}
-									});
-								} else {
-									new Notice("Failure: Generation returned incorrect format");
-								}
-							}
-						}
-
-						this.quiz = new QuizModal(this.app, this.plugin, questionsAndAnswers);
-						this.quiz.open();
-					} catch (error: any) {
-						new Notice(error);
+			try {
+				const parsedQuestions: ParsedQuestions = JSON.parse(questions.replace(/\\/g, "\\\\"));
+				for (const key in parsedQuestions) {
+					const value = parsedQuestions[key];
+					if (!Array.isArray(value)) {
+						new Notice("Failure: Generation returned incorrect format");
+						continue;
 					}
-				} else {
-					new Notice("Failure: Generation returned null");
+
+					value.forEach(element => {
+						if ("questionMC" in element) {
+							questionsAndAnswers.push(element as ParsedMC);
+						} else if ("questionTF" in element) {
+							questionsAndAnswers.push(element as ParsedTF);
+						} else if ("questionSA" in element) {
+							questionsAndAnswers.push(element as ParsedSA);
+						} else {
+							new Notice("A question was generated incorrectly");
+						}
+					});
 				}
 
-				this.generateQuizButton.disabled = false;
-				this.openQuizButton.disabled = false;
-			} else {
-				new Notice("Generation cancelled because all question types are set to false or prompt contains 0 tokens");
+				this.quiz = new QuizModal(this.app, this.plugin, questionsAndAnswers);
+				this.quiz.open();
+				this.toggleButtons(["quiz"], false);
+			} catch (error: any) {
+				new Notice(error);
+			} finally {
+				this.toggleButtons(["generate"], false);
 			}
 		};
 
@@ -125,9 +121,7 @@ export default class SelectorModal extends Modal {
 
 	public onOpen(): void {
 		super.onOpen();
-		this.clearButton.disabled = true;
-		this.openQuizButton.disabled = true;
-		this.generateQuizButton.disabled = true;
+		this.toggleButtons(["clear", "quiz", "generate"], true);
 	}
 
 	public onClose(): void {
@@ -136,24 +130,19 @@ export default class SelectorModal extends Modal {
 
 	private activateButtons(): void {
 		this.clearButton.addClass("ui-button");
-		setIcon(this.clearButton, "book-x");
-		setTooltip(this.clearButton, "Remove all");
+		this.setIconAndTooltip(this.clearButton, "book-x", "Remove all");
 
 		this.openQuizButton.addClass("ui-button");
-		setIcon(this.openQuizButton, "scroll-text");
-		setTooltip(this.openQuizButton, "Open quiz");
+		this.setIconAndTooltip(this.openQuizButton, "scroll-text", "Open quiz");
 
 		this.addNoteButton.addClass("ui-button");
-		setIcon(this.addNoteButton, "file-plus-2");
-		setTooltip(this.addNoteButton, "Add note");
+		this.setIconAndTooltip(this.addNoteButton, "file-plus-2", "Add note");
 
 		this.addFolderButton.addClass("ui-button");
-		setIcon(this.addFolderButton, "folder-plus");
-		setTooltip(this.addFolderButton, "Add folder");
+		this.setIconAndTooltip(this.addFolderButton, "folder-plus", "Add folder");
 
 		this.generateQuizButton.addClass("ui-button");
-		setIcon(this.generateQuizButton, "webhook");
-		setTooltip(this.generateQuizButton, "Generate");
+		this.setIconAndTooltip(this.generateQuizButton, "webhook", "Generate");
 
 		this.clearButton.addEventListener("click", this.clearHandler);
 		this.openQuizButton.addEventListener("click", this.openQuizHandler);
@@ -167,13 +156,11 @@ export default class SelectorModal extends Modal {
 
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
-
 			if (selectedNote instanceof TFile) {
 				this.notePaths.remove(selectedNote.path);
 				this.showNoteAdder();
 				const noteContents = await this.app.vault.cachedRead(selectedNote);
-				const hasFrontMatter = getFrontMatterInfo(noteContents).exists;
-				this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, hasFrontMatter));
+				this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
 				this.displayNote(selectedNote);
 			}
 		});
@@ -186,28 +173,24 @@ export default class SelectorModal extends Modal {
 
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
-
 			if (selectedFolder instanceof TFolder) {
 				this.folderPaths.remove(selectedFolder.path);
 				this.showFolderAdder();
 
 				let folderContents: string[] = [];
 				const promises: any[] = [];
-
 				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
 					if (file instanceof TFile && file.extension === "md") {
 						promises.push(
 							(async (): Promise<void> => {
 								const noteContents = await this.app.vault.cachedRead(file);
-								const hasFrontMatter = getFrontMatterInfo(noteContents).exists;
-								folderContents.push(cleanUpNoteContents(noteContents, hasFrontMatter));
+								folderContents.push(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
 							})()
 						);
 					}
 				});
 
 				await Promise.all(promises);
-
 				this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
 				this.displayFolder(selectedFolder);
 			}
@@ -217,73 +200,77 @@ export default class SelectorModal extends Modal {
 	}
 
 	private displayNote(note: TFile): void {
-		this.clearButton.disabled = false;
-		this.generateQuizButton.disabled = false;
-
-		const selectedNoteBox = this.notesContainer.createDiv("notes-container-element");
-		this.plugin.settings.showNotePath ?
-			selectedNoteBox.textContent = note.path : selectedNoteBox.textContent = note.basename;
-
-		const noteTokensElement = selectedNoteBox.createDiv("note-tokens");
-		const noteTokens = this.countNoteTokens(this.selectedNotes.get(note.path));
-		noteTokensElement.textContent = noteTokens + " tokens";
-
-		const removeButton = selectedNoteBox.createEl("button");
-		removeButton.addClass("remove-button");
-		setIcon(removeButton, "x");
-		setTooltip(removeButton, "Remove");
-		removeButton.addEventListener("click", (): void => {
-			this.selectedNotes.delete(note.path);
-			this.notesContainer.removeChild(selectedNoteBox);
-			this.notePaths.push(note.path);
-			this.promptTokens -= noteTokens;
-			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
-
-			if (this.selectedNotes.size === 0) {
-				this.clearButton.disabled = true;
-				this.generateQuizButton.disabled = true;
-			}
-		});
-
-		this.promptTokens += noteTokens;
-		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+		const tokens = this.createSelectedFile(note, this.plugin.settings.showNotePath ? note.path : note.basename);
+		this.toggleButtons(["clear", "generate"], false);
+		this.updatePromptTokens(this.promptTokens + tokens);
 	}
 
 	private displayFolder(folder: TFolder): void {
-		this.clearButton.disabled = false;
-		this.generateQuizButton.disabled = false;
-
-		const selectedFolderBox = this.notesContainer.createDiv("notes-container-element");
-
+		let folderName = this.plugin.settings.showFolderPath ? folder.path : folder.name;
 		if (folder.path === "/") {
-			selectedFolderBox.textContent = this.app.vault.getName() + " (Vault)";
-		} else {
-			selectedFolderBox.textContent = this.plugin.settings.showFolderPath ? folder.path : folder.name;
+			folderName = this.app.vault.getName() + " (Vault)";
 		}
 
-		const noteTokensElement = selectedFolderBox.createDiv("note-tokens");
-		const noteTokens = this.countNoteTokens(this.selectedNotes.get(folder.path));
-		noteTokensElement.textContent = noteTokens + " tokens";
+		const tokens = this.createSelectedFile(folder, folderName);
+		this.toggleButtons(["clear", "generate"], false);
+		this.updatePromptTokens(this.promptTokens + tokens);
+	}
 
-		const removeButton = selectedFolderBox.createEl("button");
-		removeButton.addClass("remove-button");
-		setIcon(removeButton, "x");
-		setTooltip(removeButton, "Remove");
+	private createSelectedFile(file: TFile | TFolder, fileName: string): number {
+		const fileContainer = this.notesContainer.createDiv("notes-container-element");
+		fileContainer.textContent = fileName;
+
+		const tokensElement = fileContainer.createDiv("note-tokens");
+		const tokens = this.countNoteTokens(this.selectedNotes.get(file.path));
+		tokensElement.textContent = tokens + " tokens";
+
+		const seeContentsButton = fileContainer.createEl("button");
+		this.setIconAndTooltip(seeContentsButton, "eye", "See contents");
+
+		const removeButton = fileContainer.createEl("button");
+		this.setIconAndTooltip(removeButton, "x", "Remove");
 		removeButton.addEventListener("click", (): void => {
-			this.selectedNotes.delete(folder.path);
-			this.notesContainer.removeChild(selectedFolderBox);
-			this.folderPaths.push(folder.path);
-			this.promptTokens -= noteTokens;
-			this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+			this.removeNoteOrFolder(file, fileContainer);
+			this.updatePromptTokens(this.promptTokens - tokens);
 
 			if (this.selectedNotes.size === 0) {
-				this.clearButton.disabled = true;
-				this.generateQuizButton.disabled = true;
+				this.toggleButtons(["clear", "generate"], true);
 			}
 		});
 
-		this.promptTokens += noteTokens;
+		return tokens;
+	}
+
+	private removeNoteOrFolder(file: TFile | TFolder, element: HTMLDivElement): void {
+		this.selectedNotes.delete(file.path);
+		this.notesContainer.removeChild(element);
+		file instanceof TFile ? this.notePaths.push(file.path) : this.folderPaths.push(file.path);
+	}
+
+	private toggleButtons(buttons: SelectorModalButtons[], disabled: boolean): void {
+		const buttonMap: Record<SelectorModalButtons, HTMLButtonElement> = {
+			clear: this.clearButton,
+			quiz: this.openQuizButton,
+			note: this.addNoteButton,
+			folder: this.addFolderButton,
+			generate: this.generateQuizButton,
+		};
+		buttons.forEach(button => buttonMap[button].disabled = disabled);
+	}
+
+	private updatePromptTokens(tokens: number): void {
+		this.promptTokens = tokens;
 		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+	}
+
+	private setIconAndTooltip(element: HTMLElement, icon: string, tooltip: string): void {
+		setIcon(element, icon);
+		setTooltip(element, tooltip);
+	}
+
+	private validGenerationSettings(): boolean {
+		return (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
+			|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0;
 	}
 
 	private countNoteTokens(noteContents: string | undefined): number {
@@ -293,5 +280,4 @@ export default class SelectorModal extends Modal {
 			return 0;
 		}
 	}
-
 }

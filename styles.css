@@ -79,15 +79,16 @@
 	margin-right: 2%;
 }
 
-.remove-button {
+.notes-container-element > button {
+	height: initial;
+	padding: initial;
+	margin-right: 0.5em;
 	background-color: transparent !important;
 	box-shadow: none !important;
 	cursor: pointer;
-	padding: initial;
-	height: initial;
 }
 
-.remove-button:hover {
+.notes-container-element > button:hover {
 	background-color: revert !important;
 }
 
@@ -204,5 +205,5 @@
 
 .first-item {
 	padding-top: 0.75em !important;
-	border-top: 1px solid var(--background-modifier-border) !important;
+	/*border-top: 1px solid var(--background-modifier-border) !important;*/
 }
