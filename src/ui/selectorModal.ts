@@ -6,6 +6,7 @@ import QuizGenerator from "../main";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import QuizModal from "./quizModal";
 import "styles.css";
+import NoteViewerModal from "./noteViewerModal";
 
 export default class SelectorModal extends Modal {
 	private readonly plugin: QuizGenerator;
@@ -38,8 +39,8 @@ export default class SelectorModal extends Modal {
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
-		this.titleEl.setText("Selected Notes");
 		this.titleEl.addClass("title-style");
+		this.titleEl.setText("Selected Notes");
 
 		this.notesContainer = this.contentEl.createDiv("notes-container");
 
@@ -224,8 +225,13 @@ export default class SelectorModal extends Modal {
 		const tokens = this.countNoteTokens(this.selectedNotes.get(file.path));
 		tokensElement.textContent = tokens + " tokens";
 
-		const seeContentsButton = fileContainer.createEl("button");
-		this.setIconAndTooltip(seeContentsButton, "eye", "See contents");
+		const viewContentsButton = fileContainer.createEl("button");
+		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
+		viewContentsButton.addEventListener("click", async (): Promise<void> => {
+			if (file instanceof TFile) {
+				new NoteViewerModal(this.app, this.plugin, file).open();
+			}
+		});
 
 		const removeButton = fileContainer.createEl("button");
 		this.setIconAndTooltip(removeButton, "x", "Remove");

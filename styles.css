@@ -1,9 +1,10 @@
 /* Shared */
 .modal-el-container {
-	width: 40%;
+	width: 40%; /* modify to keep modal at max size until screen shrinks too much */
 	height: 80%;
 }
 
+/* Can probably be rewritten to get rid of the 92% */
 .modal-content-container {
 	position: relative;
 	height: 92%;
@@ -12,12 +13,10 @@
 .title-style {
 	display: flex;
 	justify-content: center;
-	align-items: center;
-	flex-direction: column;
 }
 
 .ui-button {
-	box-shadow: none !important;
+	box-shadow: none !important; /* maybe remove this? */
 	margin-right: 1rem;
 	cursor: pointer;
 }
@@ -27,11 +26,11 @@
 }
 
 .move-left {
-	transform: translateX(-51%);
+	transform: translateX(-51%); /* use alternative to transform like left and right */
 }
 
 .move-right {
-	transform: translateX(51%);
+	transform: translateX(51%); /* use alternative to transform like left and right */
 }
 
 .remove-opacity {
@@ -42,41 +41,37 @@
 .notes-container {
 	overflow-y: auto;
 	height: 90%;
-	flex: none;
-	border: 0.125rem solid;
-	border-radius: 0.5rem;
+	flex: none; /* unnecessary? */
+	border: 0.125rem solid; /* use em? */
+	border-radius: 0.5rem; /* use em? */
 }
 
 .selector-button-container {
 	position: relative;
-	bottom: -2.5%;
+	bottom: -2.5%; /* find better way to do this */
 	display: flex;
 	justify-content: center;
-	align-items: center;
-	flex-direction: row;
 }
 
 .token-container {
 	position: relative;
-	bottom: -1%;
+	bottom: -1%; /* find better way to do this */
 	display: flex;
 	justify-content: center;
-	align-items: center;
-	flex-direction: row;
 }
 
 .notes-container-element {
 	display: flex;
 	flex-direction: row;
-	padding: 1.5%;
-	margin: 1%;
-	border-radius: 0.5rem;
-	border: 0.1rem solid;
+	padding: 1.5%; /* use better unit */
+	margin: 1%; /* use better unit */
+	border-radius: 0.5rem; /* use em? */
+	border: 0.1rem solid; /* use em? */
 }
 
 .note-tokens {
 	margin-left: auto;
-	margin-right: 2%;
+	margin-right: 2%; /* find better way to do this */
 }
 
 .notes-container-element > button {
