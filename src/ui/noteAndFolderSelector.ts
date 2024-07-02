@@ -1,4 +1,4 @@
-import { App, FuzzySuggestModal, Scope } from "obsidian";
+import { App, FuzzySuggestModal } from "obsidian";
 
 export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | undefined; // evt unnecessary?
@@ -9,7 +9,6 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 		super(app);
 		this.paths = paths;
 		this.selectorModal = selectorModal;
-		this.scope = new Scope(this.app.scope);
 
 		this.onChooseItem = this.onChooseItem.bind(this); // unnecessary?
 	}
