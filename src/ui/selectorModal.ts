@@ -48,6 +48,7 @@ export default class SelectorModal extends Modal {
 			.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
 			.map((folder: TFolder) => folder.path);
 		this.scope = new Scope(this.app.scope);
+		this.scope.register([], "Escape", () => this.close());
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");

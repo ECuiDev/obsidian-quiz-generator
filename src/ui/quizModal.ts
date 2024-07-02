@@ -39,6 +39,7 @@ export default class QuizModal extends Modal {
 		this.questionsAndAnswers = questionsAndAnswers;
 		this.saved = new Array(this.questionsAndAnswers.length).fill(false);
 		this.scope = new Scope(this.app.scope);
+		this.scope.register([], "Escape", () => this.close());
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");

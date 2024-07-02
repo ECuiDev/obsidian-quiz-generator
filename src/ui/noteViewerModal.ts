@@ -4,12 +4,15 @@ import QuizGenerator from "../main";
 export default class NoteViewerModal extends Modal {
 	private readonly plugin: QuizGenerator;
 	private readonly note: TFile;
+	// private selectorModal: HTMLElement;
 
 	constructor(app: App, plugin: QuizGenerator, note: TFile) {
 		super(app);
 		this.plugin = plugin;
+		// this.selectorModal = selectorModal;
 		this.note = note;
 		this.scope = new Scope(this.app.scope);
+		this.scope.register([], "Escape", () => this.close());
 	}
 
 	public async onOpen(): Promise<void> {
@@ -17,6 +20,10 @@ export default class NoteViewerModal extends Modal {
 		this.modalEl.addClass("modal-el-container");
 		this.titleEl.addClass("title-style");
 		this.titleEl.setText(this.note.basename);
+
+		// this.containerEl.firstElementChild?.addClass("remove-opacity");
+		// this.selectorModal.addClass("move-left");
+		// this.containerEl.children[1].addClass("move-right");
 
 		// if (this.containerEl.firstElementChild){
 		// 	this.containerEl.removeChild(this.containerEl.firstElementChild);
@@ -27,5 +34,6 @@ export default class NoteViewerModal extends Modal {
 
 	public onClose(): void {
 		super.onClose();
+		// this.selectorModal.removeClass("move-left");
 	}
 }
