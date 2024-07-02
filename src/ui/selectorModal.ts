@@ -69,8 +69,8 @@ export default class SelectorModal extends Modal {
 				.map((folder: TFolder) => folder.path);
 		};
 		this.openQuizHandler = (): void => this.quiz?.open();
-		this.addNoteHandler = (): void => this.showNoteAdder();
-		this.addFolderHandler = (): void => this.showFolderAdder();
+		this.addNoteHandler = (): void => this.openNoteSelector();
+		this.addFolderHandler = (): void => this.openFolderSelector();
 		this.generateQuizHandler = async (): Promise<void> => {
 			if (!this.validGenerationSettings()) {
 				new Notice("Invalid generation settings or prompt contains 0 tokens");
@@ -165,31 +165,31 @@ export default class SelectorModal extends Modal {
 		this.generateQuizButton.addEventListener("click", this.generateQuizHandler);
 	}
 
-	private showNoteAdder(): void {
+	private openNoteSelector(): void {
 		const modal = new NoteAndFolderSelector(this.app, this.notePaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
 			if (selectedNote instanceof TFile) {
 				this.notePaths.remove(selectedNote.path);
-				this.showNoteAdder();
+				this.openNoteSelector();
 				const noteContents = await this.app.vault.cachedRead(selectedNote);
 				this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
-				this.displayNote(selectedNote);
+				this.renderNote(selectedNote);
 			}
 		});
 
 		modal.open();
 	}
 
-	private showFolderAdder(): void {
+	private openFolderSelector(): void {
 		const modal = new NoteAndFolderSelector(this.app, this.folderPaths, this.modalEl);
 
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
 			if (selectedFolder instanceof TFolder) {
 				this.folderPaths.remove(selectedFolder.path);
-				this.showFolderAdder();
+				this.openFolderSelector();
 
 				let folderContents: string[] = [];
 				const promises: any[] = [];
@@ -206,50 +206,50 @@ export default class SelectorModal extends Modal {
 
 				await Promise.all(promises);
 				this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
-				this.displayFolder(selectedFolder);
+				this.renderFolder(selectedFolder);
 			}
 		});
 
 		modal.open();
 	}
 
-	private displayNote(note: TFile): void {
-		const tokens = this.createSelectedFile(note, this.plugin.settings.showNotePath ? note.path : note.basename);
+	private renderNote(note: TFile): void {
+		const tokens = this.renderNoteOrFolder(note, this.plugin.settings.showNotePath ? note.path : note.basename);
 		this.toggleButtons(["clear", "generate"], false);
 		this.updatePromptTokens(this.promptTokens + tokens);
 	}
 
-	private displayFolder(folder: TFolder): void {
+	private renderFolder(folder: TFolder): void {
 		let folderName = this.plugin.settings.showFolderPath ? folder.path : folder.name;
 		if (folder.path === "/") {
 			folderName = this.app.vault.getName() + " (Vault)";
 		}
 
-		const tokens = this.createSelectedFile(folder, folderName);
+		const tokens = this.renderNoteOrFolder(folder, folderName);
 		this.toggleButtons(["clear", "generate"], false);
 		this.updatePromptTokens(this.promptTokens + tokens);
 	}
 
-	private createSelectedFile(file: TFile | TFolder, fileName: string): number {
-		const fileContainer = this.notesContainer.createDiv("notes-container-element");
-		fileContainer.textContent = fileName;
+	private renderNoteOrFolder(item: TFile | TFolder, fileName: string): number {
+		const itemContainer = this.notesContainer.createDiv("notes-container-element");
+		itemContainer.textContent = fileName;
 
-		const tokensElement = fileContainer.createDiv("note-tokens");
-		const tokens = this.countNoteTokens(this.selectedNotes.get(file.path));
+		const tokensElement = itemContainer.createDiv("note-tokens");
+		const tokens = this.countNoteTokens(this.selectedNotes.get(item.path));
 		tokensElement.textContent = tokens + " tokens";
 
-		const viewContentsButton = fileContainer.createEl("button");
+		const viewContentsButton = itemContainer.createEl("button");
 		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
-			if (file instanceof TFile) {
-				new NoteViewerModal(this.app, this.plugin, file).open();
+			if (item instanceof TFile) {
+				new NoteViewerModal(this.app, this.plugin, item).open();
 			}
 		});
 
-		const removeButton = fileContainer.createEl("button");
+		const removeButton = itemContainer.createEl("button");
 		this.setIconAndTooltip(removeButton, "x", "Remove");
 		removeButton.addEventListener("click", (): void => {
-			this.removeNoteOrFolder(file, fileContainer);
+			this.removeNoteOrFolder(item, itemContainer);
 			this.updatePromptTokens(this.promptTokens - tokens);
 
 			if (this.selectedNotes.size === 0) {
@@ -260,10 +260,10 @@ export default class SelectorModal extends Modal {
 		return tokens;
 	}
 
-	private removeNoteOrFolder(file: TFile | TFolder, element: HTMLDivElement): void {
-		this.selectedNotes.delete(file.path);
+	private removeNoteOrFolder(item: TFile | TFolder, element: HTMLDivElement): void {
+		this.selectedNotes.delete(item.path);
 		this.notesContainer.removeChild(element);
-		file instanceof TFile ? this.notePaths.push(file.path) : this.folderPaths.push(file.path);
+		item instanceof TFile ? this.notePaths.push(item.path) : this.folderPaths.push(item.path);
 	}
 
 	private toggleButtons(buttons: SelectorModalButtons[], disabled: boolean): void {
