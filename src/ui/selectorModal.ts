@@ -1,11 +1,22 @@
-import { App, getFrontMatterInfo, Modal, Notice, setIcon, setTooltip, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
+import {
+	App,
+	getFrontMatterInfo,
+	Modal,
+	Notice,
+	Scope,
+	setIcon,
+	setTooltip,
+	TAbstractFile,
+	TFile,
+	TFolder,
+	Vault
+} from "obsidian";
 import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF, SelectorModalButtons } from "../utils/types";
 import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
 import QuizGenerator from "../main";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import QuizModal from "./quizModal";
-import "styles.css";
 import NoteViewerModal from "./noteViewerModal";
 
 export default class SelectorModal extends Modal {
@@ -118,6 +129,8 @@ export default class SelectorModal extends Modal {
 		this.addFolderButton = this.buttonContainer.createEl("button");
 		this.generateQuizButton = this.buttonContainer.createEl("button");
 		this.activateButtons();
+
+		this.scope = new Scope(this.app.scope);
 	}
 
 	public onOpen(): void {

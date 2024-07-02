@@ -1,4 +1,4 @@
-import { App, MarkdownRenderer, Modal, TFile } from "obsidian";
+import { App, MarkdownRenderer, Modal, Scope, TFile } from "obsidian";
 import QuizGenerator from "../main";
 
 export default class NoteViewerModal extends Modal {
@@ -13,6 +13,8 @@ export default class NoteViewerModal extends Modal {
 		this.modalEl.addClass("modal-el-container");
 		this.titleEl.addClass("title-style");
 		this.titleEl.setText(note.basename);
+
+		this.scope = new Scope(this.app.scope);
 	}
 
 	public async onOpen(): Promise<void> {

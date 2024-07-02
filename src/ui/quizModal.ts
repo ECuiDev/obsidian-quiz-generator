@@ -1,8 +1,18 @@
-import { App, MarkdownRenderer, Modal, normalizePath, Notice, setIcon, setTooltip, TFile, TFolder } from "obsidian";
+import {
+	App,
+	MarkdownRenderer,
+	Modal,
+	normalizePath,
+	Notice,
+	Scope,
+	setIcon,
+	setTooltip,
+	TFile,
+	TFolder
+} from "obsidian";
 import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
 import QuizGenerator from "../main";
 import QuestionSaver from "../services/questionSaver";
-import "styles.css";
 
 export default class QuizModal extends Modal {
 	private readonly plugin: QuizGenerator;
@@ -82,6 +92,8 @@ export default class QuizModal extends Modal {
 		this.contentEl.createEl("hr").addClass("quiz-divider");
 
 		this.questionContainer = this.contentEl.createDiv("question-container");
+
+		this.scope = new Scope(this.app.scope);
 	}
 
 	public async onOpen(): Promise<void> {
@@ -285,6 +297,7 @@ export default class QuizModal extends Modal {
 		trueButton.disabled = true;
 		falseButton.disabled = true;
 
+		// Improve this
 		if (choice === answer) {
 			choice ? trueButton.classList.add("correct-choice") : falseButton.classList.add("correct-choice");
 		} else {
