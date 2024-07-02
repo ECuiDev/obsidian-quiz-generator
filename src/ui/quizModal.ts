@@ -38,12 +38,19 @@ export default class QuizModal extends Modal {
 		this.plugin = plugin;
 		this.questionsAndAnswers = questionsAndAnswers;
 		this.saved = new Array(this.questionsAndAnswers.length).fill(false);
+		this.scope = new Scope(this.app.scope);
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
 		this.titleEl.addClass("title-style");
 
-		this.chooseFileName();
+		this.buttonContainer = this.contentEl.createDiv("quiz-button-container");
+		this.previousButton = this.buttonContainer.createEl("button");
+		this.saveButton = this.buttonContainer.createEl("button");
+		this.saveAllButton = this.buttonContainer.createEl("button");
+		this.nextButton = this.buttonContainer.createEl("button");
+		this.contentEl.createEl("hr").addClass("quiz-divider");
+		this.questionContainer = this.contentEl.createDiv("question-container");
 
 		this.previousQuestionHandler = async (): Promise<void> => await this.showPreviousQuestion();
 		this.saveQuestionHandler = async (): Promise<void> => {
@@ -82,18 +89,8 @@ export default class QuizModal extends Modal {
 		};
 		this.nextQuestionHandler = async (): Promise<void> => await this.showNextQuestion();
 
-		this.buttonContainer = this.contentEl.createDiv("quiz-button-container");
-		this.previousButton = this.buttonContainer.createEl("button");
-		this.saveButton = this.buttonContainer.createEl("button");
-		this.saveAllButton = this.buttonContainer.createEl("button");
-		this.nextButton = this.buttonContainer.createEl("button");
 		this.activateButtons();
-
-		this.contentEl.createEl("hr").addClass("quiz-divider");
-
-		this.questionContainer = this.contentEl.createDiv("question-container");
-
-		this.scope = new Scope(this.app.scope);
+		this.chooseFileName();
 	}
 
 	public async onOpen(): Promise<void> {

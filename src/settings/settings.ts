@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import { languages, models, saveFormats } from "../utils/types";
 import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
@@ -210,7 +210,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				search
 					.setValue(this.plugin.settings.questionSavePath)
 					.onChange(async (value) => {
-						this.plugin.settings.questionSavePath = value;
+						this.plugin.settings.questionSavePath = normalizePath(value);
 						await this.plugin.saveSettings();
 					})
 			});

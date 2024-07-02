@@ -25,9 +25,9 @@ export default class SelectorModal extends Modal {
 	private folderPaths: string[];
 	private selectedNotes: Map<string, string> = new Map<string, string>();
 	private notesContainer: HTMLDivElement;
-	private buttonContainer: HTMLDivElement;
-	private tokenSection: HTMLSpanElement;
+	private tokenContainer: HTMLSpanElement;
 	private promptTokens: number = 0;
+	private buttonContainer: HTMLDivElement;
 	private readonly clearButton: HTMLButtonElement;
 	private readonly openQuizButton: HTMLButtonElement;
 	private readonly addNoteButton: HTMLButtonElement;
@@ -47,6 +47,7 @@ export default class SelectorModal extends Modal {
 		this.folderPaths = this.app.vault.getAllLoadedFiles()
 			.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
 			.map((folder: TFolder) => folder.path);
+		this.scope = new Scope(this.app.scope);
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
@@ -54,9 +55,14 @@ export default class SelectorModal extends Modal {
 		this.titleEl.setText("Selected Notes");
 
 		this.notesContainer = this.contentEl.createDiv("notes-container");
-
-		this.tokenSection = this.contentEl.createSpan("token-container");
-		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+		this.tokenContainer = this.contentEl.createSpan("token-container");
+		this.tokenContainer.textContent = "Prompt tokens: " + this.promptTokens;
+		this.buttonContainer = this.contentEl.createDiv("selector-button-container");
+		this.clearButton = this.buttonContainer.createEl("button");
+		this.openQuizButton = this.buttonContainer.createEl("button");
+		this.addNoteButton = this.buttonContainer.createEl("button");
+		this.addFolderButton = this.buttonContainer.createEl("button");
+		this.generateQuizButton = this.buttonContainer.createEl("button");
 
 		this.clearHandler = (): void => {
 			this.toggleButtons(["clear", "generate"], true);
@@ -122,15 +128,7 @@ export default class SelectorModal extends Modal {
 			}
 		};
 
-		this.buttonContainer = this.contentEl.createDiv("selector-button-container");
-		this.clearButton = this.buttonContainer.createEl("button");
-		this.openQuizButton = this.buttonContainer.createEl("button");
-		this.addNoteButton = this.buttonContainer.createEl("button");
-		this.addFolderButton = this.buttonContainer.createEl("button");
-		this.generateQuizButton = this.buttonContainer.createEl("button");
 		this.activateButtons();
-
-		this.scope = new Scope(this.app.scope);
 	}
 
 	public onOpen(): void {
@@ -279,7 +277,7 @@ export default class SelectorModal extends Modal {
 
 	private updatePromptTokens(tokens: number): void {
 		this.promptTokens = tokens;
-		this.tokenSection.textContent = "Prompt tokens: " + this.promptTokens;
+		this.tokenContainer.textContent = "Prompt tokens: " + this.promptTokens;
 	}
 
 	private setIconAndTooltip(element: HTMLElement, icon: string, tooltip: string): void {

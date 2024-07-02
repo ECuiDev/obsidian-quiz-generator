@@ -9,16 +9,19 @@ export default class NoteViewerModal extends Modal {
 		super(app);
 		this.plugin = plugin;
 		this.note = note;
-
-		this.modalEl.addClass("modal-el-container");
-		this.titleEl.addClass("title-style");
-		this.titleEl.setText(note.basename);
-
 		this.scope = new Scope(this.app.scope);
 	}
 
 	public async onOpen(): Promise<void> {
 		super.onOpen();
+		this.modalEl.addClass("modal-el-container");
+		this.titleEl.addClass("title-style");
+		this.titleEl.setText(this.note.basename);
+
+		// if (this.containerEl.firstElementChild){
+		// 	this.containerEl.removeChild(this.containerEl.firstElementChild);
+		// }
+
 		await MarkdownRenderer.render(this.app, await this.app.vault.cachedRead(this.note), this.contentEl, "", this.plugin);
 	}
 

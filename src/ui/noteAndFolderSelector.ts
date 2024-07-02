@@ -9,9 +9,9 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 		super(app);
 		this.paths = paths;
 		this.selectorModal = selectorModal;
+		this.scope = new Scope(this.app.scope);
 
 		this.onChooseItem = this.onChooseItem.bind(this); // unnecessary?
-		this.scope = new Scope(this.app.scope);
 	}
 
 	public onOpen(): void {
