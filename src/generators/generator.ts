@@ -8,137 +8,68 @@ export default abstract class Generator {
 	}
 
 	protected systemPrompt(): string {
-		return "You are an assistant specialized in generating exam-style questions " +
-			"and answers. Your response must be a JSON object with the following property:\n" +
-			`"quiz": An array of JSON objects, where each JSON object represents a question and answer pair. ` +
-			"Each question type has a different JSON object format.\n" +
-			`${this.settings.generateMultipleChoice ? "\nThe JSON object representing multiple choice " +
-				"questions must have the following properties:\n" + `${this.multipleChoiceFormat()}` : ""}` +
-			`${this.settings.generateTrueFalse ? "\nThe JSON object representing true/false questions " +
-				"must have the following properties:\n" + `${this.trueFalseFormat()}` : ""}` +
-			`${this.settings.generateShortAnswer ? "\nThe JSON object representing short answer questions " +
-				"must have the following properties:\n" + `${this.shortAnswerFormat()}` : ""}` +
-			"\nFor example, if I ask you to generate " + this.systemPromptQuestions() +
-			" the structure of your response should look like this:\n" +
+		const questionFormats = [
+			{ generate: this.settings.generateMultipleChoice, format: this.multipleChoiceFormat(), type: "multiple choice" },
+			{ generate: this.settings.generateTrueFalse, format: this.trueFalseFormat(), type: "true/false" },
+			{ generate: this.settings.generateShortAnswer, format: this.shortAnswerFormat(), type: "short answer" },
+		];
+
+		const activeFormats = questionFormats
+			.filter(q => q.generate)
+			.map(q => `The JSON object representing ${q.type} questions must have the following properties:\n${q.format}`)
+			.join("\n");
+
+		return "You are an assistant specialized in generating exam-style questions and answers. Your response must be a JSON object with the following property:\n" +
+			`"quiz": An array of JSON objects, where each JSON object represents a question and answer pair. Each question type has a different JSON object format.\n` +
+			`${activeFormats}\n` +
+			`For example, if I ask you to generate ${this.systemPromptQuestions()} the structure of your response should look like this:\n` +
 			`${this.exampleResponse()}\n` +
 			`${this.generationLanguage()}`;
 	}
 
 	protected systemPromptQuestions(): string {
-		if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
-			!this.settings.generateShortAnswer) {
-			return "1 multiple choice question";
-		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
-			!this.settings.generateShortAnswer) {
-			return "1 true/false question";
-		} else if (!this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
-			this.settings.generateShortAnswer) {
-			return "1 short answer question";
-		} else if (this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
-			!this.settings.generateShortAnswer) {
-			return "1 multiple choice question and 1 true/false question";
-		} else if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
-			this.settings.generateShortAnswer) {
-			return "1 multiple choice question and 1 short answer question";
-		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
-			this.settings.generateShortAnswer) {
-			return "1 true/false question and 1 short answer question";
+		const questionTypes = [
+			{ generate: this.settings.generateMultipleChoice, singular: "multiple choice question" },
+			{ generate: this.settings.generateTrueFalse, singular: "true/false question" },
+			{ generate: this.settings.generateShortAnswer, singular: "short answer question" },
+		];
+
+		const activeQuestionTypes = questionTypes.filter(q => q.generate);
+		const parts = activeQuestionTypes.map(q => `1 ${q.singular}`);
+
+		if (parts.length === 1) {
+			return parts[0];
+		} else if (parts.length === 2) {
+			return parts.join(" and ");
 		} else {
-			return "1 multiple choice question, 1 true/false question, and 1 short answer question";
+			const lastPart = parts.pop();
+			return `${parts.join(", ")}, and ${lastPart}`;
 		}
 	}
 
 	protected userPromptQuestions(): string {
-		if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
-			!this.settings.generateShortAnswer) {
-			if (this.settings.numberOfMultipleChoice > 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions`;
+		const questionTypes = [
+			{ generate: this.settings.generateMultipleChoice, count: this.settings.numberOfMultipleChoice, singular: "multiple choice question", plural: "multiple choice questions" },
+			{ generate: this.settings.generateTrueFalse, count: this.settings.numberOfTrueFalse, singular: "true/false question", plural: "true/false questions" },
+			{ generate: this.settings.generateShortAnswer, count: this.settings.numberOfShortAnswer, singular: "short answer question", plural: "short answer questions" },
+		];
+
+		const activeQuestionTypes = questionTypes.filter(q => q.generate);
+		const parts = activeQuestionTypes.map(q => {
+			if (q.count > 1) {
+				return `${q.count} ${q.plural}`;
 			} else {
-				return "1 multiple choice question";
+				return `1 ${q.singular}`;
 			}
-		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
-			!this.settings.generateShortAnswer) {
-			if (this.settings.numberOfTrueFalse > 1) {
-				return `${this.settings.numberOfTrueFalse} true/false questions`;
-			} else {
-				return "1 true/false question";
-			}
-		} else if (!this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
-			this.settings.generateShortAnswer) {
-			if (this.settings.numberOfShortAnswer > 1) {
-				return `${this.settings.numberOfShortAnswer} short answer questions`;
-			} else {
-				return "1 short answer question";
-			}
-		} else if (this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
-			!this.settings.generateShortAnswer) {
-			if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse > 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions and ` +
-					`${this.settings.numberOfTrueFalse} true/false questions`;
-			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse === 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions and 1 true/false question`;
-			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse > 1) {
-				return `1 multiple choice question and ${this.settings.numberOfTrueFalse} true/false questions`;
-			} else {
-				return `1 multiple choice question and 1 true/false question`;
-			}
-		} else if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
-			this.settings.generateShortAnswer) {
-			if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfShortAnswer > 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions and ` +
-					`${this.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfShortAnswer === 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions and 1 short answer question`;
-			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfShortAnswer > 1) {
-				return `1 multiple choice question and ${this.settings.numberOfShortAnswer} short answer questions`;
-			} else {
-				return "1 multiple choice question and 1 short answer question";
-			}
-		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
-			this.settings.generateShortAnswer) {
-			if (this.settings.numberOfTrueFalse > 1 && this.settings.numberOfShortAnswer > 1) {
-				return `${this.settings.numberOfTrueFalse} true/false questions and ` +
-					`${this.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.settings.numberOfTrueFalse > 1 && this.settings.numberOfShortAnswer === 1) {
-				return `${this.settings.numberOfTrueFalse} true/false questions and 1 short answer question`;
-			} else if (this.settings.numberOfTrueFalse === 1 && this.settings.numberOfShortAnswer > 1) {
-				return `1 true/false question and ${this.settings.numberOfShortAnswer} short answer questions`;
-			} else {
-				return "1 true/false question and 1 short answer question";
-			}
+		});
+
+		if (parts.length === 1) {
+			return parts[0];
+		} else if (parts.length === 2) {
+			return parts.join(" and ");
 		} else {
-			if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse > 1 &&
-				this.settings.numberOfShortAnswer > 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`${this.settings.numberOfTrueFalse} true/false questions, and ` +
-					`${this.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse > 1 &&
-				this.settings.numberOfShortAnswer > 1) {
-				return `1 multiple choice question, ${this.settings.numberOfTrueFalse} true/false questions, ` +
-					`and ${this.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse === 1 &&
-				this.settings.numberOfShortAnswer > 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`1 true/false question, and ${this.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse > 1 &&
-				this.settings.numberOfShortAnswer === 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`${this.settings.numberOfTrueFalse} true/false questions, and 1 short answer question`;
-			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse === 1 &&
-				this.settings.numberOfShortAnswer > 1) {
-				return `1 multiple choice question, 1 true/false question, and ` +
-					`${this.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse > 1 &&
-				this.settings.numberOfShortAnswer === 1) {
-				return `1 multiple choice question, ${this.settings.numberOfTrueFalse} true/false questions, ` +
-					`and 1 short answer question`;
-			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse === 1 &&
-				this.settings.numberOfShortAnswer === 1) {
-				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`1 true/false question, and 1 short answer question`;
-			} else {
-				return "1 multiple choice question, 1 true/false question, and 1 short answer question";
-			}
+			const lastPart = parts.pop();
+			return `${parts.join(", ")}, and ${lastPart}`;
 		}
 	}
 
@@ -158,23 +89,26 @@ export default abstract class Generator {
 	protected exampleResponse(): string {
 		const multipleChoiceExample = `{"questionMC": "What is the capital city of Australia?", ` +
 			`"1": "Sydney", "2": "Melbourne", "3": "Canberra", "4": "Brisbane", "answer": 3}`;
-
 		const trueFalseExample = `{"questionTF": "The Great Wall of China is visible from space.", ` +
 			`"answer": false}`;
-
 		const shortAnswerExample = `{"questionSA": "Explain the concept of photosynthesis in plants.", ` +
 			`"answer": "Photosynthesis is the process by which green plants, algae, and some bacteria convert light ` +
 			`energy into chemical energy, stored in the form of glucose or other organic compounds. It occurs in the ` +
 			`chloroplasts of cells and involves the absorption of light by chlorophyll, the conversion of carbon ` +
 			`dioxide and water into glucose, and the release of oxygen as a byproduct."}`;
 
-		return `{"quiz": [` +
-			`${this.settings.generateMultipleChoice ? `${multipleChoiceExample}` : ""}` +
-			`${this.settings.generateTrueFalse ? `${this.settings.generateMultipleChoice ?
-				`, ${trueFalseExample}` : `${trueFalseExample}`}` : ""}` +
-			`${this.settings.generateShortAnswer ?
-				`${this.settings.generateMultipleChoice || this.settings.generateTrueFalse ?
-					`, ${shortAnswerExample}` : `${shortAnswerExample}`}` : ""}` + `]}`;
+		const examples = [
+			{ generate: this.settings.generateMultipleChoice, example: multipleChoiceExample },
+			{ generate: this.settings.generateTrueFalse, example: trueFalseExample },
+			{ generate: this.settings.generateShortAnswer, example: shortAnswerExample },
+		];
+
+		const activeExamples = examples
+			.filter(e => e.generate)
+			.map(e => e.example)
+			.join(", ");
+
+		return `{"quiz": [${activeExamples}]}`;
 	}
 
 	protected generationLanguage(): string {
