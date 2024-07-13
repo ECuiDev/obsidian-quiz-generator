@@ -1,16 +1,16 @@
 import { Notice } from "obsidian";
 import OpenAI from "openai";
-import QuizGenerator from "../main";
 import Generator from "./generator";
+import { QuizSettings } from "../utils/types";
 
 export default class GptGenerator extends Generator {
 	private openai: OpenAI;
 
-	constructor(plugin: QuizGenerator) {
-		super(plugin);
+	constructor(settings: QuizSettings) {
+		super(settings);
 		this.openai = new OpenAI({
-			apiKey: this.plugin.settings.apiKey,
-			baseURL: this.plugin.settings.apiBaseURL,
+			apiKey: this.settings.apiKey,
+			baseURL: this.settings.apiBaseURL,
 			dangerouslyAllowBrowser: true,
 		});
 	}
@@ -24,7 +24,7 @@ export default class GptGenerator extends Generator {
 							" based off the following text:\n" + contents.join('') +
 							"\nThe overall focus should be on assessing understanding and critical thinking."}
 				],
-				model: this.plugin.settings.model,
+				model: this.settings.model,
 				response_format: { type: "json_object" },
 			});
 

@@ -1,16 +1,15 @@
 import { App, Notice, TFile } from "obsidian";
-import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
-import QuizGenerator from "../main";
+import { ParsedMC, ParsedSA, ParsedTF, QuizSettings } from "../utils/types";
 import QuizModal from "../ui/quizModal";
 
 export default class QuizReviewer {
 	private readonly app: App;
-	private readonly plugin: QuizGenerator;
+	private readonly settings: QuizSettings;
 	private readonly questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 
-	constructor(app: App, plugin: QuizGenerator) {
+	constructor(app: App, settings: QuizSettings) {
 		this.app = app;
-		this.plugin = plugin;
+		this.settings = settings;
 		this.questionsAndAnswers = [];
 	}
 
@@ -19,7 +18,7 @@ export default class QuizReviewer {
 			const fileContents = await this.app.vault.cachedRead(file);
 			this.calloutParser(fileContents);
 			this.spacedRepetitionParser(fileContents);
-			const quiz = new QuizModal(this.app, this.plugin, this.questionsAndAnswers);
+			const quiz = new QuizModal(this.app, this.settings, this.questionsAndAnswers);
 			quiz.disableSave();
 			quiz.open();
 		} else {
@@ -75,7 +74,7 @@ export default class QuizReviewer {
 	}
 
 	private spacedRepetitionParser(fileContents: string): void {
-		const regexMC = new RegExp(`\\*\\*Multiple Choice:\\*\\*\\s*(.+)\\s*a\\)\\s*(.+)\\s*b\\)\\s*(.+)\\s*c\\)\\s*(.+)\\s*d\\)\\s*(.+)\\s*\\${this.plugin.settings.multilineSeparator}\\s*([abcd])\\)\\s*(.+)`, "gim");
+		const regexMC = new RegExp(`\\*\\*Multiple Choice:\\*\\*\\s*(.+)\\s*a\\)\\s*(.+)\\s*b\\)\\s*(.+)\\s*c\\)\\s*(.+)\\s*d\\)\\s*(.+)\\s*\\${this.settings.multilineSeparator}\\s*([abcd])\\)\\s*(.+)`, "gim");
 
 		let match: RegExpExecArray | null;
 		while ((match = regexMC.exec(fileContents)) !== null) {
@@ -96,7 +95,7 @@ export default class QuizReviewer {
 			} as ParsedMC);
 		}
 
-		const regexTF = new RegExp(`\\*\\*True\\/False:\\*\\*\\s*(.+)\\s*${this.plugin.settings.inlineSeparator}\\s*(true|false)`, "gim");
+		const regexTF = new RegExp(`\\*\\*True\\/False:\\*\\*\\s*(.+)\\s*${this.settings.inlineSeparator}\\s*(true|false)`, "gim");
 
 		while ((match = regexTF.exec(fileContents)) !== null) {
 			const question = match[1];
@@ -108,7 +107,7 @@ export default class QuizReviewer {
 			} as ParsedTF);
 		}
 
-		const regexSA = new RegExp(`\\*\\*Short Answer:\\*\\*\\s*(.+)\\s*${this.plugin.settings.inlineSeparator}\\s*(.+)`, "gim");
+		const regexSA = new RegExp(`\\*\\*Short Answer:\\*\\*\\s*(.+)\\s*${this.settings.inlineSeparator}\\s*(.+)`, "gim");
 
 		while ((match = regexSA.exec(fileContents)) !== null) {
 			const question = match[1];

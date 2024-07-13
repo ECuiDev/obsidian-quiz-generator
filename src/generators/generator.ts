@@ -1,10 +1,10 @@
-import QuizGenerator from "../main";
+import { QuizSettings } from "../utils/types";
 
 export default abstract class Generator {
-	protected plugin: QuizGenerator;
+	protected readonly settings: QuizSettings;
 
-	protected constructor(plugin: QuizGenerator) {
-		this.plugin = plugin;
+	protected constructor(settings: QuizSettings) {
+		this.settings = settings;
 	}
 
 	protected systemPrompt(): string {
@@ -12,11 +12,11 @@ export default abstract class Generator {
 			"and answers. Your response must be a JSON object with the following property:\n" +
 			`"quiz": An array of JSON objects, where each JSON object represents a question and answer pair. ` +
 			"Each question type has a different JSON object format.\n" +
-			`${this.plugin.settings.generateMultipleChoice ? "\nThe JSON object representing multiple choice " +
+			`${this.settings.generateMultipleChoice ? "\nThe JSON object representing multiple choice " +
 				"questions must have the following properties:\n" + `${this.multipleChoiceFormat()}` : ""}` +
-			`${this.plugin.settings.generateTrueFalse ? "\nThe JSON object representing true/false questions " +
+			`${this.settings.generateTrueFalse ? "\nThe JSON object representing true/false questions " +
 				"must have the following properties:\n" + `${this.trueFalseFormat()}` : ""}` +
-			`${this.plugin.settings.generateShortAnswer ? "\nThe JSON object representing short answer questions " +
+			`${this.settings.generateShortAnswer ? "\nThe JSON object representing short answer questions " +
 				"must have the following properties:\n" + `${this.shortAnswerFormat()}` : ""}` +
 			"\nFor example, if I ask you to generate " + this.systemPromptQuestions() +
 			" the structure of your response should look like this:\n" +
@@ -25,23 +25,23 @@ export default abstract class Generator {
 	}
 
 	protected systemPromptQuestions(): string {
-		if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
-			!this.plugin.settings.generateShortAnswer) {
+		if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
+			!this.settings.generateShortAnswer) {
 			return "1 multiple choice question";
-		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
-			!this.plugin.settings.generateShortAnswer) {
+		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
+			!this.settings.generateShortAnswer) {
 			return "1 true/false question";
-		} else if (!this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
-			this.plugin.settings.generateShortAnswer) {
+		} else if (!this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
+			this.settings.generateShortAnswer) {
 			return "1 short answer question";
-		} else if (this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
-			!this.plugin.settings.generateShortAnswer) {
+		} else if (this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
+			!this.settings.generateShortAnswer) {
 			return "1 multiple choice question and 1 true/false question";
-		} else if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
-			this.plugin.settings.generateShortAnswer) {
+		} else if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
+			this.settings.generateShortAnswer) {
 			return "1 multiple choice question and 1 short answer question";
-		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
-			this.plugin.settings.generateShortAnswer) {
+		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
+			this.settings.generateShortAnswer) {
 			return "1 true/false question and 1 short answer question";
 		} else {
 			return "1 multiple choice question, 1 true/false question, and 1 short answer question";
@@ -49,92 +49,92 @@ export default abstract class Generator {
 	}
 
 	protected userPromptQuestions(): string {
-		if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
-			!this.plugin.settings.generateShortAnswer) {
-			if (this.plugin.settings.numberOfMultipleChoice > 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions`;
+		if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
+			!this.settings.generateShortAnswer) {
+			if (this.settings.numberOfMultipleChoice > 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions`;
 			} else {
 				return "1 multiple choice question";
 			}
-		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
-			!this.plugin.settings.generateShortAnswer) {
-			if (this.plugin.settings.numberOfTrueFalse > 1) {
-				return `${this.plugin.settings.numberOfTrueFalse} true/false questions`;
+		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
+			!this.settings.generateShortAnswer) {
+			if (this.settings.numberOfTrueFalse > 1) {
+				return `${this.settings.numberOfTrueFalse} true/false questions`;
 			} else {
 				return "1 true/false question";
 			}
-		} else if (!this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
-			this.plugin.settings.generateShortAnswer) {
-			if (this.plugin.settings.numberOfShortAnswer > 1) {
-				return `${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+		} else if (!this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
+			this.settings.generateShortAnswer) {
+			if (this.settings.numberOfShortAnswer > 1) {
+				return `${this.settings.numberOfShortAnswer} short answer questions`;
 			} else {
 				return "1 short answer question";
 			}
-		} else if (this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
-			!this.plugin.settings.generateShortAnswer) {
-			if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse > 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and ` +
-					`${this.plugin.settings.numberOfTrueFalse} true/false questions`;
-			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse === 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and 1 true/false question`;
-			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse > 1) {
-				return `1 multiple choice question and ${this.plugin.settings.numberOfTrueFalse} true/false questions`;
+		} else if (this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
+			!this.settings.generateShortAnswer) {
+			if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse > 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions and ` +
+					`${this.settings.numberOfTrueFalse} true/false questions`;
+			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse === 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions and 1 true/false question`;
+			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse > 1) {
+				return `1 multiple choice question and ${this.settings.numberOfTrueFalse} true/false questions`;
 			} else {
 				return `1 multiple choice question and 1 true/false question`;
 			}
-		} else if (this.plugin.settings.generateMultipleChoice && !this.plugin.settings.generateTrueFalse &&
-			this.plugin.settings.generateShortAnswer) {
-			if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfShortAnswer > 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and ` +
-					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfShortAnswer === 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions and 1 short answer question`;
-			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfShortAnswer > 1) {
-				return `1 multiple choice question and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+		} else if (this.settings.generateMultipleChoice && !this.settings.generateTrueFalse &&
+			this.settings.generateShortAnswer) {
+			if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfShortAnswer > 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions and ` +
+					`${this.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfShortAnswer === 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions and 1 short answer question`;
+			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfShortAnswer > 1) {
+				return `1 multiple choice question and ${this.settings.numberOfShortAnswer} short answer questions`;
 			} else {
 				return "1 multiple choice question and 1 short answer question";
 			}
-		} else if (!this.plugin.settings.generateMultipleChoice && this.plugin.settings.generateTrueFalse &&
-			this.plugin.settings.generateShortAnswer) {
-			if (this.plugin.settings.numberOfTrueFalse > 1 && this.plugin.settings.numberOfShortAnswer > 1) {
-				return `${this.plugin.settings.numberOfTrueFalse} true/false questions and ` +
-					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.plugin.settings.numberOfTrueFalse > 1 && this.plugin.settings.numberOfShortAnswer === 1) {
-				return `${this.plugin.settings.numberOfTrueFalse} true/false questions and 1 short answer question`;
-			} else if (this.plugin.settings.numberOfTrueFalse === 1 && this.plugin.settings.numberOfShortAnswer > 1) {
-				return `1 true/false question and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
+		} else if (!this.settings.generateMultipleChoice && this.settings.generateTrueFalse &&
+			this.settings.generateShortAnswer) {
+			if (this.settings.numberOfTrueFalse > 1 && this.settings.numberOfShortAnswer > 1) {
+				return `${this.settings.numberOfTrueFalse} true/false questions and ` +
+					`${this.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.settings.numberOfTrueFalse > 1 && this.settings.numberOfShortAnswer === 1) {
+				return `${this.settings.numberOfTrueFalse} true/false questions and 1 short answer question`;
+			} else if (this.settings.numberOfTrueFalse === 1 && this.settings.numberOfShortAnswer > 1) {
+				return `1 true/false question and ${this.settings.numberOfShortAnswer} short answer questions`;
 			} else {
 				return "1 true/false question and 1 short answer question";
 			}
 		} else {
-			if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
-				this.plugin.settings.numberOfShortAnswer > 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`${this.plugin.settings.numberOfTrueFalse} true/false questions, and ` +
-					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
-				this.plugin.settings.numberOfShortAnswer > 1) {
-				return `1 multiple choice question, ${this.plugin.settings.numberOfTrueFalse} true/false questions, ` +
-					`and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse === 1 &&
-				this.plugin.settings.numberOfShortAnswer > 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`1 true/false question, and ${this.plugin.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
-				this.plugin.settings.numberOfShortAnswer === 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
-					`${this.plugin.settings.numberOfTrueFalse} true/false questions, and 1 short answer question`;
-			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse === 1 &&
-				this.plugin.settings.numberOfShortAnswer > 1) {
+			if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse > 1 &&
+				this.settings.numberOfShortAnswer > 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`${this.settings.numberOfTrueFalse} true/false questions, and ` +
+					`${this.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse > 1 &&
+				this.settings.numberOfShortAnswer > 1) {
+				return `1 multiple choice question, ${this.settings.numberOfTrueFalse} true/false questions, ` +
+					`and ${this.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse === 1 &&
+				this.settings.numberOfShortAnswer > 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`1 true/false question, and ${this.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse > 1 &&
+				this.settings.numberOfShortAnswer === 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
+					`${this.settings.numberOfTrueFalse} true/false questions, and 1 short answer question`;
+			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse === 1 &&
+				this.settings.numberOfShortAnswer > 1) {
 				return `1 multiple choice question, 1 true/false question, and ` +
-					`${this.plugin.settings.numberOfShortAnswer} short answer questions`;
-			} else if (this.plugin.settings.numberOfMultipleChoice === 1 && this.plugin.settings.numberOfTrueFalse > 1 &&
-				this.plugin.settings.numberOfShortAnswer === 1) {
-				return `1 multiple choice question, ${this.plugin.settings.numberOfTrueFalse} true/false questions, ` +
+					`${this.settings.numberOfShortAnswer} short answer questions`;
+			} else if (this.settings.numberOfMultipleChoice === 1 && this.settings.numberOfTrueFalse > 1 &&
+				this.settings.numberOfShortAnswer === 1) {
+				return `1 multiple choice question, ${this.settings.numberOfTrueFalse} true/false questions, ` +
 					`and 1 short answer question`;
-			} else if (this.plugin.settings.numberOfMultipleChoice > 1 && this.plugin.settings.numberOfTrueFalse === 1 &&
-				this.plugin.settings.numberOfShortAnswer === 1) {
-				return `${this.plugin.settings.numberOfMultipleChoice} multiple choice questions, ` +
+			} else if (this.settings.numberOfMultipleChoice > 1 && this.settings.numberOfTrueFalse === 1 &&
+				this.settings.numberOfShortAnswer === 1) {
+				return `${this.settings.numberOfMultipleChoice} multiple choice questions, ` +
 					`1 true/false question, and 1 short answer question`;
 			} else {
 				return "1 multiple choice question, 1 true/false question, and 1 short answer question";
@@ -169,17 +169,17 @@ export default abstract class Generator {
 			`dioxide and water into glucose, and the release of oxygen as a byproduct."}`;
 
 		return `{"quiz": [` +
-			`${this.plugin.settings.generateMultipleChoice ? `${multipleChoiceExample}` : ""}` +
-			`${this.plugin.settings.generateTrueFalse ? `${this.plugin.settings.generateMultipleChoice ?
+			`${this.settings.generateMultipleChoice ? `${multipleChoiceExample}` : ""}` +
+			`${this.settings.generateTrueFalse ? `${this.settings.generateMultipleChoice ?
 				`, ${trueFalseExample}` : `${trueFalseExample}`}` : ""}` +
-			`${this.plugin.settings.generateShortAnswer ?
-				`${this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse ?
+			`${this.settings.generateShortAnswer ?
+				`${this.settings.generateMultipleChoice || this.settings.generateTrueFalse ?
 					`, ${shortAnswerExample}` : `${shortAnswerExample}`}` : ""}` + `]}`;
 	}
 
 	protected generationLanguage(): string {
-		return `The generated questions and answers must be in ${this.plugin.settings.language}. However, your ` +
+		return `The generated questions and answers must be in ${this.settings.language}. However, your ` +
 			`response must still follow the JSON format provided above. This means that while the values should ` +
-			`be in ${this.plugin.settings.language}, the keys must be the exact same as given above, in English.`;
+			`be in ${this.settings.language}, the keys must be the exact same as given above, in English.`;
 	}
 }

@@ -1,19 +1,18 @@
 import { App, normalizePath, TFile } from "obsidian";
-import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
-import QuizGenerator from "../main";
+import { ParsedMC, ParsedSA, ParsedTF, QuizSettings } from "../utils/types";
 
 export default class QuestionSaver {
 	private app: App;
-	private readonly plugin: QuizGenerator;
+	private readonly settings: QuizSettings;
 	private readonly question: ParsedMC | ParsedTF | ParsedSA;
 	private readonly fileName: string;
 	private readonly validPath: boolean;
 	private readonly fileCreated: boolean;
 
-	constructor(app: App, plugin: QuizGenerator, question: ParsedMC | ParsedTF | ParsedSA,
+	constructor(app: App, settings: QuizSettings, question: ParsedMC | ParsedTF | ParsedSA,
 				fileName: string, validPath: boolean, fileCreated: boolean) {
 		this.app = app;
-		this.plugin = plugin;
+		this.settings = settings;
 		this.question = question;
 		this.fileName = fileName;
 		this.validPath = validPath;
@@ -24,7 +23,7 @@ export default class QuestionSaver {
 		let path: string;
 		let quizFile: TFile;
 		if (this.validPath) {
-			path = normalizePath(this.plugin.settings.questionSavePath.trim() + "/" + this.fileName);
+			path = normalizePath(this.settings.questionSavePath.trim() + "/" + this.fileName);
 		} else {
 			path = this.fileName;
 		}
@@ -41,7 +40,7 @@ export default class QuestionSaver {
 			}
 		}
 
-		if (this.plugin.settings.questionSaveFormat === "Spaced Repetition") {
+		if (this.settings.questionSaveFormat === "Spaced Repetition") {
 			await this.saveForSpacedRepetition(quizFile);
 		} else {
 			await this.saveAsCallout(quizFile);
@@ -61,15 +60,15 @@ export default class QuestionSaver {
 			return "**Multiple Choice:** " + question.questionMC +
 				`\na) ${question["1"]}` + `\nb) ${question["2"]}` +
 				`\nc) ${question["3"]}` + `\nd) ${question["4"]}` +
-				`\n${this.plugin.settings.multilineSeparator}\n` +
+				`\n${this.settings.multilineSeparator}\n` +
 				this.numberToAnswer(question.answer, question);
 		} else if ("questionTF" in question) {
 			return "**True/False:** " + question.questionTF +
-				` ${this.plugin.settings.inlineSeparator} ` + question.answer.toString().charAt(0).toUpperCase() +
+				` ${this.settings.inlineSeparator} ` + question.answer.toString().charAt(0).toUpperCase() +
 				question.answer.toString().slice(1);
 		} else if ("questionSA" in question) {
 			return "**Short Answer:** " + question.questionSA +
-				` ${this.plugin.settings.inlineSeparator} ` + question.answer;
+				` ${this.settings.inlineSeparator} ` + question.answer;
 		} else {
 			return "Error saving question.";
 		}

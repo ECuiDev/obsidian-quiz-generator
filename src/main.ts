@@ -26,19 +26,19 @@ export default class QuizGenerator extends Plugin {
 			id: "open-generator",
 			name: "Open generator",
 			callback: (): void => {
-				new SelectorModal(this.app, this).open();
+				new SelectorModal(this.app, this.settings).open();
 			}
 		});
 
 		this.addRibbonIcon("brain-circuit", "Open generator", (): void => {
-			new SelectorModal(this.app, this).open();
+			new SelectorModal(this.app, this.settings).open();
 		});
 
 		this.addCommand({
 			id: "open-quiz-from-active-note",
 			name: "Open quiz from active note",
 			callback: (): void => {
-				new QuizReviewer(this.app, this).openQuiz(this.app.workspace.getActiveFile());
+				new QuizReviewer(this.app, this.settings).openQuiz(this.app.workspace.getActiveFile());
 			}
 		});
 
@@ -50,7 +50,7 @@ export default class QuizGenerator extends Plugin {
 							.setTitle("Open quiz from this note")
 							.setIcon("scroll-text")
 							.onClick((): void => {
-								new QuizReviewer(this.app, this).openQuiz(file);
+								new QuizReviewer(this.app, this.settings).openQuiz(file);
 							});
 					});
 				}

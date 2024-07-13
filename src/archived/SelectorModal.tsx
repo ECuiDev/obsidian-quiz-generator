@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { App, Vault, Notice, TFile, TFolder, getFrontMatterInfo } from "obsidian";
 import GptGenerator from "../generators/gptGenerator";
-import QuizGenerator from "../main";
 import { cleanUpNoteContents } from "../utils/parser";
-import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote } from "../utils/types";
+import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote, QuizSettings } from "../utils/types";
 import NoteAndFolderSelector from "../ui/noteAndFolderSelector";
 import "styles.css";
 import QuizModal from "../ui/quizModal";
@@ -13,11 +12,11 @@ import FolderContainer from "./FolderContainer";
 
 interface SelectorModalProps {
 	app: App;
-	plugin: QuizGenerator;
+	settings: QuizSettings;
 	parent: HTMLDivElement;
 }
 
-const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
+const SelectorModal = ({ app, settings, parent }: SelectorModalProps) => {
 	const modalRef = useRef<HTMLDivElement>(null);
 	const [notePaths, setNotePaths] = useState<string[]>([]);
 	const [folderPaths, setFolderPaths] = useState<string[]>([]);
@@ -63,11 +62,11 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 	};
 
 	const generateHandler = async (): Promise<void> => {
-		if ((plugin.settings.generateMultipleChoice || plugin.settings.generateTrueFalse
-			|| plugin.settings.generateShortAnswer) && promptTokens > 0) {
+		if ((settings.generateMultipleChoice || settings.generateTrueFalse
+			|| settings.generateShortAnswer) && promptTokens > 0) {
 			setGenerateButtonDisabled(true);
 			setQuestionsAndAnswers([]);
-			const generator = new GptGenerator(plugin);
+			const generator = new GptGenerator(settings);
 
 			new Notice("Generating...");
 			let questions = await generator.generateQuestions(loadNoteContents());
@@ -99,7 +98,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 						}
 					}
 
-					setQuiz(new QuizModal(app, plugin, questionsAndAnswers));
+					setQuiz(new QuizModal(app, settings, questionsAndAnswers));
 					quiz?.open();
 				} catch (error: any) {
 					new Notice(error);
@@ -218,7 +217,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 			}
 		};
 
-		const newNoteContainer = <NoteContainer key={key} showPath={plugin.settings.showNotePath} path={note.path} basename={note.basename} tokens={tokens} onClick={removeHandler}></NoteContainer>;
+		const newNoteContainer = <NoteContainer key={key} showPath={settings.showNotePath} path={note.path} basename={note.basename} tokens={tokens} onClick={removeHandler}></NoteContainer>;
 		setNotesContainerChildren(children => [...children, newNoteContainer]); // good
 	};
 
@@ -244,7 +243,7 @@ const SelectorModal = ({ app, plugin, parent }: SelectorModalProps) => {
 			const newFolderContainer = <FolderContainer key={key} showPath={true} path={app.vault.getName() + " (Vault)"} basename={folder.name} tokens={tokens} onClick={removeHandler}></FolderContainer>;
 			setNotesContainerChildren(children => [...children, newFolderContainer]); // good
 		} else {
-			const newFolderContainer = <FolderContainer key={key} showPath={plugin.settings.showFolderPath} path={folder.path} basename={folder.name} tokens={tokens} onClick={removeHandler}></FolderContainer>;
+			const newFolderContainer = <FolderContainer key={key} showPath={settings.showFolderPath} path={folder.path} basename={folder.name} tokens={tokens} onClick={removeHandler}></FolderContainer>;
 			setNotesContainerChildren(children => [...children, newFolderContainer]); // good
 		}
 	};

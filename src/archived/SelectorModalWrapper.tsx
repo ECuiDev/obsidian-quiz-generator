@@ -1,17 +1,17 @@
 import { App } from "obsidian";
-import QuizGenerator from "../main";
 import SelectorModal from "./SelectorModal";
 import React from "react";
+import { QuizSettings } from "../utils/types";
 
 interface SelectorModalWrapperProps {
 	app: App;
-	plugin: QuizGenerator;
+	settings: QuizSettings;
 	parent: HTMLDivElement;
 }
 
-const SelectorModalWrapper: React.FC<SelectorModalWrapperProps> = ({ app, plugin, parent }) => {
+const SelectorModalWrapper: React.FC<SelectorModalWrapperProps> = ({ app, settings, parent }) => {
 	return(
-		<SelectorModal app={app} plugin={plugin} parent={parent}></SelectorModal>
+		<SelectorModal app={app} settings={settings} parent={parent}></SelectorModal>
 	);
 }
 

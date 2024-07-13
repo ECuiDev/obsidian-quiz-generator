@@ -11,16 +11,15 @@ import {
 	TFolder,
 	Vault
 } from "obsidian";
-import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF, SelectorModalButtons } from "../utils/types";
+import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF, QuizSettings, SelectorModalButtons } from "../utils/types";
 import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
-import QuizGenerator from "../main";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import QuizModal from "./quizModal";
 import NoteViewerModal from "./noteViewerModal";
 
 export default class SelectorModal extends Modal {
-	private readonly plugin: QuizGenerator;
+	private readonly settings: QuizSettings;
 	private notePaths: string[];
 	private folderPaths: string[];
 	private selectedNotes: Map<string, string> = new Map<string, string>();
@@ -40,9 +39,9 @@ export default class SelectorModal extends Modal {
 	private readonly generateQuizHandler: () => void;
 	private quiz: QuizModal | undefined;
 
-	constructor(app: App, plugin: QuizGenerator) {
+	constructor(app: App, settings: QuizSettings) {
 		super(app);
-		this.plugin = plugin;
+		this.settings = settings;
 		this.notePaths = this.app.vault.getMarkdownFiles().map((file: TFile) => file.path);
 		this.folderPaths = this.app.vault.getAllLoadedFiles()
 			.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
@@ -86,7 +85,7 @@ export default class SelectorModal extends Modal {
 
 			this.toggleButtons(["generate"], true);
 			const questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[] = [];
-			const generator = new GptGenerator(this.plugin);
+			const generator = new GptGenerator(this.settings);
 
 			new Notice("Generating...");
 
@@ -119,7 +118,7 @@ export default class SelectorModal extends Modal {
 					});
 				}
 
-				this.quiz = new QuizModal(this.app, this.plugin, questionsAndAnswers);
+				this.quiz = new QuizModal(this.app, this.settings, questionsAndAnswers);
 				this.quiz.open();
 				this.toggleButtons(["quiz"], false);
 			} catch (error: any) {
@@ -213,13 +212,13 @@ export default class SelectorModal extends Modal {
 	}
 
 	private renderNote(note: TFile): void {
-		const tokens = this.renderNoteOrFolder(note, this.plugin.settings.showNotePath ? note.path : note.basename);
+		const tokens = this.renderNoteOrFolder(note, this.settings.showNotePath ? note.path : note.basename);
 		this.toggleButtons(["clear", "generate"], false);
 		this.updatePromptTokens(this.promptTokens + tokens);
 	}
 
 	private renderFolder(folder: TFolder): void {
-		let folderName = this.plugin.settings.showFolderPath ? folder.path : folder.name;
+		let folderName = this.settings.showFolderPath ? folder.path : folder.name;
 		if (folder.path === "/") {
 			folderName = this.app.vault.getName() + " (Vault)";
 		}
@@ -241,7 +240,7 @@ export default class SelectorModal extends Modal {
 		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
 			if (item instanceof TFile) {
-				new NoteViewerModal(this.app, this.plugin, this.modalEl, item).open();
+				new NoteViewerModal(this.app, this.modalEl, item).open();
 			}
 		});
 
@@ -287,8 +286,8 @@ export default class SelectorModal extends Modal {
 	}
 
 	private validGenerationSettings(): boolean {
-		return (this.plugin.settings.generateMultipleChoice || this.plugin.settings.generateTrueFalse
-			|| this.plugin.settings.generateShortAnswer) && this.promptTokens > 0;
+		return (this.settings.generateMultipleChoice || this.settings.generateTrueFalse
+			|| this.settings.generateShortAnswer) && this.promptTokens > 0;
 	}
 
 	private countNoteTokens(noteContents: string | undefined): number {

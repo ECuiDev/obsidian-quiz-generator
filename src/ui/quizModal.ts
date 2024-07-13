@@ -1,5 +1,6 @@
 import {
 	App,
+	Component,
 	MarkdownRenderer,
 	Modal,
 	normalizePath,
@@ -10,12 +11,11 @@ import {
 	TFile,
 	TFolder
 } from "obsidian";
-import { ParsedMC, ParsedSA, ParsedTF } from "../utils/types";
-import QuizGenerator from "../main";
+import { ParsedMC, ParsedSA, ParsedTF, QuizSettings } from "../utils/types";
 import QuestionSaver from "../services/questionSaver";
 
 export default class QuizModal extends Modal {
-	private readonly plugin: QuizGenerator;
+	private readonly settings: QuizSettings;
 	private questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[];
 	private readonly saved: boolean[];
 	private questionIndex: number = 0;
@@ -32,14 +32,16 @@ export default class QuizModal extends Modal {
 	private fileName: string = "Quiz 0.md";
 	private validPath: boolean = false;
 	private fileCreated: boolean = false;
+	private readonly component: Component;
 
-	constructor(app: App, plugin: QuizGenerator, questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[]) {
+	constructor(app: App, settings: QuizSettings, questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[]) {
 		super(app);
-		this.plugin = plugin;
+		this.settings = settings;
 		this.questionsAndAnswers = questionsAndAnswers;
 		this.saved = new Array(this.questionsAndAnswers.length).fill(false);
 		this.scope = new Scope(this.app.scope);
 		this.scope.register([], "Escape", () => this.close());
+		this.component = new Component();
 
 		this.modalEl.addClass("modal-el-container");
 		this.contentEl.addClass("modal-content-container");
@@ -59,7 +61,7 @@ export default class QuizModal extends Modal {
 			this.saveAllButton.disabled = this.saved.every(value => value);
 
 			this.saved[this.questionIndex] = true;
-			await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[this.questionIndex],
+			await new QuestionSaver(this.app, this.settings, this.questionsAndAnswers[this.questionIndex],
 				this.fileName, this.validPath, this.fileCreated).saveQuestion();
 			this.fileCreated = true;
 
@@ -76,7 +78,7 @@ export default class QuizModal extends Modal {
 			for (let index = 0; index < this.questionsAndAnswers.length; index++) {
 				if (!this.saved[index]) {
 					this.saved[index] = true;
-					await new QuestionSaver(this.app, this.plugin, this.questionsAndAnswers[index],
+					await new QuestionSaver(this.app, this.settings, this.questionsAndAnswers[index],
 						this.fileName, this.validPath, this.fileCreated).saveQuestion();
 					this.fileCreated = true;
 				}
@@ -96,10 +98,10 @@ export default class QuizModal extends Modal {
 
 	public async onOpen(): Promise<void> {
 		super.onOpen();
-		if (this.plugin.settings.randomizeQuestions) {
+		if (this.settings.randomizeQuestions) {
 			this.shuffleQuestions(this.questionsAndAnswers);
 		}
-		if (this.plugin.settings.autoSave) {
+		if (this.settings.autoSave) {
 			this.saveAllQuestionsHandler();
 		}
 		await this.showQuestion();
@@ -124,7 +126,7 @@ export default class QuizModal extends Modal {
 
 	private chooseFileName(): void {
 		let count = 1;
-		const folder = this.app.vault.getAbstractFileByPath(normalizePath(this.plugin.settings.questionSavePath.trim()));
+		const folder = this.app.vault.getAbstractFileByPath(normalizePath(this.settings.questionSavePath.trim()));
 
 		if (folder instanceof TFolder) {
 			const fileNames = folder.children
@@ -191,13 +193,13 @@ export default class QuizModal extends Modal {
 
 		switch (this.questionType(question)) {
 			case "MC":
-				await MarkdownRenderer.render(this.app, (question as ParsedMC).questionMC, questionText, "", this.plugin);
+				await MarkdownRenderer.render(this.app, (question as ParsedMC).questionMC, questionText, "", this.component);
 				break;
 			case "TF":
-				await MarkdownRenderer.render(this.app, (question as ParsedTF).questionTF, questionText, "", this.plugin);
+				await MarkdownRenderer.render(this.app, (question as ParsedTF).questionTF, questionText, "", this.component);
 				break;
 			case "SA":
-				await MarkdownRenderer.render(this.app, (question as ParsedSA).questionSA, questionText, "", this.plugin);
+				await MarkdownRenderer.render(this.app, (question as ParsedSA).questionSA, questionText, "", this.component);
 				break;
 			default:
 				break;
@@ -227,7 +229,7 @@ export default class QuizModal extends Modal {
 		for (const choice of choices) {
 			const choiceNumber = choices.indexOf(choice);
 			const choiceButton = choicesContainer.createEl("button");
-			await MarkdownRenderer.render(this.app, choice, choiceButton, "", this.plugin);
+			await MarkdownRenderer.render(this.app, choice, choiceButton, "", this.component);
 			choiceButton.addEventListener("click", (): void =>
 				this.selectMCQAnswer((this.questionsAndAnswers[this.questionIndex] as ParsedMC).answer, choiceNumber + 1));
 		}
@@ -307,7 +309,7 @@ export default class QuizModal extends Modal {
 	private async showSAAnswer(answer: string): Promise<void> {
 		const showAnswerButton = this.questionContainer.querySelector(".show-answer-button")! as HTMLButtonElement;
 		showAnswerButton.textContent = "";
-		await MarkdownRenderer.render(this.app, answer, showAnswerButton, "", this.plugin);
+		await MarkdownRenderer.render(this.app, answer, showAnswerButton, "", this.component);
 		showAnswerButton.disabled = true;
 	}
 
