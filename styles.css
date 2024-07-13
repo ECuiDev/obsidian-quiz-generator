@@ -26,11 +26,13 @@
 }
 
 .move-left {
-	transform: translateX(-51%); /* use alternative to transform like left and right */
+	position: absolute;
+	left: 9.5%;
 }
 
 .move-right {
-	transform: translateX(51%); /* use alternative to transform like left and right */
+	position: absolute;
+	right: 9.5%;
 }
 
 .remove-opacity {

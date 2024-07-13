@@ -42,5 +42,4 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 	public setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
 		this.callback = callback;
 	}
-
 }

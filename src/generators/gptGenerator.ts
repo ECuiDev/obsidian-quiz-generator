@@ -37,5 +37,4 @@ export default class GptGenerator extends Generator {
 			new Notice(error);
 		}
 	}
-
 }

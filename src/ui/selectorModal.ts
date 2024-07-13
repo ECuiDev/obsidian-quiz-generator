@@ -241,7 +241,7 @@ export default class SelectorModal extends Modal {
 		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
 			if (item instanceof TFile) {
-				new NoteViewerModal(this.app, this.plugin, item).open();
+				new NoteViewerModal(this.app, this.plugin, this.modalEl, item).open();
 			}
 		});
 

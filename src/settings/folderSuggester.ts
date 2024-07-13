@@ -24,5 +24,4 @@ export default class FolderSuggester extends AbstractInputSuggest<string> {
 		this.inputEl.trigger("input");
 		this.close();
 	}
-
 }

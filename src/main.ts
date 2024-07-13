@@ -68,5 +68,4 @@ export default class QuizGenerator extends Plugin {
 	async saveSettings(): Promise<void> {
 		await this.saveData(this.settings);
 	}
-
 }

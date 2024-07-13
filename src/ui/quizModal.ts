@@ -322,5 +322,4 @@ export default class QuizModal extends Modal {
 			return "Error";
 		}
 	}
-
 }

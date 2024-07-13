@@ -251,7 +251,5 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
-
 	}
-
 }

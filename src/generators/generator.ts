@@ -182,5 +182,4 @@ export default abstract class Generator {
 			`response must still follow the JSON format provided above. This means that while the values should ` +
 			`be in ${this.plugin.settings.language}, the keys must be the exact same as given above, in English.`;
 	}
-
 }
