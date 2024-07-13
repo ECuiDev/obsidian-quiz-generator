@@ -15,10 +15,43 @@
 	justify-content: center;
 }
 
+.notes-container {
+	height: 90%;
+	border: 0.125em solid;
+	border-radius: 0.5em;
+	overflow-y: auto;
+}
+
+.notes-container-element {
+	display: flex;
+	padding: 1.5%; /* use better unit */
+	margin: 1%; /* use better unit */
+	border-radius: 0.5rem; /* use em? */
+	border: 0.1rem solid; /* use em? */
+}
+
+.notes-container-element > button {
+	height: initial;
+	padding: initial;
+	margin-right: 0.5em;
+	background-color: transparent !important;
+	box-shadow: none !important;
+	cursor: pointer;
+}
+
+.notes-container-element > button:hover {
+	background-color: revert !important;
+}
+
+.note-tokens {
+	margin-left: auto;
+	margin-right: 2%; /* find better way to do this */
+}
+
 .ui-button {
-	box-shadow: none !important; /* maybe remove this? */
 	margin-right: 1rem;
 	cursor: pointer;
+	box-shadow: none !important;
 }
 
 .ui-button:disabled {
@@ -40,14 +73,6 @@
 }
 
 /* selectorModal */
-.notes-container {
-	overflow-y: auto;
-	height: 90%;
-	flex: none; /* unnecessary? */
-	border: 0.125rem solid; /* use em? */
-	border-radius: 0.5rem; /* use em? */
-}
-
 .selector-button-container {
 	position: relative;
 	bottom: -2.5%; /* find better way to do this */
@@ -60,33 +85,6 @@
 	bottom: -1%; /* find better way to do this */
 	display: flex;
 	justify-content: center;
-}
-
-.notes-container-element {
-	display: flex;
-	flex-direction: row;
-	padding: 1.5%; /* use better unit */
-	margin: 1%; /* use better unit */
-	border-radius: 0.5rem; /* use em? */
-	border: 0.1rem solid; /* use em? */
-}
-
-.note-tokens {
-	margin-left: auto;
-	margin-right: 2%; /* find better way to do this */
-}
-
-.notes-container-element > button {
-	height: initial;
-	padding: initial;
-	margin-right: 0.5em;
-	background-color: transparent !important;
-	box-shadow: none !important;
-	cursor: pointer;
-}
-
-.notes-container-element > button:hover {
-	background-color: revert !important;
 }
 
 /* noteAndFolderSelector */

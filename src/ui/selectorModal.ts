@@ -17,6 +17,7 @@ import GptGenerator from "../generators/gptGenerator";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import QuizModal from "./quizModal";
 import NoteViewerModal from "./noteViewerModal";
+import FolderViewerModal from "./folderViewerModal";
 
 export default class SelectorModal extends Modal {
 	private readonly settings: QuizSettings;
@@ -190,7 +191,7 @@ export default class SelectorModal extends Modal {
 				this.openFolderSelector();
 
 				let folderContents: string[] = [];
-				const promises: any[] = [];
+				const promises: Promise<void>[] = [];
 				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
 					if (file instanceof TFile && file.extension === "md") {
 						promises.push(
@@ -240,7 +241,9 @@ export default class SelectorModal extends Modal {
 		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
 			if (item instanceof TFile) {
-				new NoteViewerModal(this.app, this.modalEl, item).open();
+				new NoteViewerModal(this.app, item, this.modalEl).open();
+			} else {
+				new FolderViewerModal(this.app, this.modalEl, item).open();
 			}
 		});
 

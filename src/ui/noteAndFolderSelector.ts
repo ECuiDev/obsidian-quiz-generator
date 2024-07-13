@@ -15,9 +15,9 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 
 	public onOpen(): void {
 		super.onOpen();
-		this.containerEl.firstElementChild?.addClass("remove-opacity");
-		this.selectorModal.addClass("move-left");
+		this.containerEl.children[0].addClass("remove-opacity");
 		this.containerEl.children[1].addClass("move-right", "adder-modal");
+		this.selectorModal.addClass("move-left");
 	}
 
 	public onClose(): void {

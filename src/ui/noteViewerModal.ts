@@ -1,14 +1,14 @@
 import { App, Component, MarkdownRenderer, Modal, Scope, TFile } from "obsidian";
 
 export default class NoteViewerModal extends Modal {
-	private selectorModal: HTMLElement;
 	private readonly note: TFile;
+	private selectorModal: HTMLElement | undefined;
 	private readonly component: Component;
 
-	constructor(app: App, selectorModal: HTMLElement, note: TFile) {
+	constructor(app: App, note: TFile, selectorModal?: HTMLElement) {
 		super(app);
-		this.selectorModal = selectorModal;
 		this.note = note;
+		this.selectorModal = selectorModal;
 		this.scope = new Scope(this.app.scope);
 		this.scope.register([], "Escape", () => this.close());
 		this.component = new Component();
@@ -20,15 +20,15 @@ export default class NoteViewerModal extends Modal {
 		this.titleEl.addClass("title-style");
 		this.titleEl.setText(this.note.basename);
 
-		this.containerEl.firstElementChild?.addClass("remove-opacity");
-		this.selectorModal.addClass("move-left");
+		this.containerEl.children[0].addClass("remove-opacity");
 		this.containerEl.children[1].addClass("move-right");
+		this.selectorModal?.addClass("move-left");
 
 		await MarkdownRenderer.render(this.app, await this.app.vault.cachedRead(this.note), this.contentEl, "", this.component);
 	}
 
 	public onClose(): void {
 		super.onClose();
-		this.selectorModal.removeClass("move-left");
+		this.selectorModal?.removeClass("move-left");
 	}
 }
