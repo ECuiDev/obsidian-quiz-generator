@@ -29,8 +29,9 @@ export interface SelectedNote {
 export type SelectorModalButtons = "clear" | "quiz" | "note" | "folder" | "generate";
 
 export const models: Record<string, string> = {
-	"gpt-3.5-turbo-0125": "GPT-3.5",
-	"gpt-4-0125-preview": "GPT-4",
+	"gpt-3.5-turbo": "GPT-3.5 Turbo",
+	"gpt-4-turbo": "GPT-4 Turbo",
+	"gpt-4o": "GPT-4o",
 }
 
 export const languages: Record<string, string> = {
@@ -86,7 +87,7 @@ export interface QuizSettings {
 export const DEFAULT_SETTINGS: QuizSettings = {
 	apiKey: "",
 	apiBaseURL: "https://api.openai.com/v1",
-	model: "gpt-3.5-turbo-0125",
+	model: "gpt-3.5-turbo",
 	showNotePath: false,
 	showFolderPath: false,
 	randomizeQuestions: true,
