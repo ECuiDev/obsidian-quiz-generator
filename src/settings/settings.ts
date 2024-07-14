@@ -78,6 +78,18 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
+			.setName("Include notes in subfolders")
+			.setDesc("Turn this off to only include notes in the selected folders.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.includeSubfolderNotes)
+					.onChange(async (value) => {
+						this.plugin.settings.includeSubfolderNotes = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
 			.setName("Randomize question order")
 			.setDesc("Turn this off to answer questions in their generated/saved order.")
 			.addToggle((toggle) =>

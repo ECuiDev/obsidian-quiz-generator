@@ -12,14 +12,17 @@ import {
 } from "obsidian";
 import NoteViewerModal from "./noteViewerModal";
 import { cleanUpNoteContents } from "../utils/parser";
+import { QuizSettings } from "../utils/types";
 
 export default class FolderViewerModal extends Modal {
+	private readonly settings: QuizSettings;
 	private selectorModal: HTMLElement;
 	private readonly folder: TFolder;
 	private notesContainer: HTMLDivElement;
 
-	constructor(app: App, selectorModal: HTMLElement, folder: TFolder) {
+	constructor(app: App, settings: QuizSettings, selectorModal: HTMLElement, folder: TFolder) {
 		super(app);
+		this.settings = settings;
 		this.selectorModal = selectorModal;
 		this.folder = folder;
 		this.scope = new Scope(this.app.scope);
@@ -40,7 +43,8 @@ export default class FolderViewerModal extends Modal {
 
 		const promises: Promise<void>[] = [];
 		Vault.recurseChildren(this.folder, (file: TAbstractFile): void => {
-			if (file instanceof TFile && file.extension === "md") {
+			if (file instanceof TFile && file.extension === "md" &&
+				(this.settings.includeSubfolderNotes || file.parent?.path === this.folder.path)) {
 				promises.push(
 					(async (): Promise<void> => {
 						await this.renderNote(file);

@@ -193,7 +193,8 @@ export default class SelectorModal extends Modal {
 				let folderContents: string[] = [];
 				const promises: Promise<void>[] = [];
 				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
-					if (file instanceof TFile && file.extension === "md") {
+					if (file instanceof TFile && file.extension === "md" &&
+						(this.settings.includeSubfolderNotes || file.parent?.path === selectedFolder.path)) {
 						promises.push(
 							(async (): Promise<void> => {
 								const noteContents = await this.app.vault.cachedRead(file);
@@ -243,7 +244,7 @@ export default class SelectorModal extends Modal {
 			if (item instanceof TFile) {
 				new NoteViewerModal(this.app, item, this.modalEl).open();
 			} else {
-				new FolderViewerModal(this.app, this.modalEl, item).open();
+				new FolderViewerModal(this.app, this.settings, this.modalEl, item).open();
 			}
 		});
 
