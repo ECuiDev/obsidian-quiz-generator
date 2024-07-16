@@ -17,7 +17,7 @@
       "ES6",
       "ES7"
     ],
-	"jsx": "react",
+	"jsx": "react-jsx",
 	"esModuleInterop": true,
 	"strict": true
   },
