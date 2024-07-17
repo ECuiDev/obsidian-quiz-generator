@@ -6,7 +6,7 @@ import { ParsedQuestions, ParsedMC, ParsedTF, ParsedSA, SelectedNote, QuizSettin
 import NoteAndFolderSelector from "../ui/noteAndFolderSelector";
 import "styles.css";
 import QuizModal from "../ui/quizModal";
-import CustomizableButton from "../ui/components/buttons/CustomizableButton";
+import IconButton from "../ui/components/buttons/IconButton";
 import NoteContainer from "./NoteContainer";
 import FolderContainer from "./FolderContainer";
 
@@ -278,11 +278,11 @@ const SelectorModal = ({ app, settings, parent }: SelectorModalProps) => {
 					</div>
 					<span className="token-container">Prompt tokens: {promptTokens}</span>
 					<div className="selector-button-container">
-						<CustomizableButton icon="book-x" toolTip="Remove all" onClick={clearHandler} isDisabled={clearButtonDisabled}></CustomizableButton>
-						<CustomizableButton icon="scroll-text" toolTip="Open quiz" onClick={quizHandler} isDisabled={quizButtonDisabled}></CustomizableButton>
-						<CustomizableButton icon="file-plus-2" toolTip="Add note" onClick={addNoteHandler} isDisabled={false}></CustomizableButton>
-						<CustomizableButton icon="folder-plus" toolTip="Add folder" onClick={addFolderHandler} isDisabled={false}></CustomizableButton>
-						<CustomizableButton icon="webhook" toolTip="Generate" onClick={generateHandler} isDisabled={generateButtonDisabled}></CustomizableButton>
+						<IconButton icon="book-x" toolTip="Remove all" onClick={clearHandler} isDisabled={clearButtonDisabled}></IconButton>
+						<IconButton icon="scroll-text" toolTip="Open quiz" onClick={quizHandler} isDisabled={quizButtonDisabled}></IconButton>
+						<IconButton icon="file-plus-2" toolTip="Add note" onClick={addNoteHandler} isDisabled={false}></IconButton>
+						<IconButton icon="folder-plus" toolTip="Add folder" onClick={addFolderHandler} isDisabled={false}></IconButton>
+						<IconButton icon="webhook" toolTip="Generate" onClick={generateHandler} isDisabled={generateButtonDisabled}></IconButton>
 					</div>
 				</div>
 			</div>
