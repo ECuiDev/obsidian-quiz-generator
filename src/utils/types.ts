@@ -21,6 +21,43 @@ export interface ParsedSA {
 	answer: string;
 }
 
+export type Question = TrueFalse | MultipleChoice | SelectAllThatApply | FillInTheBlank | Matching | ShortOrLongAnswer;
+
+export interface TrueFalse {
+	question: string;
+	answer: boolean;
+}
+
+export interface MultipleChoice {
+	question: string;
+	options: string[];
+	answer: number;
+}
+
+export interface SelectAllThatApply {
+	question: string;
+	options: string[];
+	answer: number[];
+}
+
+export interface FillInTheBlank {
+	question: string; // TypeScript supports __1__, __2__, __3__, and __4__ types. (Use __number__ where number is the index of the correct choice in the answer array)
+	answer: string[];
+}
+
+export interface Matching {
+	question: string;
+	answer: {
+		leftOption: string;
+		rightOption: string;
+	}[];
+}
+
+export interface ShortOrLongAnswer {
+	question: string;
+	answer: string;
+}
+
 export interface SelectedNote {
 	path: string;
 	contents: string;
