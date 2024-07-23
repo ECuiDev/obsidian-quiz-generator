@@ -1,4 +1,4 @@
-export function cleanUpNoteContents(noteContents: string, hasFrontMatter: boolean): string {
+export const cleanUpNoteContents = (noteContents: string, hasFrontMatter: boolean): string => {
 	let cleanedContents = noteContents;
 	if (hasFrontMatter) {
 		cleanedContents = removeFrontMatter(cleanedContents);
@@ -8,14 +8,14 @@ export function cleanUpNoteContents(noteContents: string, hasFrontMatter: boolea
 	cleanedContents = removeMarkdownFormatting(cleanedContents);
 	cleanedContents = removeSpecialCharacters(cleanedContents);
 	return cleanUpWhiteSpace(cleanedContents);
-}
+};
 
-function removeFrontMatter(input: string): string {
+const removeFrontMatter = (input: string): string => {
 	const yamlFrontMatterRegex = /---[\s\S]+?---\n/;
 	return input.replace(yamlFrontMatterRegex, "");
-}
+};
 
-function cleanUpLinks(input: string): string {
+const cleanUpLinks = (input: string): string => {
 	const combinedRegex = /\[\[([^\]|]+)(?:\|([^\]]+))??]]|\[([^\]]+)]\([^)]+\)/g;
 
 	return input.replace(combinedRegex, (match, wikiLink, wikiDisplayText, markdownLink) => {
@@ -25,24 +25,24 @@ function cleanUpLinks(input: string): string {
 			return markdownLink;
 		}
 	});
-}
+};
 
-function removeMarkdownHeadings(input: string): string {
+const removeMarkdownHeadings = (input: string): string => {
 	const headingRegex = /^(#+\s+.*)$/gm;
 	return input.replace(headingRegex, "");
-}
+};
 
-function removeMarkdownFormatting(input: string): string {
+const removeMarkdownFormatting = (input: string): string => {
 	const markdownFormattingRegex = /(\*\*\*|___|\*\*|__|\*|_|~~|==|%%)(.*?)\1/g;
 	return input.replace(markdownFormattingRegex, "$2");
-}
+};
 
-function removeSpecialCharacters(input: string): string {
+const removeSpecialCharacters = (input: string): string => {
 	const regex = /[\n`\t]/g;
 	return input.replace(regex, "");
-}
+};
 
-function cleanUpWhiteSpace(input: string): string {
+const cleanUpWhiteSpace = (input: string): string => {
 	const consecutiveSpacesRegex = /\s+/g;
 	return input.replace(consecutiveSpacesRegex, " ").trim();
-}
+};
