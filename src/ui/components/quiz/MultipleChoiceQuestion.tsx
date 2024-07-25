@@ -36,7 +36,7 @@ const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) 
 		<div className="question-container">
 			<div className="question" ref={questionRef} />
 			<div className="mc-tf-container">
-				{question.options.map((_option, index) => (
+				{question.options.map((_, index) => (
 					<button
 						key={index}
 						ref={(el) => buttonRefs.current[index] = el}

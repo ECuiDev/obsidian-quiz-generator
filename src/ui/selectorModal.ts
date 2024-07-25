@@ -24,10 +24,10 @@ export default class SelectorModal extends Modal {
 	private notePaths: string[];
 	private folderPaths: string[];
 	private selectedNotes: Map<string, string> = new Map<string, string>();
-	private notesContainer: HTMLDivElement;
-	private tokenContainer: HTMLSpanElement;
+	private readonly notesContainer: HTMLDivElement;
+	private readonly tokenContainer: HTMLSpanElement;
 	private promptTokens: number = 0;
-	private buttonContainer: HTMLDivElement;
+	private readonly buttonContainer: HTMLDivElement;
 	private readonly clearButton: HTMLButtonElement;
 	private readonly openQuizButton: HTMLButtonElement;
 	private readonly addNoteButton: HTMLButtonElement;

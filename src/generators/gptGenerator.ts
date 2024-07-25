@@ -4,7 +4,7 @@ import Generator from "./generator";
 import { QuizSettings } from "../utils/types";
 
 export default class GptGenerator extends Generator {
-	private openai: OpenAI;
+	private readonly openai: OpenAI;
 
 	constructor(settings: QuizSettings) {
 		super(settings);

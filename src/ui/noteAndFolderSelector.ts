@@ -3,7 +3,7 @@ import { App, FuzzySuggestModal } from "obsidian";
 export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | undefined; // evt unnecessary?
 	private readonly paths: string[];
-	private selectorModal: HTMLElement;
+	private readonly selectorModal: HTMLElement;
 
 	constructor(app: App, paths: string[], selectorModal: HTMLElement) {
 		super(app);

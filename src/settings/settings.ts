@@ -4,7 +4,7 @@ import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
 
 export default class QuizSettingsTab extends PluginSettingTab {
-	private plugin: QuizGenerator;
+	private readonly plugin: QuizGenerator;
 
 	constructor(app: App, plugin: QuizGenerator) {
 		super(app, plugin);

@@ -2,7 +2,7 @@ import { App, Component, MarkdownRenderer, Modal, Scope, TFile } from "obsidian"
 
 export default class NoteViewerModal extends Modal {
 	private readonly note: TFile;
-	private selectorModal: HTMLElement | undefined;
+	private readonly selectorModal: HTMLElement | undefined;
 	private readonly component: Component;
 
 	constructor(app: App, note: TFile, selectorModal?: HTMLElement) {

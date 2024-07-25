@@ -16,9 +16,9 @@ import { QuizSettings } from "../utils/types";
 
 export default class FolderViewerModal extends Modal {
 	private readonly settings: QuizSettings;
-	private selectorModal: HTMLElement;
+	private readonly selectorModal: HTMLElement;
 	private readonly folder: TFolder;
-	private notesContainer: HTMLDivElement;
+	private readonly notesContainer: HTMLDivElement;
 
 	constructor(app: App, settings: QuizSettings, selectorModal: HTMLElement, folder: TFolder) {
 		super(app);

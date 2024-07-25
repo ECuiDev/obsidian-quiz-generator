@@ -1,7 +1,18 @@
-import {App, normalizePath, Notice, TAbstractFile, TFile, TFolder} from "obsidian";
-import {Question, QuizSettings} from "../../../utils/types";
-import {useEffect, useMemo, useState} from "react";
+import { App, normalizePath, Notice, TAbstractFile, TFile, TFolder } from "obsidian";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Question, QuizSettings } from "../../../utils/types";
+import {
+	isFillInTheBlank,
+	isMatching,
+	isMultipleChoice,
+	isSelectAllThatApply, isShortOrLongAnswer,
+	isTrueFalse
+} from "../../../utils/typeGuards";
 import IconButton from "../buttons/IconButton";
+import TrueFalseQuestion from "./TrueFalseQuestion";
+import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
+import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
+import QuestionSaver from "../../../services/questionSaver";
 
 interface QuizModalProps {
 	app: App;
@@ -13,14 +24,10 @@ interface QuizModalProps {
 const QuizModal = ({ app, settings, questions, initialSavedQuestions }: QuizModalProps) => {
 	const [questionIndex, setQuestionIndex] = useState<number>(0);
 	const [savedQuestions, setSavedQuestions] = useState<boolean[]>(initialSavedQuestions);
-
-	useEffect(() => {
-		if (settings.autoSave) {
-			handleSaveAllQuestions();
-		}
-	}, []);
-
-	const [fileName, validPath] = useMemo<[string, boolean]>(() => {
+	// move into a new QuizModalLogic.ts file/class that instantiates these fields privately
+	// access using getters when you need them here
+	// maybe instantiate this component from there too?
+	const [fileName, validSavePath] = useMemo<[string, boolean]>(() => {
 		const getFileNames = (folder: TFolder): string[] => {
 			return folder.children
 				.filter((file: TAbstractFile) => file instanceof TFile)
@@ -46,10 +53,9 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions }: QuizModa
 		}
 
 		return [`Quiz ${count}.md`, validPath];
-	}, []);
-	const fileCreated = useMemo<boolean>(() => {
-		return savedQuestions.includes(true);
-	}, [savedQuestions]);
+	}, [app, settings]);
+	// Can probably replace everywhere with just savedQuestions.includes(true)
+	const fileCreated = useMemo<boolean>(() => savedQuestions.includes(true), [savedQuestions]);
 
 	const handleClose = () => {
 
@@ -65,34 +71,58 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions }: QuizModa
 		}
 	};
 
-	const handleSaveQuestion = () => {
+	const handleSaveQuestion = async () => {
 		const updatedSavedQuestions = [...savedQuestions];
 		updatedSavedQuestions[questionIndex] = true;
 		setSavedQuestions(updatedSavedQuestions);
-		// call QuestionSaver here
+		await new QuestionSaver(app, settings, questions, fileName, validSavePath, fileCreated).saveQuestion(questionIndex);
 
-		if (validPath) {
+		if (validSavePath) {
 			new Notice("Question saved");
 		} else {
 			new Notice("Invalid path: Question saved in vault root folder");
 		}
 	};
 
-	const handleSaveAllQuestions = () => {
+	const handleSaveAllQuestions = useCallback(async () => {
+		const unsavedQuestions = questions.filter((_, index) => !savedQuestions[index]);
 		const updatedSavedQuestions = savedQuestions.map(() => true);
 		setSavedQuestions(updatedSavedQuestions);
-		// call QuestionSaver here (create new saveAllQuestions function in QuestionSaver)
+		await new QuestionSaver(app, settings, unsavedQuestions, fileName, validSavePath, fileCreated).saveAllQuestions();
 
-		if (validPath) {
+		if (validSavePath) {
 			new Notice("All questions saved");
 		} else {
 			new Notice("Invalid path: All questions saved in vault root folder");
 		}
-	};
+	}, [app, settings, questions, savedQuestions, fileName, validSavePath, fileCreated]);
 
 	const handleNextQuestion = () => {
 		if (questionIndex < questions.length - 1) {
 			setQuestionIndex(questionIndex + 1);
+		}
+	};
+
+	useEffect(() => {
+		if (settings.autoSave && savedQuestions.every(value => value)) {
+			handleSaveAllQuestions();
+		}
+	}, [handleSaveAllQuestions, settings, savedQuestions]);
+
+	const renderQuestion = () => {
+		const question = questions[questionIndex];
+		if (isTrueFalse(question)) {
+			return <TrueFalseQuestion app={app} question={question} />;
+		} else if (isMultipleChoice(question)) {
+			return <MultipleChoiceQuestion app={app} question={question} />;
+		} else if (isSelectAllThatApply(question)) {
+			return <div>Placeholder</div>;
+		} else if (isFillInTheBlank(question)) {
+			return <div>Placeholder</div>;
+		} else if (isMatching(question)) {
+			return <div>Placeholder</div>;
+		} else if (isShortOrLongAnswer(question)) {
+			return <ShortOrLongAnswerQuestion app={app} question={question} />;
 		}
 	};
 
@@ -129,8 +159,8 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions }: QuizModa
 							isDisabled={questionIndex === questions.length - 1}
 						/>
 					</div>
-					<hr className="quiz-divider"/>
-				{/*	render question here */}
+					<hr className="quiz-divider" />
+					{renderQuestion()}
 				</div>
 			</div>
 		</div>
