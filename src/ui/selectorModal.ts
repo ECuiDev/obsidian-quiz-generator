@@ -122,8 +122,8 @@ export default class SelectorModal extends Modal {
 				this.quiz = new QuizModal(this.app, this.settings, questionsAndAnswers);
 				this.quiz.open();
 				this.toggleButtons(["quiz"], false);
-			} catch (error: any) {
-				new Notice(error);
+			} catch (error) {
+				new Notice((error as Error).message);
 			} finally {
 				this.toggleButtons(["generate"], false);
 			}
@@ -190,7 +190,7 @@ export default class SelectorModal extends Modal {
 				this.folderPaths.remove(selectedFolder.path);
 				this.openFolderSelector();
 
-				let folderContents: string[] = [];
+				const folderContents: string[] = [];
 				const promises: Promise<void>[] = [];
 				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
 					if (file instanceof TFile && file.extension === "md" &&

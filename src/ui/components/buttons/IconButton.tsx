@@ -16,7 +16,7 @@ const IconButton = ({ icon, toolTip, onClick, isDisabled = false }: IconButtonPr
 			setIcon(buttonRef.current, icon);
 			setTooltip(buttonRef.current, toolTip);
 		}
-	}, []);
+	}, [icon, toolTip]);
 
 	return <button className="ui-button" onClick={onClick} disabled={isDisabled} ref={buttonRef} />;
 };

@@ -23,7 +23,7 @@ const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) 
 				MarkdownRenderer.render(app, question.options[index], button, "", component);
 			}
 		});
-	}, []);
+	}, [app, question, component]);
 
 	const getButtonClass = (buttonAnswer: number): string | undefined => {
 		if (userAnswer === null) return undefined;

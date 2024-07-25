@@ -58,11 +58,6 @@ export interface ShortOrLongAnswer {
 	answer: string;
 }
 
-export interface SelectedNote {
-	path: string;
-	contents: string;
-}
-
 export type SelectorModalButtons = "clear" | "quiz" | "note" | "folder" | "generate";
 
 export const models: Record<string, string> = {

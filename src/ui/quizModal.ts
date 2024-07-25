@@ -217,7 +217,7 @@ export default class QuizModal extends Modal {
 	}
 	
 	private async displayMC(): Promise<void> {
-		let choices: string[] = [];
+		const choices: string[] = [];
 
 		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["1"]);
 		choices.push((this.questionsAndAnswers[this.questionIndex] as ParsedMC)["2"]);

@@ -15,7 +15,7 @@ const TrueFalseQuestion = ({ app, question }: TrueFalseQuestionProps) => {
 		if (questionRef.current) {
 			MarkdownRenderer.render(app, question.question, questionRef.current, "", new Component());
 		}
-	}, []);
+	}, [app, question]);
 
 	const getButtonClass = (buttonAnswer: boolean): string | undefined => {
 		if (userAnswer === null) return undefined;

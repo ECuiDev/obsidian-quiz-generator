@@ -17,13 +17,13 @@ const ShortOrLongAnswerQuestion = ({ app, question }: ShortOrLongAnswerQuestionP
 		if (questionRef.current) {
 			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
 		}
-	}, []);
+	}, [app, question, component]);
 
 	useEffect(() => {
-		if (answerRef.current) {
+		if (answerRef.current && showAnswer) {
 			MarkdownRenderer.render(app, question.answer, answerRef.current, "", component);
 		}
-	}, [showAnswer]);
+	}, [app, question, component, showAnswer]);
 
 	return (
 		<div className="question-container">
