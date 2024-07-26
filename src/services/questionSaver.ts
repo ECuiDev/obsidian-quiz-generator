@@ -50,15 +50,12 @@ export default class QuestionSaver {
 
 		if (!this.fileCreated) {
 			return await this.app.vault.create(path, "#flashcards");
-		} else {
-			const file = this.app.vault.getAbstractFileByPath(path);
-
-			if (file instanceof TFile) {
-				return file;
-			} else {
-				return await this.app.vault.create(path, "#flashcards");
-			}
 		}
+		const file = this.app.vault.getAbstractFileByPath(path);
+		if (file instanceof TFile) {
+			return file;
+		}
+		return await this.app.vault.create(path, "#flashcards");
 	}
 
 	private createSpacedRepetitionQuestion(question: Question): string {
