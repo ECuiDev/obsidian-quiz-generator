@@ -63,6 +63,7 @@ export type SelectorModalButtons = "clear" | "quiz" | "note" | "folder" | "gener
 export const models: Record<string, string> = {
 	"gpt-3.5-turbo": "GPT-3.5 Turbo",
 	"gpt-4-turbo": "GPT-4 Turbo",
+	"gpt-4o-mini": "GPT-4o Mini",
 	"gpt-4o": "GPT-4o",
 }
 
