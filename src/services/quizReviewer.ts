@@ -134,7 +134,7 @@ export default class QuizReviewer {
 		for (const match of matches) {
 			this.questions.push({
 				question: match[1],
-				options: match.slice(2, -1),
+				options: match.slice(2, -1).filter(option => typeof option !== "undefined"),
 				answer: match[match.length - 1].toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
 			} as MultipleChoice);
 		}

@@ -13,6 +13,7 @@ export default class QuizModalLogic {
 	private validSavePath: boolean = false;
 	private container: HTMLDivElement | undefined;
 	private root: Root | undefined;
+	private readonly handleEscapePressed: (event: KeyboardEvent) => void;
 
 	constructor(app: App, settings: QuizSettings, questions: Question[], savedQuestions: boolean[]) {
 		this.app = app;
@@ -20,6 +21,11 @@ export default class QuizModalLogic {
 		this.questions = questions;
 		this.savedQuestions = savedQuestions;
 		this.fileName = this.setFileName();
+		this.handleEscapePressed = (event: KeyboardEvent): void => {
+			if (event.key === "Escape" && event.target instanceof HTMLDivElement) {
+				this.removeQuiz();
+			}
+		};
 	}
 
 	public async renderQuiz(): Promise<void> {
@@ -43,11 +49,13 @@ export default class QuizModalLogic {
 			validSavePath: this.validSavePath,
 			handleClose: () => this.removeQuiz()
 		}));
+		document.body.addEventListener("keydown", this.handleEscapePressed);
 	}
 
-	public removeQuiz(): void {
+	private removeQuiz(): void {
 		this.root?.unmount();
 		this.container?.remove();
+		document.body.removeEventListener("keydown", this.handleEscapePressed);
 	}
 
 	private shuffleQuestions(): Question[] {
