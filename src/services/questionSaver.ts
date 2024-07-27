@@ -47,7 +47,7 @@ export default class QuestionSaver {
 			}
 		}
 
-		if (this.validSavePath) {
+		if (this.validSavePath && this.questions.length > 0) {
 			new Notice("All questions saved");
 		} else {
 			new Notice("Invalid save path: All questions saved in vault root folder");

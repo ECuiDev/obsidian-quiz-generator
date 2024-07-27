@@ -11,13 +11,14 @@ import {
 	TFolder,
 	Vault
 } from "obsidian";
-import { ParsedMC, ParsedQuestions, ParsedSA, ParsedTF, QuizSettings, SelectorModalButtons } from "../utils/types";
+import { Question, Quiz, QuizSettings, SelectorModalButtons } from "../utils/types";
+import { isMultipleChoice, isShortOrLongAnswer, isTrueFalse } from "../utils/typeGuards";
 import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
-import QuizModal from "./quizModal";
 import NoteViewerModal from "./noteViewerModal";
 import FolderViewerModal from "./folderViewerModal";
+import QuizModalLogic from "./quizModalLogic";
 
 export default class SelectorModal extends Modal {
 	private readonly settings: QuizSettings;
@@ -38,7 +39,7 @@ export default class SelectorModal extends Modal {
 	private readonly addNoteHandler: () => void;
 	private readonly addFolderHandler: () => void;
 	private readonly generateQuizHandler: () => void;
-	private quiz: QuizModal | undefined;
+	private quiz: QuizModalLogic | undefined;
 
 	constructor(app: App, settings: QuizSettings) {
 		super(app);
@@ -75,7 +76,7 @@ export default class SelectorModal extends Modal {
 				.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
 				.map((folder: TFolder) => folder.path);
 		};
-		this.openQuizHandler = (): void => this.quiz?.open();
+		this.openQuizHandler = async (): Promise<void> => await this.quiz?.renderQuiz();
 		this.addNoteHandler = (): void => this.openNoteSelector();
 		this.addFolderHandler = (): void => this.openFolderSelector();
 		this.generateQuizHandler = async (): Promise<void> => {
@@ -85,42 +86,42 @@ export default class SelectorModal extends Modal {
 			}
 
 			this.toggleButtons(["generate"], true);
-			const questionsAndAnswers: (ParsedMC | ParsedTF | ParsedSA)[] = [];
+			const questions: Question[] = [];
 			const generator = new GptGenerator(this.settings);
 
 			new Notice("Generating...");
 
-			const questions = await generator.generateQuestions([...this.selectedNotes.values()]);
-			if (!questions) {
+			const generatedQuestions = await generator.generateQuestions([...this.selectedNotes.values()]);
+			if (!generatedQuestions) {
 				this.toggleButtons(["generate"], false);
-				new Notice("Failure: Generation returned nothing");
+				new Notice("Error: Generation returned nothing");
 				return;
 			}
 
 			try {
-				const parsedQuestions: ParsedQuestions = JSON.parse(questions.replace(/\\/g, "\\\\"));
-				for (const key in parsedQuestions) {
-					const value = parsedQuestions[key];
+				const quiz: Quiz = JSON.parse(generatedQuestions.replace(/\\/g, "\\\\"));
+				for (const key in quiz) {
+					const value = quiz[key];
 					if (!Array.isArray(value)) {
-						new Notice("Failure: Generation returned incorrect format");
+						new Notice("Error: Generation returned incorrect format");
 						continue;
 					}
 
-					value.forEach(element => {
-						if ("questionMC" in element) {
-							questionsAndAnswers.push(element as ParsedMC);
-						} else if ("questionTF" in element) {
-							questionsAndAnswers.push(element as ParsedTF);
-						} else if ("questionSA" in element) {
-							questionsAndAnswers.push(element as ParsedSA);
+					value.forEach(question => {
+						if (isTrueFalse(question)) {
+							questions.push(question);
+						} else if (isMultipleChoice(question)) {
+							questions.push(question);
+						} else if (isShortOrLongAnswer(question)) {
+							questions.push(question);
 						} else {
 							new Notice("A question was generated incorrectly");
 						}
 					});
 				}
 
-				this.quiz = new QuizModal(this.app, this.settings, questionsAndAnswers);
-				this.quiz.open();
+				this.quiz = new QuizModalLogic(this.app, this.settings, questions, Array(questions.length).fill(false));
+				await this.quiz.renderQuiz();
 				this.toggleButtons(["quiz"], false);
 			} catch (error) {
 				new Notice((error as Error).message);

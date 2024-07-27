@@ -1,24 +1,5 @@
-export interface ParsedQuestions {
-	[quiz: string]: (ParsedMC | ParsedTF | ParsedSA)[];
-}
-
-export interface ParsedMC {
-	questionMC: string;
-	1: string;
-	2: string;
-	3: string;
-	4: string;
-	answer: number;
-}
-
-export interface ParsedTF {
-	questionTF: string;
-	answer: boolean;
-}
-
-export interface ParsedSA {
-	questionSA: string;
-	answer: string;
+export interface Quiz {
+	[questions: string]: Question[];
 }
 
 export type Question = TrueFalse | MultipleChoice | SelectAllThatApply | FillInTheBlank | Matching | ShortOrLongAnswer;

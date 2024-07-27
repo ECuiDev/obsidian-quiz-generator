@@ -5,12 +5,11 @@ import QuizModalLogic from "../ui/quizModalLogic";
 export default class QuizReviewer {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
-	private readonly questions: Question[];
+	private readonly questions: Question[] = [];
 
 	constructor(app: App, settings: QuizSettings) {
 		this.app = app;
 		this.settings = settings;
-		this.questions = [];
 	}
 
 	public async openQuiz(file: TFile | null): Promise<void> {

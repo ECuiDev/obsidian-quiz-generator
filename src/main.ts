@@ -8,20 +8,6 @@ export default class QuizGenerator extends Plugin {
 	public settings: QuizSettings = DEFAULT_SETTINGS;
 
 	async onload(): Promise<void> {
-		// this.addCommand({
-		// 	id: "test",
-		// 	name: "Test",
-		// 	callback: () => {
-		// 		const domNode = document.body.createDiv("modal-container mod-dim");
-		// 		const root = createRoot(domNode);
-		// 		root.render(SelectorModalWrapper({
-		// 			app: this.app,
-		// 			plugin: this,
-		// 			parent: domNode
-		// 		}));
-		// 	}
-		// });
-
 		this.addCommand({
 			id: "open-generator",
 			name: "Open generator",

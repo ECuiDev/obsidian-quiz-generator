@@ -5,7 +5,8 @@ import {
 	isFillInTheBlank,
 	isMatching,
 	isMultipleChoice,
-	isSelectAllThatApply, isShortOrLongAnswer,
+	isSelectAllThatApply,
+	isShortOrLongAnswer,
 	isTrueFalse
 } from "../../../utils/typeGuards";
 import IconButton from "../IconButton";
@@ -21,19 +22,12 @@ interface QuizModalProps {
 	initialSavedQuestions: boolean[];
 	fileName: string;
 	validSavePath: boolean;
+	handleClose: () => void;
 }
 
-const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, validSavePath }: QuizModalProps) => {
+const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, validSavePath, handleClose }: QuizModalProps) => {
 	const [questionIndex, setQuestionIndex] = useState<number>(0);
 	const [savedQuestions, setSavedQuestions] = useState<boolean[]>(initialSavedQuestions);
-
-	const handleClose = () => {
-
-	};
-
-	const handleOutsideClick = () => {
-
-	};
 
 	const handlePreviousQuestion = () => {
 		if (questionIndex > 0) {
@@ -80,7 +74,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 
 	return (
 		<div className="modal-container mod-dim">
-			<div className="modal-bg" style={{opacity: 0.85}} onClick={handleOutsideClick} />
+			<div className="modal-bg" style={{opacity: 0.85}} onClick={handleClose} />
 			<div className="modal modal-el-container">
 				<div className="modal-close-button" onClick={handleClose} />
 				<div className="modal-title title-style">Question {questionIndex + 1}</div>

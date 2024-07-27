@@ -1,14 +1,18 @@
 import { App, normalizePath, TFile, TFolder } from "obsidian";
+import { createRoot, Root } from "react-dom/client";
 import { Question, QuizSettings } from "../utils/types";
 import QuestionSaver from "../services/questionSaver";
+import QuizModalWrapper from "./components/quiz/QuizModalWrapper";
 
 export default class QuizModalLogic {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
 	private questions: Question[];
-	private savedQuestions: boolean[];
+	private readonly savedQuestions: boolean[];
 	private readonly fileName: string;
 	private validSavePath: boolean = false;
+	private container: HTMLDivElement | undefined;
+	private root: Root | undefined;
 
 	constructor(app: App, settings: QuizSettings, questions: Question[], savedQuestions: boolean[]) {
 		this.app = app;
@@ -23,10 +27,27 @@ export default class QuizModalLogic {
 			this.questions = this.shuffleQuestions();
 		}
 		if (this.settings.autoSave) {
-			await new QuestionSaver(this.app, this.settings, this.questions, this.fileName,
+			const unsavedQuestions = this.questions.filter((_, index) => !this.savedQuestions[index]);
+			await new QuestionSaver(this.app, this.settings, unsavedQuestions, this.fileName,
 				this.validSavePath, this.savedQuestions.includes(true)).saveAllQuestions();
 			this.savedQuestions.fill(true);
 		}
+		this.container = document.body.createDiv();
+		this.root = createRoot(this.container);
+		this.root.render(QuizModalWrapper({
+			app: this.app,
+			settings: this.settings,
+			questions: this.questions,
+			initialSavedQuestions: this.savedQuestions,
+			fileName: this.fileName,
+			validSavePath: this.validSavePath,
+			handleClose: () => this.removeQuiz()
+		}));
+	}
+
+	public removeQuiz(): void {
+		this.root?.unmount();
+		this.container?.remove();
 	}
 
 	private shuffleQuestions(): Question[] {
