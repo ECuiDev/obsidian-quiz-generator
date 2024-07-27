@@ -1,4 +1,4 @@
-import { App, normalizePath, TFile } from "obsidian";
+import { App, normalizePath, Notice, TFile } from "obsidian";
 import { Question, QuizSettings } from "../utils/types";
 import { isMultipleChoice, isShortOrLongAnswer, isTrueFalse } from "../utils/typeGuards";
 
@@ -28,6 +28,12 @@ export default class QuestionSaver {
 		} else {
 			await this.app.vault.append(saveFile, "\n\n" + this.createCalloutQuestion(this.questions[questionIndex]));
 		}
+
+		if (this.validSavePath) {
+			new Notice("Question saved");
+		} else {
+			new Notice("Invalid save path: Question saved in vault root folder");
+		}
 	}
 
 	public async saveAllQuestions(): Promise<void> {
@@ -39,6 +45,12 @@ export default class QuestionSaver {
 			} else {
 				await this.app.vault.append(saveFile, "\n\n" + this.createCalloutQuestion(question));
 			}
+		}
+
+		if (this.validSavePath) {
+			new Notice("All questions saved");
+		} else {
+			new Notice("Invalid save path: All questions saved in vault root folder");
 		}
 	}
 

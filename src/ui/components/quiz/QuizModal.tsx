@@ -1,4 +1,4 @@
-import { App, Notice } from "obsidian";
+import { App } from "obsidian";
 import { useState } from "react";
 import { Question, QuizSettings } from "../../../utils/types";
 import {
@@ -46,12 +46,6 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		updatedSavedQuestions[questionIndex] = true;
 		setSavedQuestions(updatedSavedQuestions);
 		await new QuestionSaver(app, settings, questions, fileName, validSavePath, savedQuestions.includes(true)).saveQuestion(questionIndex);
-
-		if (validSavePath) {
-			new Notice("Question saved");
-		} else {
-			new Notice("Invalid save path: Question saved in vault root folder");
-		}
 	};
 
 	const handleSaveAllQuestions = async () => {
@@ -59,12 +53,6 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		const updatedSavedQuestions = savedQuestions.map(() => true);
 		setSavedQuestions(updatedSavedQuestions);
 		await new QuestionSaver(app, settings, unsavedQuestions, fileName, validSavePath, savedQuestions.includes(true)).saveAllQuestions();
-
-		if (validSavePath) {
-			new Notice("All questions saved");
-		} else {
-			new Notice("Invalid save path: All questions saved in vault root folder");
-		}
 	};
 
 	const handleNextQuestion = () => {
