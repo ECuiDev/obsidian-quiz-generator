@@ -22,7 +22,7 @@ export interface SelectAllThatApply {
 }
 
 export interface FillInTheBlank {
-	question: string; // TypeScript supports __1__, __2__, __3__, and __4__ types. (Use __number__ where number is the index of the correct choice in the answer array)
+	question: string; // Use `____` to represent blanks. 1st blank answer is index 0, etc. regex should use `_+`
 	answer: string[];
 }
 
@@ -86,12 +86,20 @@ export interface QuizSettings {
 	includeSubfolderNotes: boolean;
 	randomizeQuestions: boolean;
 	language: string;
-	numberOfMultipleChoice: number;
-	numberOfTrueFalse: number;
-	numberOfShortAnswer: number;
-	generateMultipleChoice: boolean;
 	generateTrueFalse: boolean;
+	numberOfTrueFalse: number;
+	generateMultipleChoice: boolean;
+	numberOfMultipleChoice: number;
+	generateSelectAllThatApply: boolean;
+	numberOfSelectAllThatApply: number;
+	generateFillInTheBlank: boolean;
+	numberOfFillInTheBlank: number;
+	generateMatching: boolean;
+	numberOfMatching: number;
 	generateShortAnswer: boolean;
+	numberOfShortAnswer: number;
+	generateLongAnswer: boolean;
+	numberOfLongAnswer: number;
 	autoSave: boolean;
 	questionSavePath: string;
 	questionSaveFormat: string;
@@ -108,12 +116,20 @@ export const DEFAULT_SETTINGS: QuizSettings = {
 	includeSubfolderNotes: true,
 	randomizeQuestions: true,
 	language: "English",
-	numberOfMultipleChoice: 1,
-	numberOfTrueFalse: 1,
-	numberOfShortAnswer: 1,
-	generateMultipleChoice: true,
 	generateTrueFalse: true,
+	numberOfTrueFalse: 1,
+	generateMultipleChoice: true,
+	numberOfMultipleChoice: 1,
+	generateSelectAllThatApply: true,
+	numberOfSelectAllThatApply: 1,
+	generateFillInTheBlank: true,
+	numberOfFillInTheBlank: 1,
+	generateMatching: true,
+	numberOfMatching: 1,
 	generateShortAnswer: true,
+	numberOfShortAnswer: 1,
+	generateLongAnswer: true,
+	numberOfLongAnswer: 1,
 	autoSave: false,
 	questionSavePath: "",
 	questionSaveFormat: "Callout",

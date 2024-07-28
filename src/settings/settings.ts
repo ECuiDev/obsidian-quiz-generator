@@ -120,6 +120,33 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(generationSection)
 			.setClass("first-item-qg")
+			.setName("True or false")
+			.setDesc("Generate true or false questions.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.generateTrueFalse)
+					.onChange(async (value) => {
+						this.plugin.settings.generateTrueFalse = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(generationSection)
+			.setName("True or false quantity")
+			.setDesc("Number of questions to generate.")
+			.addSlider((slider) =>
+				slider
+					.setValue(this.plugin.settings.numberOfTrueFalse)
+					.setLimits(1, 20, 1)
+					.onChange(async (value) => {
+						this.plugin.settings.numberOfTrueFalse = value;
+						await this.plugin.saveSettings();
+					})
+					.setDynamicTooltip()
+					.showTooltip()
+			);
+
+		new Setting(generationSection)
 			.setName("Multiple choice")
 			.setDesc("Generate multiple choice questions.")
 			.addToggle((toggle) =>
@@ -147,26 +174,80 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			);
 
 		new Setting(generationSection)
-			.setName("True/false")
-			.setDesc("Generate true/false questions.")
+			.setName("Select all that apply")
+			.setDesc("Generate select all that apply questions.")
 			.addToggle((toggle) =>
 				toggle
-					.setValue(this.plugin.settings.generateTrueFalse)
+					.setValue(this.plugin.settings.generateSelectAllThatApply)
 					.onChange(async (value) => {
-						this.plugin.settings.generateTrueFalse = value;
+						this.plugin.settings.generateSelectAllThatApply = value;
 						await this.plugin.saveSettings();
 					})
 			);
 
 		new Setting(generationSection)
-			.setName("True/false quantity")
+			.setName("Select all that apply quantity")
 			.setDesc("Number of questions to generate.")
 			.addSlider((slider) =>
 				slider
-					.setValue(this.plugin.settings.numberOfTrueFalse)
+					.setValue(this.plugin.settings.numberOfSelectAllThatApply)
 					.setLimits(1, 20, 1)
 					.onChange(async (value) => {
-						this.plugin.settings.numberOfTrueFalse = value;
+						this.plugin.settings.numberOfSelectAllThatApply = value;
+						await this.plugin.saveSettings();
+					})
+					.setDynamicTooltip()
+					.showTooltip()
+			);
+
+		new Setting(generationSection)
+			.setName("Fill in the blank")
+			.setDesc("Generate fill in the blank questions.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.generateFillInTheBlank)
+					.onChange(async (value) => {
+						this.plugin.settings.generateFillInTheBlank = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(generationSection)
+			.setName("Fill in the blank quantity")
+			.setDesc("Number of questions to generate.")
+			.addSlider((slider) =>
+				slider
+					.setValue(this.plugin.settings.numberOfFillInTheBlank)
+					.setLimits(1, 20, 1)
+					.onChange(async (value) => {
+						this.plugin.settings.numberOfFillInTheBlank = value;
+						await this.plugin.saveSettings();
+					})
+					.setDynamicTooltip()
+					.showTooltip()
+			);
+
+		new Setting(generationSection)
+			.setName("Matching")
+			.setDesc("Generate matching questions.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.generateMatching)
+					.onChange(async (value) => {
+						this.plugin.settings.generateMatching = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(generationSection)
+			.setName("Matching quantity")
+			.setDesc("Number of questions to generate.")
+			.addSlider((slider) =>
+				slider
+					.setValue(this.plugin.settings.numberOfMatching)
+					.setLimits(1, 20, 1)
+					.onChange(async (value) => {
+						this.plugin.settings.numberOfMatching = value;
 						await this.plugin.saveSettings();
 					})
 					.setDynamicTooltip()
@@ -194,6 +275,33 @@ export default class QuizSettingsTab extends PluginSettingTab {
 					.setLimits(1, 20, 1)
 					.onChange(async (value) => {
 						this.plugin.settings.numberOfShortAnswer = value;
+						await this.plugin.saveSettings();
+					})
+					.setDynamicTooltip()
+					.showTooltip()
+			);
+
+		new Setting(generationSection)
+			.setName("Long answer")
+			.setDesc("Generate long answer questions.")
+			.addToggle((toggle) =>
+				toggle
+					.setValue(this.plugin.settings.generateLongAnswer)
+					.onChange(async (value) => {
+						this.plugin.settings.generateLongAnswer = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(generationSection)
+			.setName("Long answer quantity")
+			.setDesc("Number of questions to generate.")
+			.addSlider((slider) =>
+				slider
+					.setValue(this.plugin.settings.numberOfLongAnswer)
+					.setLimits(1, 20, 1)
+					.onChange(async (value) => {
+						this.plugin.settings.numberOfLongAnswer = value;
 						await this.plugin.saveSettings();
 					})
 					.setDynamicTooltip()
