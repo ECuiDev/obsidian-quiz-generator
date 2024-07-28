@@ -26,11 +26,11 @@ const ShortOrLongAnswerQuestion = ({ app, question }: ShortOrLongAnswerQuestionP
 	}, [app, question, component, showAnswer]);
 
 	return (
-		<div className="question-container">
-			<div className="question" ref={questionRef} />
+		<div className="question-container-qg">
+			<div className="question-qg" ref={questionRef} />
 			{showAnswer
-				? <button className="show-answer-button" ref={answerRef} disabled={true} />
-				: <button className="show-answer-button" onClick={() => setShowAnswer(true)}>Show answer</button>}
+				? <button className="answer-qg" ref={answerRef} />
+				: <button className="show-answer-qg" onClick={() => setShowAnswer(true)}>Show answer</button>}
 		</div>
 	);
 }

@@ -19,15 +19,15 @@ const TrueFalseQuestion = ({ app, question }: TrueFalseQuestionProps) => {
 
 	const getButtonClass = (buttonAnswer: boolean): string | undefined => {
 		if (userAnswer === null) return undefined;
-		if (buttonAnswer === question.answer) return "correct-choice";
-		if (buttonAnswer === userAnswer) return "incorrect-choice";
+		if (buttonAnswer === question.answer) return "correct-choice-qg";
+		if (buttonAnswer === userAnswer) return "incorrect-choice-qg";
 		return undefined;
 	};
 
 	return (
-		<div className="question-container">
-			<div className="question" ref={questionRef} />
-			<div className="mc-tf-container">
+		<div className="question-container-qg">
+			<div className="question-qg" ref={questionRef} />
+			<div className="true-false-container-qg">
 				<button
 					className={getButtonClass(true)}
 					onClick={() => setUserAnswer(true)}

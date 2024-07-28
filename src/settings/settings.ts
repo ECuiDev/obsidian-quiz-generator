@@ -116,10 +116,10 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl).setName("Generation").setHeading();
 
-		const generationSection = containerEl.createDiv("generation-container");
+		const generationSection = containerEl.createDiv("generation-container-qg");
 
 		new Setting(generationSection)
-			.setClass("first-item")
+			.setClass("first-item-qg")
 			.setName("Multiple choice")
 			.setDesc("Generate multiple choice questions.")
 			.addToggle((toggle) =>

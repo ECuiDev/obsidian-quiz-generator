@@ -9,7 +9,7 @@ import {
 	isShortOrLongAnswer,
 	isTrueFalse
 } from "../../../utils/typeGuards";
-import IconButton from "../IconButton";
+import ModalButton from "../ModalButton";
 import TrueFalseQuestion from "./TrueFalseQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
@@ -75,37 +75,37 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 	return (
 		<div className="modal-container mod-dim">
 			<div className="modal-bg" style={{opacity: 0.85}} onClick={handleClose} />
-			<div className="modal modal-el-container">
+			<div className="modal modal-qg">
 				<div className="modal-close-button" onClick={handleClose} />
-				<div className="modal-title title-style">Question {questionIndex + 1}</div>
-				<div className="modal-content modal-content-container">
-					<div className="quiz-button-container">
-						<IconButton
+				<div className="modal-title modal-title-qg">Question {questionIndex + 1}</div>
+				<div className="modal-content modal-content-qg">
+					<div className="modal-button-container-qg">
+						<ModalButton
 							icon="arrow-left"
 							toolTip="Back"
 							onClick={handlePreviousQuestion}
 							isDisabled={questionIndex === 0}
 						/>
-						<IconButton
+						<ModalButton
 							icon="save"
 							toolTip="Save"
 							onClick={handleSaveQuestion}
 							isDisabled={savedQuestions[questionIndex]}
 						/>
-						<IconButton
+						<ModalButton
 							icon="save-all"
 							toolTip="Save all"
 							onClick={handleSaveAllQuestions}
 							isDisabled={!savedQuestions.includes(false)}
 						/>
-						<IconButton
+						<ModalButton
 							icon="arrow-right"
 							toolTip="Next"
 							onClick={handleNextQuestion}
 							isDisabled={questionIndex === questions.length - 1}
 						/>
 					</div>
-					<hr className="quiz-divider" />
+					<hr className="quiz-divider-qg" />
 					{renderQuestion()}
 				</div>
 			</div>

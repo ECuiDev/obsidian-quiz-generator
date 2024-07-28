@@ -22,7 +22,7 @@ export default class QuizModalLogic {
 		this.savedQuestions = savedQuestions;
 		this.fileName = this.setFileName();
 		this.handleEscapePressed = (event: KeyboardEvent): void => {
-			if (event.key === "Escape" && event.target instanceof HTMLDivElement) {
+			if (event.key === "Escape" && !(event.target instanceof HTMLInputElement)) {
 				this.removeQuiz();
 			}
 		};

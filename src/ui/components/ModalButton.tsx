@@ -8,7 +8,7 @@ interface IconButtonProps {
 	isDisabled?: boolean;
 }
 
-const IconButton = ({ icon, toolTip, onClick, isDisabled = false }: IconButtonProps) => {
+const ModalButton = ({ icon, toolTip, onClick, isDisabled = false }: IconButtonProps) => {
 	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
@@ -18,7 +18,7 @@ const IconButton = ({ icon, toolTip, onClick, isDisabled = false }: IconButtonPr
 		}
 	}, [icon, toolTip]);
 
-	return <button className="ui-button" onClick={onClick} disabled={isDisabled} ref={buttonRef} />;
+	return <button className="modal-button-qg" onClick={onClick} disabled={isDisabled} ref={buttonRef} />;
 };
 
-export default IconButton;
+export default ModalButton;

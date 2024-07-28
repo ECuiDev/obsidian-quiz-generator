@@ -25,7 +25,7 @@ export default class SelectorModal extends Modal {
 	private notePaths: string[];
 	private folderPaths: string[];
 	private selectedNotes: Map<string, string> = new Map<string, string>();
-	private readonly notesContainer: HTMLDivElement;
+	private readonly itemContainer: HTMLDivElement;
 	private readonly tokenContainer: HTMLSpanElement;
 	private promptTokens: number = 0;
 	private readonly buttonContainer: HTMLDivElement;
@@ -51,25 +51,25 @@ export default class SelectorModal extends Modal {
 		this.scope = new Scope(this.app.scope);
 		this.scope.register([], "Escape", () => this.close());
 
-		this.modalEl.addClass("modal-el-container");
-		this.contentEl.addClass("modal-content-container");
-		this.titleEl.addClass("title-style");
+		this.modalEl.addClass("modal-qg");
+		this.contentEl.addClass("modal-content-qg");
+		this.titleEl.addClass("modal-title-qg");
 		this.titleEl.setText("Selected Notes");
 
-		this.notesContainer = this.contentEl.createDiv("notes-container");
-		this.tokenContainer = this.contentEl.createSpan("token-container");
+		this.itemContainer = this.contentEl.createDiv("item-container-qg");
+		this.tokenContainer = this.contentEl.createSpan("prompt-tokens-qg");
 		this.tokenContainer.textContent = "Prompt tokens: " + this.promptTokens;
-		this.buttonContainer = this.contentEl.createDiv("selector-button-container");
-		this.clearButton = this.buttonContainer.createEl("button");
-		this.openQuizButton = this.buttonContainer.createEl("button");
-		this.addNoteButton = this.buttonContainer.createEl("button");
-		this.addFolderButton = this.buttonContainer.createEl("button");
-		this.generateQuizButton = this.buttonContainer.createEl("button");
+		this.buttonContainer = this.contentEl.createDiv("modal-button-container-qg");
+		this.clearButton = this.buttonContainer.createEl("button", "modal-button-qg");
+		this.openQuizButton = this.buttonContainer.createEl("button", "modal-button-qg");
+		this.addNoteButton = this.buttonContainer.createEl("button", "modal-button-qg");
+		this.addFolderButton = this.buttonContainer.createEl("button", "modal-button-qg");
+		this.generateQuizButton = this.buttonContainer.createEl("button", "modal-button-qg");
 
 		this.clearHandler = (): void => {
 			this.toggleButtons(["clear", "generate"], true);
 			this.selectedNotes.clear();
-			this.notesContainer.empty();
+			this.itemContainer.empty();
 			this.updatePromptTokens(0);
 			this.notePaths = this.app.vault.getMarkdownFiles().map((file: TFile) => file.path);
 			this.folderPaths = this.app.vault.getAllLoadedFiles()
@@ -143,19 +143,10 @@ export default class SelectorModal extends Modal {
 	}
 
 	private activateButtons(): void {
-		this.clearButton.addClass("ui-button");
 		this.setIconAndTooltip(this.clearButton, "book-x", "Remove all");
-
-		this.openQuizButton.addClass("ui-button");
 		this.setIconAndTooltip(this.openQuizButton, "scroll-text", "Open quiz");
-
-		this.addNoteButton.addClass("ui-button");
 		this.setIconAndTooltip(this.addNoteButton, "file-plus-2", "Add note");
-
-		this.addFolderButton.addClass("ui-button");
 		this.setIconAndTooltip(this.addFolderButton, "folder-plus", "Add folder");
-
-		this.generateQuizButton.addClass("ui-button");
 		this.setIconAndTooltip(this.generateQuizButton, "webhook", "Generate");
 
 		this.clearButton.addEventListener("click", this.clearHandler);
@@ -232,14 +223,14 @@ export default class SelectorModal extends Modal {
 	}
 
 	private renderNoteOrFolder(item: TFile | TFolder, fileName: string): number {
-		const itemContainer = this.notesContainer.createDiv("notes-container-element");
+		const itemContainer = this.itemContainer.createDiv("item-qg");
 		itemContainer.textContent = fileName;
 
-		const tokensElement = itemContainer.createDiv("note-tokens");
+		const tokensElement = itemContainer.createDiv("item-tokens-qg");
 		const tokens = this.countNoteTokens(this.selectedNotes.get(item.path));
 		tokensElement.textContent = tokens + " tokens";
 
-		const viewContentsButton = itemContainer.createEl("button");
+		const viewContentsButton = itemContainer.createEl("button", "item-button-qg");
 		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
 			if (item instanceof TFile) {
@@ -249,7 +240,7 @@ export default class SelectorModal extends Modal {
 			}
 		});
 
-		const removeButton = itemContainer.createEl("button");
+		const removeButton = itemContainer.createEl("button", "item-button-qg");
 		this.setIconAndTooltip(removeButton, "x", "Remove");
 		removeButton.addEventListener("click", (): void => {
 			this.removeNoteOrFolder(item, itemContainer);
@@ -265,7 +256,7 @@ export default class SelectorModal extends Modal {
 
 	private removeNoteOrFolder(item: TFile | TFolder, element: HTMLDivElement): void {
 		this.selectedNotes.delete(item.path);
-		this.notesContainer.removeChild(element);
+		this.itemContainer.removeChild(element);
 		item instanceof TFile ? this.notePaths.push(item.path) : this.folderPaths.push(item.path);
 	}
 

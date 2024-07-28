@@ -27,19 +27,19 @@ export default class FolderViewerModal extends Modal {
 		this.folder = folder;
 		this.scope = new Scope(this.app.scope);
 		this.scope.register([], "Escape", () => this.close());
-		this.notesContainer = this.contentEl.createDiv("notes-container");
+		this.notesContainer = this.contentEl.createDiv("item-container-qg");
 	}
 
 	public async onOpen(): Promise<void> {
 		super.onOpen();
-		this.modalEl.addClass("modal-el-container");
-		this.contentEl.addClass("modal-content-container");
-		this.titleEl.addClass("title-style");
+		this.modalEl.addClass("modal-qg");
+		this.contentEl.addClass("modal-content-qg");
+		this.titleEl.addClass("modal-title-qg");
 		this.titleEl.setText(this.folder.name);
 
-		this.containerEl.children[0].addClass("remove-opacity");
-		this.containerEl.children[1].addClass("move-right");
-		this.selectorModal.addClass("move-left");
+		this.containerEl.children[0].addClass("remove-opacity-qg");
+		this.modalEl.addClass("move-right-qg");
+		this.selectorModal.addClass("move-left-qg");
 
 		const promises: Promise<void>[] = [];
 		Vault.recurseChildren(this.folder, (file: TAbstractFile): void => {
@@ -58,19 +58,19 @@ export default class FolderViewerModal extends Modal {
 
 	public onClose(): void {
 		super.onClose();
-		this.selectorModal.removeClass("move-left");
+		this.selectorModal.removeClass("move-left-qg");
 	}
 
 	private async renderNote(item: TFile): Promise<void> {
-		const itemContainer = this.notesContainer.createDiv("notes-container-element");
+		const itemContainer = this.notesContainer.createDiv("item-qg");
 		itemContainer.textContent = item.basename;
 
 		const noteContents = await this.app.vault.cachedRead(item);
-		const tokensElement = itemContainer.createDiv("note-tokens");
+		const tokensElement = itemContainer.createDiv("item-tokens-qg");
 		const tokens = this.countNoteTokens(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
 		tokensElement.textContent = tokens + " tokens";
 
-		const viewContentsButton = itemContainer.createEl("button");
+		const viewContentsButton = itemContainer.createEl("button", "item-button-qg");
 		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
 			new NoteViewerModal(this.app, item).open();

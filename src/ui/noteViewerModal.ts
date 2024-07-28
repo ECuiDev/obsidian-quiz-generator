@@ -16,19 +16,19 @@ export default class NoteViewerModal extends Modal {
 
 	public async onOpen(): Promise<void> {
 		super.onOpen();
-		this.modalEl.addClass("modal-el-container");
-		this.titleEl.addClass("title-style");
+		this.modalEl.addClass("modal-qg");
+		this.titleEl.addClass("modal-title-qg");
 		this.titleEl.setText(this.note.basename);
 
-		this.containerEl.children[0].addClass("remove-opacity");
-		this.containerEl.children[1].addClass("move-right");
-		this.selectorModal?.addClass("move-left");
+		this.containerEl.children[0].addClass("remove-opacity-qg");
+		this.modalEl.addClass("move-right-qg");
+		this.selectorModal?.addClass("move-left-qg");
 
 		await MarkdownRenderer.render(this.app, await this.app.vault.cachedRead(this.note), this.contentEl, "", this.component);
 	}
 
 	public onClose(): void {
 		super.onClose();
-		this.selectorModal?.removeClass("move-left");
+		this.selectorModal?.removeClass("move-left-qg");
 	}
 }
