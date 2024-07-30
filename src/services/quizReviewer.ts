@@ -26,10 +26,10 @@ export default class QuizReviewer {
 	private calloutParser(fileContents: string): void {
 		const questionCallout = />\s*\[!question][+-]?\s*(.+)\s*/;
 		const choices = this.generateCalloutChoicesRegex();
-		const answerCallout = />>\s*\[!success].*\s*/;
+		const answerCallout = />\s*>\s*\[!success].*\s*/;
 
 		const trueFalseBody = />\s*true\s*or\s*false\??\s*/;
-		const trueFalseAnswer = />>\s*(true|false)/;
+		const trueFalseAnswer = />\s*>\s*(true|false)/;
 		const trueFalseRegex = new RegExp(
 			questionCallout.source +
 			trueFalseBody.source +
@@ -39,7 +39,7 @@ export default class QuizReviewer {
 		);
 		this.matchTrueFalse(fileContents, trueFalseRegex);
 
-		const multipleChoiceAnswer = />>\s*([a-z])\)/;
+		const multipleChoiceAnswer = />\s*>\s*([a-z])\)/;
 		const multipleChoiceRegex = new RegExp(
 			questionCallout.source +
 			choices.source +
@@ -49,7 +49,7 @@ export default class QuizReviewer {
 		);
 		this.matchMultipleChoice(fileContents, multipleChoiceRegex);
 
-		const shortOrLongAnswer = />>\s*(.+)/;
+		const shortOrLongAnswer = />\s*>\s*(.+)/;
 		const shortOrLongAnswerRegex = new RegExp(
 			questionCallout.source +
 			answerCallout.source +
