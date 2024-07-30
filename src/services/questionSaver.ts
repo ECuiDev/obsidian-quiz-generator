@@ -70,43 +70,46 @@ export default class QuestionSaver {
 		return await this.app.vault.create(path, "#flashcards");
 	}
 
-	private createSpacedRepetitionQuestion(question: Question): string {
-		if (isMultipleChoice(question)) {
-			const options = this.formatOptions(question.options, "Spaced Repetition");
-			return "**Multiple Choice:** " + question.question + options.join("") +
-				`\n${this.settings.multilineSeparator}\n` + options[question.answer].replace("\n", "");
-		} else if (isTrueFalse(question)) {
-			return "**True/False:** " + question.question + ` ${this.settings.inlineSeparator} ` +
-				question.answer.toString().charAt(0).toUpperCase() + question.answer.toString().slice(1);
-		} else if (isShortOrLongAnswer(question)) {
-			return "**Short Answer:** " + question.question + ` ${this.settings.inlineSeparator} ` + question.answer;
-		} else {
-			return "Error saving question.";
-		}
-	}
-
 	private createCalloutQuestion(question: Question): string {
 		if (isMultipleChoice(question)) {
-			const options = this.formatOptions(question.options, "Callout");
-			return `> [!question] ${question.question}` + options.join("") +
-				`\n>> [!success]- Answer\n>>` + options[question.answer].replace("\n>", "");
+			const options = this.getCalloutOptions(question.options);
+			return `> [!question] ${question.question}${options.join("")}\n>> [!success]- Answer\n>>` +
+				options[question.answer].replace("\n>", "");
 		} else if (isTrueFalse(question)) {
-			return `> [!question] ${question.question}` + `\n> True or false?` +
-				`\n>> [!success]- Answer\n>> ` + question.answer.toString().charAt(0).toUpperCase() +
-				question.answer.toString().slice(1);
+			return `> [!question] ${question.question}\n> True or false?\n>> [!success]- Answer\n>> ` +
+				question.answer.toString().charAt(0).toUpperCase() + question.answer.toString().slice(1);
 		} else if (isShortOrLongAnswer(question)) {
-			return `> [!question] ${question.question}` + `\n>> [!success]- Answer\n>> ${question.answer}`;
+			return `> [!question] ${question.question}\n>> [!success]- Answer\n>> ${question.answer}`;
 		} else {
 			return "> [!failure] Error saving question.";
 		}
 	}
 
-	private formatOptions(options: string[], format: "Spaced Repetition" | "Callout"): string[] {
-		const letters = "abcdefghijklmnopqrstuvwxyz";
-		if (format === "Spaced Repetition") {
-			return options.map((option, index) => `\n${letters[index]}) ${option}`);
+	private createSpacedRepetitionQuestion(question: Question): string {
+		if (isMultipleChoice(question)) {
+			const options = this.getSpacedRepetitionOptions(question.options);
+			return `**Multiple Choice:** ${question.question}${options.join("")}\n${this.settings.multilineSeparator}\n` +
+				options[question.answer].replace("\n", "");
+		} else if (isTrueFalse(question)) {
+			return `**True or False:** ${question.question} ${this.settings.inlineSeparator} ` +
+				question.answer.toString().charAt(0).toUpperCase() + question.answer.toString().slice(1);
+		} else if (isShortOrLongAnswer(question)) {
+			if (question.answer.length < 300) {
+				return `**Short Answer:** ${question.question} ${this.settings.inlineSeparator} ${question.answer}`;
+			}
+			return `**Long Answer:** ${question.question} ${this.settings.inlineSeparator} ${question.answer}`;
 		} else {
-			return options.map((option, index) => `\n> ${letters[index]}) ${option}`);
+			return "Error saving question.";
 		}
+	}
+
+	private getCalloutOptions(options: string[]): string[] {
+		const letters = "abcdefghijklmnopqrstuvwxyz";
+		return options.map((option, index) => `\n> ${letters[index]}) ${option}`);
+	}
+
+	private getSpacedRepetitionOptions(options: string[]): string[] {
+		const letters = "abcdefghijklmnopqrstuvwxyz";
+		return options.map((option, index) => `\n${letters[index]}) ${option}`);
 	}
 }

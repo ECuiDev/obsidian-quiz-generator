@@ -64,7 +64,7 @@ export default class QuizReviewer {
 		const inlineSeparator = this.escapeSpecialCharacters(this.settings.inlineSeparator);
 		const multilineSeparator = this.escapeSpecialCharacters(this.settings.multilineSeparator);
 
-		const trueFalse = /[*_]{0,3}true\/false:[*_]{0,3}\s*(.+)\s*/;
+		const trueFalse = /[*_]{0,3}true\s*(?:\/|or)\s*false:[*_]{0,3}\s*(.+)\s*/;
 		const trueFalseAnswer = /\s*(true|false)/;
 		const trueFalseRegex = new RegExp(
 			trueFalse.source +
