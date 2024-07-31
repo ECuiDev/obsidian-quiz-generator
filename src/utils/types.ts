@@ -1,5 +1,5 @@
 export interface Quiz {
-	[questions: string]: Question[];
+	questions: Question[];
 }
 
 export type Question = TrueFalse | MultipleChoice | SelectAllThatApply | FillInTheBlank | Matching | ShortOrLongAnswer;

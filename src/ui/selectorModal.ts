@@ -12,7 +12,14 @@ import {
 	Vault
 } from "obsidian";
 import { Question, Quiz, QuizSettings, SelectorModalButtons } from "../utils/types";
-import { isMultipleChoice, isShortOrLongAnswer, isTrueFalse } from "../utils/typeGuards";
+import {
+	isFillInTheBlank,
+	isMatching,
+	isMultipleChoice,
+	isSelectAllThatApply,
+	isShortOrLongAnswer,
+	isTrueFalse
+} from "../utils/typeGuards";
 import { cleanUpNoteContents } from "../utils/parser";
 import GptGenerator from "../generators/gptGenerator";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
@@ -100,25 +107,27 @@ export default class SelectorModal extends Modal {
 
 			try {
 				const quiz: Quiz = JSON.parse(generatedQuestions.replace(/\\/g, "\\\\"));
-				for (const key in quiz) {
-					const value = quiz[key];
-					if (!Array.isArray(value)) {
-						new Notice("Error: Generation returned incorrect format");
-						continue;
-					}
-
-					value.forEach(question => {
-						if (isTrueFalse(question)) {
-							questions.push(question);
-						} else if (isMultipleChoice(question)) {
-							questions.push(question);
-						} else if (isShortOrLongAnswer(question)) {
-							questions.push(question);
-						} else {
-							new Notice("A question was generated incorrectly");
-						}
-					});
+				if (!Array.isArray(quiz.questions)) {
+					new Notice("Error: Generation returned incorrect format");
 				}
+
+				quiz.questions.forEach(question => {
+					if (isTrueFalse(question)) {
+						questions.push(question);
+					} else if (isMultipleChoice(question)) {
+						questions.push(question);
+					} else if (isSelectAllThatApply(question)) {
+						questions.push(question);
+					} else if (isFillInTheBlank(question)) {
+						questions.push(question);
+					} else if (isMatching(question)) {
+						questions.push(question);
+					} else if (isShortOrLongAnswer(question)) {
+						questions.push(question);
+					} else {
+						new Notice("A question was generated incorrectly");
+					}
+				});
 
 				this.quiz = new QuizModalLogic(this.app, this.settings, questions, Array(questions.length).fill(false));
 				await this.quiz.renderQuiz();
@@ -282,8 +291,10 @@ export default class SelectorModal extends Modal {
 	}
 
 	private validGenerationSettings(): boolean {
-		return (this.settings.generateMultipleChoice || this.settings.generateTrueFalse
-			|| this.settings.generateShortAnswer) && this.promptTokens > 0;
+		return (this.settings.generateTrueFalse || this.settings.generateMultipleChoice ||
+			this.settings.generateSelectAllThatApply || this.settings.generateFillInTheBlank ||
+			this.settings.generateMatching || this.settings.generateShortAnswer || this.settings.generateLongAnswer) &&
+			this.promptTokens > 0;
 	}
 
 	private countNoteTokens(noteContents: string | undefined): number {
