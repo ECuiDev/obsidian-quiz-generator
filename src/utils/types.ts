@@ -22,7 +22,7 @@ export interface SelectAllThatApply {
 }
 
 export interface FillInTheBlank {
-	question: string; // Use `____` to represent blanks. 1st blank answer is index 0, etc. regex should use `_+`
+	question: string;
 	answer: string[];
 }
 

@@ -43,10 +43,10 @@ export default abstract class Generator {
 			`"answer": The number corresponding to the index of the correct answer in the options array\n`;
 		const selectAllThatApplyFormat = `"question": The question\n"options": An array of 4 to 26 strings representing the choices\n` +
 			`"answer": An array of numbers corresponding to the indexes of the correct answers in the options array\n`;
-		const fillInTheBlankFormat = `"question": The question with blanks represented by \`____\`\n` +
+		const fillInTheBlankFormat = `"question": The question with 1 to 10 blanks, represented by \`____\`\n` +
 			`"answer": An array of strings corresponding to the blanks in the question\n`;
 		const matchingFormat = `"question": The question\n` +
-			`"answer": An array of objects, each containing a leftOption property (a string that needs to be matched) and a rightOption property (a string that matches the leftOption)\n`;
+			`"answer": An array of 3 to 26 objects, each containing a leftOption property (a string that needs to be matched) and a rightOption property (a string that matches the leftOption)\n`;
 		const shortOrLongAnswerFormat = `"question": The question\n"answer": The answer\n`;
 
 		const questionFormats = [
