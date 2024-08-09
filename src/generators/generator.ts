@@ -46,7 +46,7 @@ export default abstract class Generator {
 		const fillInTheBlankFormat = `"question": The question with 1 to 10 blanks, represented by \`____\`\n` +
 			`"answer": An array of strings corresponding to the blanks in the question\n`;
 		const matchingFormat = `"question": The question\n` +
-			`"answer": An array of 3 to 26 objects, each containing a leftOption property (a string that needs to be matched) and a rightOption property (a string that matches the leftOption)\n`;
+			`"answer": An array of 3 to 13 objects, each containing a leftOption property (a string that needs to be matched) and a rightOption property (a string that matches the leftOption)\n`;
 		const shortOrLongAnswerFormat = `"question": The question\n"answer": The answer\n`;
 
 		const questionFormats = [
