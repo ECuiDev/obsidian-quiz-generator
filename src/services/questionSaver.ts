@@ -1,6 +1,13 @@
-import { App, normalizePath, Notice, TFile } from "obsidian";
+import  { App, normalizePath, Notice, TFile } from "obsidian";
 import { Question, QuizSettings } from "../utils/types";
-import { isMultipleChoice, isShortOrLongAnswer, isTrueFalse } from "../utils/typeGuards";
+import {
+	isFillInTheBlank,
+	isMatching,
+	isMultipleChoice,
+	isSelectAllThatApply,
+	isShortOrLongAnswer,
+	isTrueFalse
+} from "../utils/typeGuards";
 
 export default class QuestionSaver {
 	private readonly app: App;
@@ -24,9 +31,9 @@ export default class QuestionSaver {
 		const saveFile = await this.createSaveFile();
 
 		if (this.settings.questionSaveFormat === "Spaced Repetition") {
-			await this.app.vault.append(saveFile, "\n\n" + this.createSpacedRepetitionQuestion(this.questions[questionIndex]));
+			await this.app.vault.append(saveFile, "\n" + this.createSpacedRepetitionQuestion(this.questions[questionIndex]));
 		} else {
-			await this.app.vault.append(saveFile, "\n\n" + this.createCalloutQuestion(this.questions[questionIndex]));
+			await this.app.vault.append(saveFile, "\n" + this.createCalloutQuestion(this.questions[questionIndex]));
 		}
 
 		if (this.validSavePath) {
@@ -41,9 +48,9 @@ export default class QuestionSaver {
 
 		for (const question of this.questions) {
 			if (this.settings.questionSaveFormat === "Spaced Repetition") {
-				await this.app.vault.append(saveFile, "\n\n" + this.createSpacedRepetitionQuestion(question));
+				await this.app.vault.append(saveFile, "\n" + this.createSpacedRepetitionQuestion(question));
 			} else {
-				await this.app.vault.append(saveFile, "\n\n" + this.createCalloutQuestion(question));
+				await this.app.vault.append(saveFile, "\n" + this.createCalloutQuestion(question));
 			}
 		}
 
@@ -71,28 +78,58 @@ export default class QuestionSaver {
 	}
 
 	private createCalloutQuestion(question: Question): string {
-		if (isMultipleChoice(question)) {
+		if (isTrueFalse(question)) {
+			const answer = question.answer.toString().charAt(0).toUpperCase() + question.answer.toString().slice(1);
+			return `> [!question] ${question.question}\n` +
+				`>> [!success]- Answer\n` +
+				`>> ${answer}\n`;
+		} else if (isMultipleChoice(question)) {
 			const options = this.getCalloutOptions(question.options);
-			return `> [!question] ${question.question}${options.join("")}\n>> [!success]- Answer\n>>` +
-				options[question.answer].replace("\n>", "");
-		} else if (isTrueFalse(question)) {
-			return `> [!question] ${question.question}\n> True or false?\n>> [!success]- Answer\n>> ` +
-				question.answer.toString().charAt(0).toUpperCase() + question.answer.toString().slice(1);
+			return `> [!question] ${question.question}\n` +
+				`${options.join("\n")}\n` +
+				`>> [!success]- Answer\n` +
+				`${options[question.answer].replace(">", ">>")}\n`;
+		} else if (isSelectAllThatApply(question)) {
+			const options = this.getCalloutOptions(question.options);
+			const answers = options.filter((_, index) => question.answer.includes(index));
+			return `> [!question] ${question.question}\n` +
+				`${options.join("\n")}\n` +
+				`>> [!success]- Answer\n` +
+				`${answers.map(answer => answer.replace(">", ">>")).join("\n")}\n`;
+		} else if (isFillInTheBlank(question)) {
+			return `> [!question] ${question.question}\n` +
+				`>> [!success]- Answer\n` +
+				`>> ${question.answer.join(", ")}\n`;
+		} else if (isMatching(question)) {
+			const leftOptions = this.shuffleOptions(question.answer.map(pair => pair.leftOption));
+			const rightOptions = this.shuffleOptions(question.answer.map(pair => pair.rightOption));
+			const answers = this.getCalloutMatchingAnswers(leftOptions, rightOptions, question.answer);
+			return `> [!question] ${question.question}\n` +
+				`>> [!example] Group A\n` +
+				`${this.getCalloutOptions(leftOptions).join("\n")}\n` +
+				`>\n` +
+				`>> [!example] Group B\n` +
+				`${this.getCalloutOptions(rightOptions, 13).join("\n")}\n` +
+				`>\n` +
+				`>> [!success]- Answer\n` +
+				`${answers.join("\n")}\n`;
 		} else if (isShortOrLongAnswer(question)) {
-			return `> [!question] ${question.question}\n>> [!success]- Answer\n>> ${question.answer}`;
+			return `> [!question] ${question.question}\n` +
+				`>> [!success]- Answer\n` +
+				`>> ${question.answer}\n`;
 		} else {
-			return "> [!failure] Error saving question.";
+			return "> [!failure] Error saving question\n";
 		}
 	}
 
 	private createSpacedRepetitionQuestion(question: Question): string {
-		if (isMultipleChoice(question)) {
-			const options = this.getSpacedRepetitionOptions(question.options);
-			return `**Multiple Choice:** ${question.question}${options.join("")}\n${this.settings.multilineSeparator}\n` +
-				options[question.answer].replace("\n", "");
-		} else if (isTrueFalse(question)) {
+		if (isTrueFalse(question)) {
 			return `**True or False:** ${question.question} ${this.settings.inlineSeparator} ` +
 				question.answer.toString().charAt(0).toUpperCase() + question.answer.toString().slice(1);
+		} else if (isMultipleChoice(question)) {
+			const options = this.getSpacedRepetitionOptions(question.options);
+			return `**Multiple Choice:** ${question.question}${options.join("")}\n${this.settings.multilineSeparator}` +
+				options[question.answer];
 		} else if (isShortOrLongAnswer(question)) {
 			if (question.answer.length < 300) {
 				return `**Short Answer:** ${question.question} ${this.settings.inlineSeparator} ${question.answer}`;
@@ -103,13 +140,33 @@ export default class QuestionSaver {
 		}
 	}
 
-	private getCalloutOptions(options: string[]): string[] {
-		const letters = "abcdefghijklmnopqrstuvwxyz";
-		return options.map((option, index) => `\n> ${letters[index]}) ${option}`);
+	private getCalloutOptions(options: string[], startIndex: number = 0): string[] {
+		const letters = "abcdefghijklmnopqrstuvwxyz".slice(startIndex);
+		return options.map((option, index) => `> ${letters[index]}) ${option}`);
 	}
 
-	private getSpacedRepetitionOptions(options: string[]): string[] {
-		const letters = "abcdefghijklmnopqrstuvwxyz";
+	private getSpacedRepetitionOptions(options: string[], startIndex: number = 0): string[] {
+		const letters = "abcdefghijklmnopqrstuvwxyz".slice(startIndex);
 		return options.map((option, index) => `\n${letters[index]}) ${option}`);
+	}
+
+	private getCalloutMatchingAnswers(leftOptions: string[], rightOptions: string[], answer: { leftOption: string, rightOption: string }[]): string[] {
+		const leftOptionIndexMap = new Map<string, number>(leftOptions.map((option, index) => [option, index]));
+		const sortedAnswer = [...answer].sort((a, b) => leftOptionIndexMap.get(a.leftOption)! - leftOptionIndexMap.get(b.leftOption)!);
+
+		return sortedAnswer.map(pair => {
+			const leftLetter = String.fromCharCode(97 + leftOptions.indexOf(pair.leftOption));
+			const rightLetter = String.fromCharCode(110 + rightOptions.indexOf(pair.rightOption));
+			return `>> ${leftLetter}) --> ${rightLetter})`;
+		});
+	}
+
+	private shuffleOptions(options: string[]): string[] {
+		const shuffledOptions = options.slice();
+		for (let i = shuffledOptions.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
+		}
+		return shuffledOptions;
 	}
 }
