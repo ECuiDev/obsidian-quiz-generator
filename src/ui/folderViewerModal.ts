@@ -1,18 +1,8 @@
-import {
-	App,
-	getFrontMatterInfo,
-	Modal,
-	Scope,
-	setIcon,
-	setTooltip,
-	TAbstractFile,
-	TFile,
-	TFolder,
-	Vault
-} from "obsidian";
+import { App, getFrontMatterInfo, Modal, Scope, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 import NoteViewerModal from "./noteViewerModal";
-import { cleanUpNoteContents } from "../utils/parser";
+import  {cleanUpNoteContents } from "../utils/markdownCleaner";
 import { QuizSettings } from "../utils/types";
+import { countNoteTokens, setIconAndTooltip } from "../utils/helpers";
 
 export default class FolderViewerModal extends Modal {
 	private readonly settings: QuizSettings;
@@ -67,22 +57,13 @@ export default class FolderViewerModal extends Modal {
 
 		const noteContents = await this.app.vault.cachedRead(item);
 		const tokensElement = itemContainer.createDiv("item-tokens-qg");
-		const tokens = this.countNoteTokens(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
+		const tokens = countNoteTokens(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
 		tokensElement.textContent = tokens + " tokens";
 
 		const viewContentsButton = itemContainer.createEl("button", "item-button-qg");
-		this.setIconAndTooltip(viewContentsButton, "eye", "View contents");
+		setIconAndTooltip(viewContentsButton, "eye", "View contents");
 		viewContentsButton.addEventListener("click", async (): Promise<void> => {
 			new NoteViewerModal(this.app, item).open();
 		});
-	}
-
-	private setIconAndTooltip(element: HTMLElement, icon: string, tooltip: string): void {
-		setIcon(element, icon);
-		setTooltip(element, tooltip);
-	}
-
-	private countNoteTokens(noteContents: string): number {
-		return Math.round(noteContents.length / 4);
 	}
 }

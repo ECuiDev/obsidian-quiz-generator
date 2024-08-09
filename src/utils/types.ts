@@ -39,7 +39,7 @@ export interface ShortOrLongAnswer {
 	answer: string;
 }
 
-export type SelectorModalButtons = "clear" | "quiz" | "note" | "folder" | "generate";
+export type SelectorModalButton = "clear" | "quiz" | "note" | "folder" | "generate";
 
 export const models: Record<string, string> = {
 	"gpt-3.5-turbo": "GPT-3.5 Turbo",

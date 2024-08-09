@@ -8,8 +8,9 @@ import {
 	isShortOrLongAnswer,
 	isTrueFalse
 } from "../utils/typeGuards";
+import { shuffleArray } from "../utils/helpers";
 
-export default class QuestionSaver {
+export default class QuizSaver {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
 	private readonly questions: Question[];
@@ -101,8 +102,8 @@ export default class QuestionSaver {
 				`>> [!success]- Answer\n` +
 				`>> ${question.answer.join(", ")}\n`;
 		} else if (isMatching(question)) {
-			const leftOptions = this.shuffleOptions(question.answer.map(pair => pair.leftOption));
-			const rightOptions = this.shuffleOptions(question.answer.map(pair => pair.rightOption));
+			const leftOptions = shuffleArray(question.answer.map(pair => pair.leftOption));
+			const rightOptions = shuffleArray(question.answer.map(pair => pair.rightOption));
 			const answers = this.getCalloutMatchingAnswers(leftOptions, rightOptions, question.answer);
 			return `> [!question] ${question.question}\n` +
 				`>> [!example] Group A\n` +
@@ -159,14 +160,5 @@ export default class QuestionSaver {
 			const rightLetter = String.fromCharCode(110 + rightOptions.indexOf(pair.rightOption));
 			return `>> ${leftLetter}) --> ${rightLetter})`;
 		});
-	}
-
-	private shuffleOptions(options: string[]): string[] {
-		const shuffledOptions = options.slice();
-		for (let i = shuffledOptions.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[shuffledOptions[i], shuffledOptions[j]] = [shuffledOptions[j], shuffledOptions[i]];
-		}
-		return shuffledOptions;
 	}
 }

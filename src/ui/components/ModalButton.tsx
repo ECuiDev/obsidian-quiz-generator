@@ -1,22 +1,21 @@
 import { useEffect, useRef } from "react";
-import { setIcon, setTooltip } from "obsidian";
+import { setIconAndTooltip } from "../../utils/helpers";
 
-interface IconButtonProps {
+interface ModalButtonProps {
 	icon: string;
-	toolTip: string;
+	tooltip: string;
 	onClick: () => void;
 	isDisabled?: boolean;
 }
 
-const ModalButton = ({ icon, toolTip, onClick, isDisabled = false }: IconButtonProps) => {
+const ModalButton = ({ icon, tooltip, onClick, isDisabled = false }: ModalButtonProps) => {
 	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
 		if (buttonRef.current) {
-			setIcon(buttonRef.current, icon);
-			setTooltip(buttonRef.current, toolTip);
+			setIconAndTooltip(buttonRef.current, icon, tooltip);
 		}
-	}, [icon, toolTip]);
+	}, [icon, tooltip]);
 
 	return <button className="modal-button-qg" onClick={onClick} disabled={isDisabled} ref={buttonRef} />;
 };

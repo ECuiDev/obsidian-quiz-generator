@@ -1,8 +1,9 @@
 import { App, normalizePath, TFile, TFolder } from "obsidian";
 import { createRoot, Root } from "react-dom/client";
 import { Question, QuizSettings } from "../utils/types";
-import QuestionSaver from "../services/questionSaver";
+import QuizSaver from "../services/quizSaver";
 import QuizModalWrapper from "./components/quiz/QuizModalWrapper";
+import { shuffleArray } from "../utils/helpers";
 
 export default class QuizModalLogic {
 	private readonly app: App;
@@ -20,7 +21,7 @@ export default class QuizModalLogic {
 		this.settings = settings;
 		this.questions = questions;
 		this.savedQuestions = savedQuestions;
-		this.fileName = this.setFileName();
+		this.fileName = this.getFileName();
 		this.handleEscapePressed = (event: KeyboardEvent): void => {
 			if (event.key === "Escape" && !(event.target instanceof HTMLInputElement)) {
 				this.removeQuiz();
@@ -30,11 +31,11 @@ export default class QuizModalLogic {
 
 	public async renderQuiz(): Promise<void> {
 		if (this.settings.randomizeQuestions) {
-			this.questions = this.shuffleQuestions();
+			this.questions = shuffleArray(this.questions);
 		}
 		if (this.settings.autoSave) {
 			const unsavedQuestions = this.questions.filter((_, index) => !this.savedQuestions[index]);
-			await new QuestionSaver(this.app, this.settings, unsavedQuestions, this.fileName,
+			await new QuizSaver(this.app, this.settings, unsavedQuestions, this.fileName,
 				this.validSavePath, this.savedQuestions.includes(true)).saveAllQuestions();
 			this.savedQuestions.fill(true);
 		}
@@ -58,17 +59,6 @@ export default class QuizModalLogic {
 		document.body.removeEventListener("keydown", this.handleEscapePressed);
 	}
 
-	private shuffleQuestions(): Question[] {
-		const shuffledQuestions = this.questions.slice();
-
-		for (let i = shuffledQuestions.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[shuffledQuestions[i], shuffledQuestions[j]] = [shuffledQuestions[j], shuffledQuestions[i]];
-		}
-
-		return shuffledQuestions;
-	}
-
 	private getFileNames(folder: TFolder): string[] {
 		return folder.children
 			.filter(file => file instanceof TFile)
@@ -76,7 +66,7 @@ export default class QuizModalLogic {
 			.filter(name => name.startsWith("quiz"));
 	}
 
-	private setFileName(): string {
+	private getFileName(): string {
 		let count = 1;
 		let fileNames: string[];
 		const saveFolder = this.app.vault.getAbstractFileByPath(normalizePath(this.settings.questionSavePath.trim()));

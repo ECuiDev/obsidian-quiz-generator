@@ -13,7 +13,7 @@ import ModalButton from "../ModalButton";
 import TrueFalseQuestion from "./TrueFalseQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
-import QuestionSaver from "../../../services/questionSaver";
+import QuizSaver from "../../../services/quizSaver";
 
 interface QuizModalProps {
 	app: App;
@@ -39,14 +39,14 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		const updatedSavedQuestions = [...savedQuestions];
 		updatedSavedQuestions[questionIndex] = true;
 		setSavedQuestions(updatedSavedQuestions);
-		await new QuestionSaver(app, settings, questions, fileName, validSavePath, savedQuestions.includes(true)).saveQuestion(questionIndex);
+		await new QuizSaver(app, settings, questions, fileName, validSavePath, savedQuestions.includes(true)).saveQuestion(questionIndex);
 	};
 
 	const handleSaveAllQuestions = async () => {
 		const unsavedQuestions = questions.filter((_, index) => !savedQuestions[index]);
 		const updatedSavedQuestions = savedQuestions.map(() => true);
 		setSavedQuestions(updatedSavedQuestions);
-		await new QuestionSaver(app, settings, unsavedQuestions, fileName, validSavePath, savedQuestions.includes(true)).saveAllQuestions();
+		await new QuizSaver(app, settings, unsavedQuestions, fileName, validSavePath, savedQuestions.includes(true)).saveAllQuestions();
 	};
 
 	const handleNextQuestion = () => {
@@ -82,25 +82,25 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 					<div className="modal-button-container-qg">
 						<ModalButton
 							icon="arrow-left"
-							toolTip="Back"
+							tooltip="Back"
 							onClick={handlePreviousQuestion}
 							isDisabled={questionIndex === 0}
 						/>
 						<ModalButton
 							icon="save"
-							toolTip="Save"
+							tooltip="Save"
 							onClick={handleSaveQuestion}
 							isDisabled={savedQuestions[questionIndex]}
 						/>
 						<ModalButton
 							icon="save-all"
-							toolTip="Save all"
+							tooltip="Save all"
 							onClick={handleSaveAllQuestions}
 							isDisabled={!savedQuestions.includes(false)}
 						/>
 						<ModalButton
 							icon="arrow-right"
-							toolTip="Next"
+							tooltip="Next"
 							onClick={handleNextQuestion}
 							isDisabled={questionIndex === questions.length - 1}
 						/>
