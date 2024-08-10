@@ -1,4 +1,4 @@
-import  { App, normalizePath, Notice, TFile } from "obsidian";
+import { App, normalizePath, Notice, TFile } from "obsidian";
 import { Question, QuizSettings } from "../utils/types";
 import {
 	isFillInTheBlank,
@@ -108,10 +108,10 @@ export default class QuizSaver {
 			const answers = this.getCalloutMatchingAnswers(leftOptions, rightOptions, question.answer);
 			return `> [!question] ${question.question}\n` +
 				`>> [!example] Group A\n` +
-				`${this.getCalloutOptions(leftOptions).join("\n")}\n` +
+				`${this.getCalloutOptions(leftOptions).map(option => option.replace(">", ">>")).join("\n")}\n` +
 				`>\n` +
 				`>> [!example] Group B\n` +
-				`${this.getCalloutOptions(rightOptions, 13).join("\n")}\n` +
+				`${this.getCalloutOptions(rightOptions, 13).map(option => option.replace(">", ">>")).join("\n")}\n` +
 				`>\n` +
 				`>> [!success]- Answer\n` +
 				`${answers.join("\n")}\n\n`;

@@ -1,5 +1,14 @@
 import { App, Notice, TFile } from "obsidian";
-import { MultipleChoice, Question, QuizSettings, ShortOrLongAnswer, TrueFalse } from "../utils/types";
+import {
+	FillInTheBlank,
+	Matching,
+	MultipleChoice,
+	Question,
+	QuizSettings,
+	SelectAllThatApply,
+	ShortOrLongAnswer,
+	TrueFalse
+} from "../utils/types";
 import QuizModalLogic from "../ui/quizModalLogic";
 
 export default class QuizReviewer {
@@ -19,81 +28,98 @@ export default class QuizReviewer {
 			this.spacedRepetitionParser(fileContents);
 			await new QuizModalLogic(this.app, this.settings, this.questions, Array(this.questions.length).fill(true)).renderQuiz();
 		} else {
-			new Notice("No active file.");
+			new Notice("No active file");
 		}
 	}
 
 	private calloutParser(fileContents: string): void {
 		const questionCallout = />\s*\[!question][+-]?\s*(.+)\s*/;
-		const choices = this.generateCalloutChoicesRegex();
 		const answerCallout = />\s*>\s*\[!success].*\s*/;
 
-		const trueFalseBody = />\s*true\s*or\s*false\??\s*/;
-		const trueFalseAnswer = />\s*>\s*(true|false)/;
-		const trueFalseRegex = new RegExp(
-			questionCallout.source +
-			trueFalseBody.source +
-			answerCallout.source +
-			trueFalseAnswer.source,
-			"gi"
-		);
-		this.matchTrueFalse(fileContents, trueFalseRegex);
-
-		const multipleChoiceAnswer = />\s*>\s*([a-z])\)/;
-		const multipleChoiceRegex = new RegExp(
+		const choices = this.generateCalloutChoicesRegex();
+		const choicesAnswer = this.generateCalloutChoicesAnswerRegex();
+		const multipleChoiceSelectAllThatApplyRegex = new RegExp(
 			questionCallout.source +
 			choices.source +
 			answerCallout.source +
-			multipleChoiceAnswer.source,
+			choicesAnswer.source,
 			"gi"
 		);
-		this.matchMultipleChoice(fileContents, multipleChoiceRegex);
+		this.matchMultipleChoiceSelectAllThatApply(fileContents, multipleChoiceSelectAllThatApplyRegex);
 
-		const shortOrLongAnswer = />\s*>\s*(.+)/;
-		const shortOrLongAnswerRegex = new RegExp(
+		const groupCallout = />\s*>\s*\[!example].*\s*/;
+		const groupAChoices = choices.source.substring(0, choices.source.length / 2).replace(/>/g, ">\\s*>");
+		const groupBChoices = choices.source.substring(choices.source.length / 2).replace(/>/g, ">\\s*>");
+		const nestedCalloutSeparator = />\s*/;
+		const matchingAnswer = this.generateCalloutMatchingAnswerRegex();
+		const matchingRegex = new RegExp(
+			questionCallout.source +
+			groupCallout.source +
+			groupAChoices +
+			nestedCalloutSeparator.source +
+			groupCallout.source +
+			groupBChoices +
+			nestedCalloutSeparator.source +
+			answerCallout.source +
+			matchingAnswer.source,
+			"gi"
+		);
+		this.matchMatching(fileContents, matchingRegex);
+
+		const trueFalseFillInTheBlankShortOrLongAnswer = />\s*>\s*(.+)/;
+		const trueFalseFillInTheBlankShortOrLongAnswerRegex = new RegExp(
 			questionCallout.source +
 			answerCallout.source +
-			shortOrLongAnswer.source,
+			trueFalseFillInTheBlankShortOrLongAnswer.source,
 			"gi"
 		);
-		this.matchShortOrLongAnswer(fileContents, shortOrLongAnswerRegex);
+		this.matchTrueFalseFillInTheBlankShortOrLongAnswer(fileContents, trueFalseFillInTheBlankShortOrLongAnswerRegex);
 	}
 
 	private spacedRepetitionParser(fileContents: string): void {
-		const choices = this.generateSpacedRepetitionChoicesRegex();
 		const inlineSeparator = this.escapeSpecialCharacters(this.settings.inlineSeparator);
 		const multilineSeparator = this.escapeSpecialCharacters(this.settings.multilineSeparator);
 
-		const trueFalse = /[*_]{0,3}true\s*(?:\/|or)\s*false:[*_]{0,3}\s*(.+)\s*/;
-		const trueFalseAnswer = /\s*(true|false)/;
-		const trueFalseRegex = new RegExp(
-			trueFalse.source +
-			inlineSeparator.source +
-			trueFalseAnswer.source,
-			"gi"
-		);
-		this.matchTrueFalse(fileContents, trueFalseRegex);
-
-		const multipleChoice = /[*_]{0,3}multiple\s*choice:[*_]{0,3}\s*(.+)\s*/;
-		const multipleChoiceAnswer = /\s*([a-z])\)/;
+		const choices = this.generateSpacedRepetitionChoicesRegex();
+		const choicesAnswer = this.generateSpacedRepetitionChoicesAnswerRegex();
+		const multipleChoiceSelectAllThatApply = /[*_]{0,3}(?:multiple\s*choice|select\s*all\s*that\s*apply):[*_]{0,3}\s*(.+)\s*/;
 		const multipleChoiceRegex = new RegExp(
-			multipleChoice.source +
+			multipleChoiceSelectAllThatApply.source +
 			choices.source +
 			multilineSeparator.source +
-			multipleChoiceAnswer.source,
+			"\\s*" +
+			choicesAnswer.source,
 			"gi"
 		);
-		this.matchMultipleChoice(fileContents, multipleChoiceRegex);
+		this.matchMultipleChoiceSelectAllThatApply(fileContents, multipleChoiceRegex);
 
-		const shortOrLong = /[*_]{0,3}(?:short|long)\s*answer:[*_]{0,3}\s*(.+)\s*/;
-		const shortOrLongAnswer = /\s*(.+)/;
-		const shortOrLongAnswerRegex = new RegExp(
-			shortOrLong.source +
-			inlineSeparator.source +
-			shortOrLongAnswer.source,
+		const matching = /[*_]{0,3}matching:[*_]{0,3}\s*(.+)\s*/;
+		const groupHeader = /.+\s*/;
+		const groupAChoices = choices.source.substring(0, choices.source.length / 2);
+		const groupBChoices = choices.source.substring(choices.source.length / 2);
+		const matchingAnswer = this.generateSpacedRepetitionMatchingAnswerRegex();
+		const matchingRegex = new RegExp(
+			matching.source +
+			groupHeader.source +
+			groupAChoices +
+			groupHeader.source +
+			groupBChoices +
+			multilineSeparator.source +
+			"\\s*" +
+			matchingAnswer.source,
 			"gi"
 		);
-		this.matchShortOrLongAnswer(fileContents, shortOrLongAnswerRegex);
+		this.matchMatching(fileContents, matchingRegex);
+
+		const trueFalseFillInTheBlankShortOrLong = /[*_]{0,3}(?:true\s*or\s*false|fill\s*in\s*the\s*blank|(?:short|long)\s*answer):[*_]{0,3}\s*(.+)\s*/;
+		const trueFalseFillInTheBlankShortOrLongAnswer = /\s*(.+)/;
+		const trueFalseFillInTheBlankShortOrLongRegex = new RegExp(
+			trueFalseFillInTheBlankShortOrLong.source +
+			inlineSeparator.source +
+			trueFalseFillInTheBlankShortOrLongAnswer.source,
+			"gi"
+		);
+		this.matchTrueFalseFillInTheBlankShortOrLongAnswer(fileContents, trueFalseFillInTheBlankShortOrLongRegex);
 	}
 
 	private generateCalloutChoicesRegex(): RegExp {
@@ -105,6 +131,23 @@ export default class QuizReviewer {
 		return new RegExp(choices.join(""));
 	}
 
+	private generateCalloutChoicesAnswerRegex(): RegExp {
+		const choices: string[] = [];
+		for (let i = 0; i < 26; i++) {
+			const letter = String.fromCharCode(97 + i);
+			choices.push(`(?:>\\s*>\\s*(${letter})\\).*\\s*)?`);
+		}
+		return new RegExp(choices.join(""));
+	}
+
+	private generateCalloutMatchingAnswerRegex(): RegExp {
+		const pairs: string[] = [];
+		for (let i = 0; i < 13; i++) {
+			pairs.push(`(?:>\\s*>\\s*([a-m]\\)\\s*-+>\\s*[n-z]\\))\\s*)?`);
+		}
+		return new RegExp(pairs.join(""));
+	}
+
 	private generateSpacedRepetitionChoicesRegex(): RegExp {
 		const choices: string[] = [];
 		for (let i = 0; i < 26; i++) {
@@ -114,39 +157,87 @@ export default class QuizReviewer {
 		return new RegExp(choices.join(""));
 	}
 
+	private generateSpacedRepetitionChoicesAnswerRegex(): RegExp {
+		const choices: string[] = [];
+		for (let i = 0; i < 26; i++) {
+			const letter = String.fromCharCode(97 + i);
+			choices.push(`(?:(${letter})\\).*\\s*)?`);
+		}
+		return new RegExp(choices.join(""));
+	}
+
+	private generateSpacedRepetitionMatchingAnswerRegex(): RegExp {
+		const pairs: string[] = [];
+		for (let i = 0; i < 13; i++) {
+			pairs.push(`(?:([a-m]\\)\\s*-+>\\s*[n-z]\\))\\s*)?`);
+		}
+		return new RegExp(pairs.join(""));
+	}
+
+	private matchMultipleChoiceSelectAllThatApply(fileContents: string, pattern: RegExp): void {
+		const matches = fileContents.matchAll(pattern);
+		for (const match of matches) {
+			const answer = match.slice(28).filter(letter => typeof letter !== "undefined");
+			if (answer.length === 1) {
+				this.questions.push({
+					question: match[1],
+					options: match.slice(2, 28).filter(option => typeof option !== "undefined"),
+					answer: answer[0].toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
+				} as MultipleChoice)
+			} else {
+				this.questions.push({
+					question: match[1],
+					options: match.slice(2, 28).filter(option => typeof option !== "undefined"),
+					answer: answer.map(letter => letter.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
+				} as SelectAllThatApply)
+			}
+		}
+	}
+
+	private matchMatching(fileContents: string, pattern: RegExp): void {
+		const matches = fileContents.matchAll(pattern);
+		for (const match of matches) {
+			const leftOptions = match.slice(2, 15).filter(option => typeof option !== "undefined");
+			const rightOptions = match.slice(15, 28).filter(option => typeof option !== "undefined");
+			const answer: { leftOption: string, rightOption: string }[] = [];
+			match.slice(28).filter(option => typeof option !== "undefined").forEach(pair => {
+				const [left, right] = pair.split(/\s*-+>\s*/);
+				const leftIndex = left.toLowerCase().charCodeAt(0) - "a".charCodeAt(0);
+				const rightIndex = right.toLowerCase().charCodeAt(0) - "n".charCodeAt(0);
+				answer.push({ leftOption: leftOptions[leftIndex], rightOption: rightOptions[rightIndex] });
+			});
+
+			this.questions.push({
+				question: match[1],
+				answer: answer
+			} as Matching);
+		}
+	}
+
+	private matchTrueFalseFillInTheBlankShortOrLongAnswer(fileContents: string, pattern: RegExp): void {
+		const matches = fileContents.matchAll(pattern);
+		for (const match of matches) {
+			if (match[2].toLowerCase() === "true" || match[2].toLowerCase() === "false") {
+				this.questions.push({
+					question: match[1],
+					answer: match[2] === "true"
+				} as TrueFalse);
+			} else if (/`_+`/.test(match[1])) {
+				this.questions.push({
+					question: match[1],
+					answer: match[2].split(/\s*,\s*/)
+				} as FillInTheBlank);
+			} else {
+				this.questions.push({
+					question: match[1],
+					answer: match[2]
+				} as ShortOrLongAnswer);
+			}
+		}
+	}
+
 	private escapeSpecialCharacters(pattern: string): RegExp {
 		const escapedPattern = pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 		return new RegExp(escapedPattern);
-	}
-
-	private matchTrueFalse(fileContents: string, pattern: RegExp): void {
-		const matches = fileContents.matchAll(pattern);
-		for (const match of matches) {
-			this.questions.push({
-				question: match[1],
-				answer: match[2] === "true"
-			} as TrueFalse);
-		}
-	}
-
-	private matchMultipleChoice(fileContents: string, pattern: RegExp): void {
-		const matches = fileContents.matchAll(pattern);
-		for (const match of matches) {
-			this.questions.push({
-				question: match[1],
-				options: match.slice(2, -1).filter(option => typeof option !== "undefined"),
-				answer: match[match.length - 1].toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
-			} as MultipleChoice);
-		}
-	}
-
-	private matchShortOrLongAnswer(fileContents: string, pattern: RegExp): void {
-		const matches = fileContents.matchAll(pattern);
-		for (const match of matches) {
-			this.questions.push({
-				question: match[1],
-				answer: match[2]
-			} as ShortOrLongAnswer);
-		}
 	}
 }
