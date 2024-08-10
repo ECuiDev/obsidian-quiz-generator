@@ -25,7 +25,7 @@ const TrueFalseQuestion = ({ app, question }: TrueFalseQuestionProps) => {
 	};
 
 	return (
-		<div className="question-container-qg">
+		<div>
 			<div className="question-qg" ref={questionRef} />
 			<div className="true-false-container-qg">
 				<button

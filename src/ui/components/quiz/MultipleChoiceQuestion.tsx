@@ -33,9 +33,9 @@ const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) 
 	};
 
 	return (
-		<div className="question-container-qg">
+		<div>
 			<div className="question-qg" ref={questionRef} />
-			<div className="choices-container-qg">
+			<div className="multiple-choice-container-qg">
 				{question.options.map((_, index) => (
 					<button
 						key={index}

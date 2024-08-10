@@ -12,6 +12,7 @@ import {
 import ModalButton from "../ModalButton";
 import TrueFalseQuestion from "./TrueFalseQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
+import SelectAllThatApplyQuestion from "./SelectAllThatApplyQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
 import QuizSaver from "../../../services/quizSaver";
 
@@ -62,7 +63,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		} else if (isMultipleChoice(question)) {
 			return <MultipleChoiceQuestion app={app} question={question} />;
 		} else if (isSelectAllThatApply(question)) {
-			return <div>Placeholder</div>;
+			return <SelectAllThatApplyQuestion app={app} question={question} />;
 		} else if (isFillInTheBlank(question)) {
 			return <div>Placeholder</div>;
 		} else if (isMatching(question)) {

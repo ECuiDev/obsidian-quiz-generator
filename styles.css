@@ -97,7 +97,7 @@
 
 /* QuizModal */
 .quiz-divider-qg {
-	margin: 1em 0 0 0;
+	margin: 1.5em 0 0 0;
 }
 
 /* NoteAndFolderSelector */
@@ -107,31 +107,30 @@
 	top: 10%;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, ShortOrLongAnswerQuestion */
-.question-container-qg {
-	overflow-y: auto;
-}
-
-/* TrueFalseQuestion, MultipleChoiceQuestion, ShortOrLongAnswerQuestion */
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
 .question-qg {
 	text-align: center;
 	font-size: 1.25em;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion */
-.choices-container-qg,
-.true-false-container-qg {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.true-false-container-qg,
+.multiple-choice-container-qg,
+.select-all-that-apply-container-qg {
 	display: grid;
-	gap: 1em;
 	grid-template-columns: 1fr 1fr;
+	gap: 1em;
+	margin-bottom: 1em;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion */
-.choices-container-qg > button,
-.true-false-container-qg > button {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.true-false-container-qg > button,
+.multiple-choice-container-qg > button,
+.select-all-that-apply-container-qg > button {
 	height: 100%;
 	border: 0.125em solid;
 	background-color: transparent;
+	box-shadow: none;
 	white-space: normal !important;
 	text-align: left;
 	font-size: 1em;
@@ -143,35 +142,60 @@
 	padding: 0.75rem;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion */
-.choices-container-qg > button:hover,
-.true-false-container-qg > button:hover {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.true-false-container-qg > button:hover,
+.multiple-choice-container-qg > button:hover,
+.select-all-that-apply-container-qg > button:hover {
 	border-color: hsl(210, 80%, 70%);
 	transition: border-color 0.3s ease;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion */
-.choices-container-qg > button:disabled,
-.true-false-container-qg > button:disabled {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.true-false-container-qg > button:disabled,
+.multiple-choice-container-qg > button:disabled,
+.select-all-that-apply-container-qg > button:disabled {
 	border-color: initial;
 	cursor: default;
 }
 
-/* ShortOrLongAnswerQuestion */
-.show-answer-qg {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.correct-choice-qg {
+	border-color: var(--color-green) !important;
+	opacity: 1 !important;
+}
+
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.incorrect-choice-qg {
+	border-color: var(--color-red) !important;
+}
+
+/* SelectAllThatApplyQuestion */
+.selected-choice-qg {
+	border-color: hsl(210, 80%, 70%) !important;
+}
+
+/* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
+.submit-answer-qg {
 	width: 100%;
-	height: 100%;
-	padding: 1em;
+	padding: 1.5em;
+	margin-bottom: 1em;
 	border: 0.125em solid;
 	background-color: transparent !important;
+	box-shadow: none !important;
 	font-size: 1em;
 	cursor: pointer;
 }
 
-/* ShortOrLongAnswerQuestion */
-.show-answer-qg:hover {
+/* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
+.submit-answer-qg:hover {
 	border-color: hsl(210, 80%, 70%);
 	transition: border-color 0.3s ease;
+}
+
+/* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
+.submit-answer-qg:disabled {
+	border-color: initial;
+	cursor: default;
 }
 
 /* ShortOrLongAnswerQuestion */
@@ -179,20 +203,10 @@
 	height: 100%;
 	border: 0.125em solid;
 	background-color: transparent !important;
+	box-shadow: none !important;
 	white-space: normal !important;
 	text-align: left;
 	font-size: 1em;
-}
-
-/* TrueFalseQuestion, MultipleChoiceQuestion */
-.correct-choice-qg {
-	background-color: #228B22 !important;
-	opacity: 1 !important;
-}
-
-/* TrueFalseQuestion, MultipleChoiceQuestion */
-.incorrect-choice-qg {
-	background-color: #dc143c !important;
 }
 
 /* settings */
@@ -205,5 +219,5 @@
 /* settings */
 .first-item-qg {
 	padding-top: 0.75em !important;
-	/*border-top: 1px solid var(--background-modifier-border) !important;*/
+	border-top: 1px solid var(--background-modifier-border) !important;
 }
