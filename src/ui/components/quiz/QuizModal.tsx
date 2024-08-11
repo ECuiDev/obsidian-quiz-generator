@@ -13,6 +13,7 @@ import ModalButton from "../ModalButton";
 import TrueFalseQuestion from "./TrueFalseQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import SelectAllThatApplyQuestion from "./SelectAllThatApplyQuestion";
+import FillInTheBlankQuestion from "./FillInTheBlankQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
 import QuizSaver from "../../../services/quizSaver";
 
@@ -65,7 +66,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		} else if (isSelectAllThatApply(question)) {
 			return <SelectAllThatApplyQuestion app={app} question={question} />;
 		} else if (isFillInTheBlank(question)) {
-			return <div>Placeholder</div>;
+			return <FillInTheBlankQuestion app={app} question={question} />;
 		} else if (isMatching(question)) {
 			return <div>Placeholder</div>;
 		} else if (isShortOrLongAnswer(question)) {
@@ -85,25 +86,25 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 							icon="arrow-left"
 							tooltip="Back"
 							onClick={handlePreviousQuestion}
-							isDisabled={questionIndex === 0}
+							disabled={questionIndex === 0}
 						/>
 						<ModalButton
 							icon="save"
 							tooltip="Save"
 							onClick={handleSaveQuestion}
-							isDisabled={savedQuestions[questionIndex]}
+							disabled={savedQuestions[questionIndex]}
 						/>
 						<ModalButton
 							icon="save-all"
 							tooltip="Save all"
 							onClick={handleSaveAllQuestions}
-							isDisabled={!savedQuestions.includes(false)}
+							disabled={!savedQuestions.includes(false)}
 						/>
 						<ModalButton
 							icon="arrow-right"
 							tooltip="Next"
 							onClick={handleNextQuestion}
-							isDisabled={questionIndex === questions.length - 1}
+							disabled={questionIndex === questions.length - 1}
 						/>
 					</div>
 					<hr className="quiz-divider-qg" />

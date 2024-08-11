@@ -69,6 +69,6 @@ const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestio
 			</button>
 		</div>
 	);
-}
+};
 
 export default SelectAllThatApplyQuestion;

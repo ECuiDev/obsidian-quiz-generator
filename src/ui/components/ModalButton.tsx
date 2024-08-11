@@ -5,10 +5,10 @@ interface ModalButtonProps {
 	icon: string;
 	tooltip: string;
 	onClick: () => void;
-	isDisabled?: boolean;
+	disabled?: boolean;
 }
 
-const ModalButton = ({ icon, tooltip, onClick, isDisabled = false }: ModalButtonProps) => {
+const ModalButton = ({ icon, tooltip, onClick, disabled = false }: ModalButtonProps) => {
 	const buttonRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
@@ -17,7 +17,7 @@ const ModalButton = ({ icon, tooltip, onClick, isDisabled = false }: ModalButton
 		}
 	}, [icon, tooltip]);
 
-	return <button className="modal-button-qg" onClick={onClick} disabled={isDisabled} ref={buttonRef} />;
+	return <button className="modal-button-qg" onClick={onClick} disabled={disabled} ref={buttonRef} />;
 };
 
 export default ModalButton;

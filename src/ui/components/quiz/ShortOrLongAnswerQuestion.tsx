@@ -33,6 +33,6 @@ const ShortOrLongAnswerQuestion = ({ app, question }: ShortOrLongAnswerQuestionP
 				: <button className="submit-answer-qg" onClick={() => setShowAnswer(true)}>Show answer</button>}
 		</div>
 	);
-}
+};
 
 export default ShortOrLongAnswerQuestion;

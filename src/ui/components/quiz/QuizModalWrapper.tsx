@@ -22,6 +22,6 @@ const QuizModalWrapper = ({ app, settings, questions, initialSavedQuestions, fil
 		validSavePath={validSavePath}
 		handleClose={handleClose}
 	/>;
-}
+};
 
 export default QuizModalWrapper;
