@@ -16,7 +16,7 @@
 	"author": "Edward Cui",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^20.14.10",
+		"@types/node": "^22.2.0",
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
 		"@typescript-eslint/eslint-plugin": "7.16.1",
@@ -26,10 +26,10 @@
 		"eslint-plugin-react-hooks": "^4.6.2",
 		"obsidian": "^1.6.6",
 		"tslib": "2.6.3",
-		"typescript": "5.5.3"
+		"typescript": "5.5.4"
 	},
 	"dependencies": {
-		"openai": "^4.52.7",
+		"openai": "^4.55.4",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	}
