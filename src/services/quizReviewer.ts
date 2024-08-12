@@ -177,17 +177,19 @@ export default class QuizReviewer {
 	private matchMultipleChoiceSelectAllThatApply(fileContents: string, pattern: RegExp): void {
 		const matches = fileContents.matchAll(pattern);
 		for (const match of matches) {
+			const options = match.slice(2, 28).filter(option => typeof option !== "undefined");
 			const answer = match.slice(28).filter(letter => typeof letter !== "undefined");
+			if (options.length === 0 || answer.length === 0 || answer.length > options.length) continue;
 			if (answer.length === 1) {
 				this.questions.push({
 					question: match[1],
-					options: match.slice(2, 28).filter(option => typeof option !== "undefined"),
+					options: options,
 					answer: answer[0].toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
 				} as MultipleChoice)
 			} else {
 				this.questions.push({
 					question: match[1],
-					options: match.slice(2, 28).filter(option => typeof option !== "undefined"),
+					options: options,
 					answer: answer.map(letter => letter.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
 				} as SelectAllThatApply)
 			}
@@ -206,6 +208,11 @@ export default class QuizReviewer {
 				const rightIndex = right.toLowerCase().charCodeAt(0) - "n".charCodeAt(0);
 				answer.push({ leftOption: leftOptions[leftIndex], rightOption: rightOptions[rightIndex] });
 			});
+
+			const leftLength = leftOptions.length;
+			const rightLength = rightOptions.length;
+			if (leftLength === 0 || rightLength === 0 || answer.length === 0) continue;
+			if (leftLength !== rightLength || leftLength !== answer.length || rightLength !== answer.length) continue;
 
 			this.questions.push({
 				question: match[1],
