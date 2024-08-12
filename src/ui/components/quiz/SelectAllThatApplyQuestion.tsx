@@ -38,12 +38,15 @@ const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestio
 
 	const getButtonClass = (buttonAnswer: number): string | undefined => {
 		if (submitted) {
-			if (question.answer.includes(buttonAnswer)) return "correct-choice-qg";
-			if (userAnswer.includes(buttonAnswer)) return "incorrect-choice-qg";
+			const correct = question.answer.includes(buttonAnswer);
+			const selected = userAnswer.includes(buttonAnswer);
+			if (correct && selected) return "select-all-that-apply-button correct-choice-qg";
+			if (correct) return "select-all-that-apply-button correct-choice-qg not-selected-qg";
+			if (selected) return "select-all-that-apply-button incorrect-choice-qg";
 		} else if (userAnswer.includes(buttonAnswer)) {
-			return "selected-choice-qg";
+			return "select-all-that-apply-button selected-choice-qg";
 		}
-		return undefined;
+		return "select-all-that-apply-button";
 	};
 
 	return (

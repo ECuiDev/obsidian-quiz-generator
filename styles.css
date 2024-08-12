@@ -126,36 +126,37 @@ FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 }
 
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
-.true-false-container-qg > button,
-.multiple-choice-container-qg > button,
-.select-all-that-apply-container-qg > button {
+.true-false-button,
+.multiple-choice-button,
+.select-all-that-apply-button {
 	height: 100%;
 	border: 0.125em solid;
-	background-color: transparent;
-	box-shadow: none;
+	background-color: transparent !important;
+	box-shadow: none !important;
 	white-space: normal !important;
+	opacity: 1 !important;
 	text-align: left;
 	font-size: 1em;
 	cursor: pointer;
 }
 
 /* TrueFalseQuestion */
-.true-false-container-qg > button {
+.true-false-button {
 	padding: 0.75rem;
 }
 
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
-.true-false-container-qg > button:hover,
-.multiple-choice-container-qg > button:hover,
-.select-all-that-apply-container-qg > button:hover {
+.true-false-button:hover,
+.multiple-choice-button:hover,
+.select-all-that-apply-button:hover {
 	border-color: hsl(210, 80%, 70%);
 	transition: border-color 0.3s ease;
 }
 
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
-.true-false-container-qg > button:disabled,
-.multiple-choice-container-qg > button:disabled,
-.select-all-that-apply-container-qg > button:disabled {
+.true-false-button:disabled,
+.multiple-choice-button:disabled,
+.select-all-that-apply-button:disabled {
 	border-color: initial;
 	cursor: default;
 }
@@ -163,7 +164,6 @@ FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
 .correct-choice-qg {
 	border-color: var(--color-green) !important;
-	opacity: 1 !important;
 }
 
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
@@ -171,9 +171,14 @@ FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 	border-color: var(--color-red) !important;
 }
 
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+.not-selected-qg {
+	border-style: dashed;
+}
+
 /* SelectAllThatApplyQuestion */
 .selected-choice-qg {
-	border-color: hsl(210, 80%, 70%) !important;
+	border-color: hsl(210, 80%, 70%);
 }
 
 /* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */

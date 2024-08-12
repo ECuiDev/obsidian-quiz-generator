@@ -18,10 +18,13 @@ const TrueFalseQuestion = ({ app, question }: TrueFalseQuestionProps) => {
 	}, [app, question]);
 
 	const getButtonClass = (buttonAnswer: boolean): string | undefined => {
-		if (userAnswer === null) return undefined;
-		if (buttonAnswer === question.answer) return "correct-choice-qg";
-		if (buttonAnswer === userAnswer) return "incorrect-choice-qg";
-		return undefined;
+		if (userAnswer === null) return "true-false-button";
+		const correct = buttonAnswer === question.answer;
+		const selected = buttonAnswer === userAnswer;
+		if (correct && selected) return "true-false-button correct-choice-qg";
+		if (correct) return "true-false-button correct-choice-qg not-selected-qg";
+		if (selected) return "true-false-button incorrect-choice-qg";
+		return "true-false-button";
 	};
 
 	return (

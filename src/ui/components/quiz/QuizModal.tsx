@@ -79,7 +79,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 			<div className="modal-bg" style={{opacity: 0.85}} onClick={handleClose} />
 			<div className="modal modal-qg">
 				<div className="modal-close-button" onClick={handleClose} />
-				<div className="modal-title modal-title-qg">Question {questionIndex + 1}</div>
+				<div className="modal-title modal-title-qg">Question {questionIndex + 1} of {questions.length}</div>
 				<div className="modal-content modal-content-qg">
 					<div className="modal-button-container-qg">
 						<ModalButton
