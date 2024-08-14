@@ -109,26 +109,28 @@
 }
 
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion,
-FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
+FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 .question-qg {
 	text-align: center;
 	font-size: var(--font-text-size);
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
 .true-false-container-qg,
 .multiple-choice-container-qg,
-.select-all-that-apply-container-qg {
+.select-all-that-apply-container-qg,
+.matching-container-qg {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 1em;
 	padding-bottom: 1em;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
-.true-false-button,
-.multiple-choice-button,
-.select-all-that-apply-button {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
+.true-false-button-qg,
+.multiple-choice-button-qg,
+.select-all-that-apply-button-qg,
+.matching-button-qg {
 	height: 100%;
 	border: 0.125em solid;
 	background-color: transparent !important;
@@ -141,47 +143,49 @@ FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 }
 
 /* TrueFalseQuestion */
-.true-false-button {
+.true-false-button-qg {
 	padding: 0.75rem;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
-.true-false-button:hover,
-.multiple-choice-button:hover,
-.select-all-that-apply-button:hover {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
+.true-false-button-qg:hover,
+.multiple-choice-button-qg:hover,
+.select-all-that-apply-button-qg:hover,
+.matching-button-qg:hover {
 	border-color: hsl(210, 80%, 70%);
 	transition: border-color 0.3s ease;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
-.true-false-button:disabled,
-.multiple-choice-button:disabled,
-.select-all-that-apply-button:disabled {
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
+.true-false-button-qg:disabled,
+.multiple-choice-button-qg:disabled,
+.select-all-that-apply-button-qg:disabled,
+.matching-button-qg:disabled {
 	border-color: initial;
 	cursor: default;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
 .correct-choice-qg {
 	border-color: var(--color-green) !important;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
 .incorrect-choice-qg {
 	border-color: var(--color-red) !important;
 }
 
-/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion */
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion, MatchingQuestion */
 .not-selected-qg {
 	border-style: dashed;
 }
 
-/* SelectAllThatApplyQuestion */
+/* SelectAllThatApplyQuestion, MatchingQuestion */
 .selected-choice-qg {
 	border-color: hsl(210, 80%, 70%);
 }
 
-/* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
+/* SelectAllThatApplyQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 .submit-answer-qg {
 	width: 100%;
 	padding: 1.5em;
@@ -193,13 +197,13 @@ FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 	cursor: pointer;
 }
 
-/* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
+/* SelectAllThatApplyQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 .submit-answer-qg:hover {
 	border-color: hsl(210, 80%, 70%);
 	transition: border-color 0.3s ease;
 }
 
-/* SelectAllThatApplyQuestion, ShortOrLongAnswerQuestion */
+/* SelectAllThatApplyQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 .submit-answer-qg:disabled {
 	border-color: initial;
 	cursor: default;

@@ -25,14 +25,14 @@ const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) 
 		});
 	}, [app, question, component]);
 
-	const getButtonClass = (buttonAnswer: number): string | undefined => {
-		if (userAnswer === null) return "multiple-choice-button";
+	const getButtonClass = (buttonAnswer: number) => {
+		if (userAnswer === null) return "multiple-choice-button-qg";
 		const correct = buttonAnswer === question.answer;
 		const selected = buttonAnswer === userAnswer;
-		if (correct && selected) return "multiple-choice-button correct-choice-qg";
-		if (correct) return "multiple-choice-button correct-choice-qg not-selected-qg";
-		if (selected) return "multiple-choice-button incorrect-choice-qg";
-		return "multiple-choice-button";
+		if (correct && selected) return "multiple-choice-button-qg correct-choice-qg";
+		if (correct) return "multiple-choice-button-qg correct-choice-qg not-selected-qg";
+		if (selected) return "multiple-choice-button-qg incorrect-choice-qg";
+		return "multiple-choice-button-qg";
 	};
 
 	return (

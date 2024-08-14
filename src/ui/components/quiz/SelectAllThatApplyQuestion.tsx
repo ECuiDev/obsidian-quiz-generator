@@ -36,17 +36,17 @@ const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestio
 		});
 	};
 
-	const getButtonClass = (buttonAnswer: number): string | undefined => {
+	const getButtonClass = (buttonAnswer: number) => {
 		if (submitted) {
 			const correct = question.answer.includes(buttonAnswer);
 			const selected = userAnswer.includes(buttonAnswer);
-			if (correct && selected) return "select-all-that-apply-button correct-choice-qg";
-			if (correct) return "select-all-that-apply-button correct-choice-qg not-selected-qg";
-			if (selected) return "select-all-that-apply-button incorrect-choice-qg";
+			if (correct && selected) return "select-all-that-apply-button-qg correct-choice-qg";
+			if (correct) return "select-all-that-apply-button-qg correct-choice-qg not-selected-qg";
+			if (selected) return "select-all-that-apply-button-qg incorrect-choice-qg";
 		} else if (userAnswer.includes(buttonAnswer)) {
-			return "select-all-that-apply-button selected-choice-qg";
+			return "select-all-that-apply-button-qg selected-choice-qg";
 		}
-		return "select-all-that-apply-button";
+		return "select-all-that-apply-button-qg";
 	};
 
 	return (
