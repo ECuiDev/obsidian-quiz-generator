@@ -182,7 +182,7 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 
 /* SelectAllThatApplyQuestion, MatchingQuestion */
 .selected-choice-qg {
-	border-color: hsl(210, 80%, 70%);
+	border-color: hsl(210, 80%, 50%) !important;
 }
 
 /* SelectAllThatApplyQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */

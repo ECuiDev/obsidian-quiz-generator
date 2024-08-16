@@ -11,7 +11,7 @@ interface MatchingQuestionProps {
 const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 	const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
 	const [selectedRight, setSelectedRight] = useState<number | null>(null);
-	const [selectedPairs, setSelectedPairs] = useState<{ left: number, right: number }[]>([]);
+	const [selectedPairs, setSelectedPairs] = useState<{ leftIndex: number, rightIndex: number }[]>([]);
 	const [submitted, setSubmitted] = useState<boolean>(false);
 
 	const leftOptions = useMemo<{ value: string, index: number }[]>(() =>
@@ -59,17 +59,17 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 		if (selectedLeft === leftIndex) {
 			setSelectedLeft(null);
 		} else if (selectedRight !== null) {
-			const pairToReplace = selectedPairs.find(pair => pair.right === selectedRight);
+			const pairToReplace = selectedPairs.find(pair => pair.leftIndex === leftIndex);
 			if (pairToReplace) {
 				setSelectedPairs(selectedPairs.map(pair =>
-					pair.right === selectedRight ? { left: leftIndex, right: selectedRight } : pair
+					pair.rightIndex === pairToReplace.rightIndex ? { leftIndex: leftIndex, rightIndex: selectedRight } : pair
 				));
 			} else {
-				setSelectedPairs([...selectedPairs, { left: leftIndex, right: selectedRight }]);
+				setSelectedPairs([...selectedPairs, { leftIndex: leftIndex, rightIndex: selectedRight }]);
 			}
 			setSelectedLeft(null);
 			setSelectedRight(null);
-		} else {
+		} else if (!selectedPairs.some(pair => pair.leftIndex === leftIndex)) {
 			setSelectedLeft(leftIndex);
 		}
 	};
@@ -78,29 +78,37 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 		if (selectedRight === rightIndex) {
 			setSelectedRight(null);
 		} else if (selectedLeft !== null) {
-			const pairToReplace = selectedPairs.find(pair => pair.left === selectedLeft);
+			const pairToReplace = selectedPairs.find(pair => pair.rightIndex === rightIndex);
 			if (pairToReplace) {
 				setSelectedPairs(selectedPairs.map(pair =>
-					pair.left === selectedLeft ? { left: selectedLeft, right: rightIndex } : pair
+					pair.leftIndex === pairToReplace.leftIndex ? { leftIndex: selectedLeft, rightIndex: rightIndex } : pair
 				));
 			} else {
-				setSelectedPairs([...selectedPairs, { left: selectedLeft, right: rightIndex }]);
+				setSelectedPairs([...selectedPairs, { leftIndex: selectedLeft, rightIndex: rightIndex }]);
 			}
 			setSelectedLeft(null);
 			setSelectedRight(null);
-		} else {
+		} else if (!selectedPairs.some(pair => pair.rightIndex === rightIndex)) {
 			setSelectedRight(rightIndex);
 		}
 	};
 
+	const handleLeftDoubleClick = (leftIndex: number) => {
+		setSelectedPairs(selectedPairs.filter(pair => pair.leftIndex !== leftIndex));
+	};
+
+	const handleRightDoubleClick = (rightIndex: number) => {
+		setSelectedPairs(selectedPairs.filter(pair => pair.rightIndex !== rightIndex));
+	};
+
 	const getLeftButtonClass = (leftIndex: number): string => {
 		if (submitted) {
-			const correctRightIndex = correctPairsMap.get(leftIndex);
-			const isCorrectPair = selectedPairs.some(pair => pair.left === leftIndex && pair.right === correctRightIndex);
-			return isCorrectPair ? "matching-button-qg correct-choice-qg" : "matching-button-qg incorrect-choice-qg";
+			const rightIndex = correctPairsMap.get(leftIndex);
+			const correct = selectedPairs.some(pair => pair.leftIndex === leftIndex && pair.rightIndex === rightIndex);
+			return correct ? "matching-button-qg correct-choice-qg" : "matching-button-qg incorrect-choice-qg";
 		}
 
-		if (selectedLeft === leftIndex || selectedPairs.some(pair => pair.left === leftIndex)) {
+		if (selectedLeft === leftIndex || selectedPairs.some(pair => pair.leftIndex === leftIndex)) {
 			return "matching-button-qg selected-choice-qg";
 		}
 
@@ -109,7 +117,7 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 
 	const getRightButtonClass = (rightIndex: number): string => {
 		if (submitted) {
-			const leftIndex = selectedPairs.find(pair => pair.right === rightIndex)?.left;
+			const leftIndex = selectedPairs.find(pair => pair.rightIndex === rightIndex)?.leftIndex;
 			if (leftIndex !== undefined) {
 				const correctRightIndex = correctPairsMap.get(leftIndex);
 				return correctRightIndex === rightIndex
@@ -118,7 +126,7 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 			}
 		}
 
-		if (selectedRight === rightIndex || selectedPairs.some(pair => pair.right === rightIndex)) {
+		if (selectedRight === rightIndex || selectedPairs.some(pair => pair.rightIndex === rightIndex)) {
 			return "matching-button-qg selected-choice-qg";
 		}
 
@@ -136,6 +144,7 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 							ref={(el) => buttonRefs.current[index * 2] = el}
 							className={getLeftButtonClass(index)}
 							onClick={() => handleLeftClick(index)}
+							onDoubleClick={() => handleLeftDoubleClick(index)}
 							disabled={submitted}
 						/>
 						<button
@@ -143,6 +152,7 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 							ref={(el) => buttonRefs.current[index * 2 + 1] = el}
 							className={getRightButtonClass(index)}
 							onClick={() => handleRightClick(index)}
+							onDoubleClick={() => handleRightDoubleClick(index)}
 							disabled={submitted}
 						/>
 					</>

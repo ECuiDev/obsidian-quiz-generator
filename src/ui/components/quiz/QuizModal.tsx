@@ -16,6 +16,7 @@ import SelectAllThatApplyQuestion from "./SelectAllThatApplyQuestion";
 import FillInTheBlankQuestion from "./FillInTheBlankQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
 import QuizSaver from "../../../services/quizSaver";
+import MatchingQuestion from "./MatchingQuestion";
 
 interface QuizModalProps {
 	app: App;
@@ -68,7 +69,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		} else if (isFillInTheBlank(question)) {
 			return <FillInTheBlankQuestion app={app} question={question} />;
 		} else if (isMatching(question)) {
-			return <div>Placeholder</div>;
+			return <MatchingQuestion app={app} question={question} />;
 		} else if (isShortOrLongAnswer(question)) {
 			return <ShortOrLongAnswerQuestion app={app} question={question} />;
 		}
