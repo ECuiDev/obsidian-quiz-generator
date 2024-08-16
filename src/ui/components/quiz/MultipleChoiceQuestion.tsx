@@ -1,5 +1,5 @@
 import { App, Component, MarkdownRenderer } from "obsidian";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MultipleChoice } from "../../../utils/types";
 
 interface MultipleChoiceQuestionProps {
@@ -9,11 +9,11 @@ interface MultipleChoiceQuestionProps {
 
 const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) => {
 	const [userAnswer, setUserAnswer] = useState<number | null>(null);
-	const component = useMemo<Component>(() => new Component(), []);
 	const questionRef = useRef<HTMLDivElement>(null);
 	const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
 	useEffect(() => {
+		const component = new Component();
 		if (questionRef.current) {
 			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
 		}
@@ -23,7 +23,7 @@ const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) 
 				MarkdownRenderer.render(app, question.options[index], button, "", component);
 			}
 		});
-	}, [app, question, component]);
+	}, [app, question]);
 
 	const getButtonClass = (buttonAnswer: number) => {
 		if (userAnswer === null) return "multiple-choice-button-qg";

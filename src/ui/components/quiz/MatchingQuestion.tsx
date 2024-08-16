@@ -34,11 +34,11 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 		}, new Map<number, number>());
 	}, [question, leftOptions, rightOptions]);
 
-	const component = useMemo<Component>(() => new Component(), []);
 	const questionRef = useRef<HTMLDivElement>(null);
 	const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
 	useEffect(() => {
+		const component = new Component();
 		if (questionRef.current) {
 			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
 		}
@@ -53,7 +53,7 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 				MarkdownRenderer.render(app, rightOptions[index].value, rightButton, "", component);
 			}
 		});
-	}, [app, question, component, leftOptions, rightOptions]);
+	}, [app, question, leftOptions, rightOptions]);
 
 	const handleLeftClick = (leftIndex: number) => {
 		if (selectedLeft === leftIndex) {

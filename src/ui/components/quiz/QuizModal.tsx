@@ -14,9 +14,9 @@ import TrueFalseQuestion from "./TrueFalseQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import SelectAllThatApplyQuestion from "./SelectAllThatApplyQuestion";
 import FillInTheBlankQuestion from "./FillInTheBlankQuestion";
+import MatchingQuestion from "./MatchingQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
 import QuizSaver from "../../../services/quizSaver";
-import MatchingQuestion from "./MatchingQuestion";
 
 interface QuizModalProps {
 	app: App;

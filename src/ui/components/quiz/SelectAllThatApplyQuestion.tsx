@@ -1,5 +1,5 @@
 import { App, Component, MarkdownRenderer } from "obsidian";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SelectAllThatApply } from "../../../utils/types";
 
 interface SelectAllThatApplyQuestionProps {
@@ -10,11 +10,11 @@ interface SelectAllThatApplyQuestionProps {
 const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestionProps) => {
 	const [userAnswer, setUserAnswer] = useState<number[]>([]);
 	const [submitted, setSubmitted] = useState<boolean>(false);
-	const component = useMemo<Component>(() => new Component(), []);
 	const questionRef = useRef<HTMLDivElement>(null);
 	const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
 	useEffect(() => {
+		const component = new Component();
 		if (questionRef.current) {
 			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
 		}
@@ -24,7 +24,7 @@ const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestio
 				MarkdownRenderer.render(app, question.options[index], button, "", component);
 			}
 		});
-	}, [app, question, component]);
+	}, [app, question]);
 
 	const toggleSelection = (buttonAnswer: number) => {
 		setUserAnswer(prevUserAnswer => {
