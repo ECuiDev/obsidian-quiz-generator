@@ -30,7 +30,7 @@ const ShortOrLongAnswerQuestion = ({ app, question }: ShortOrLongAnswerQuestionP
 			<div className="question-qg" ref={questionRef} />
 			{showAnswer
 				? <button className="answer-qg" ref={answerRef} />
-				: <button className="submit-answer-qg" onClick={() => setShowAnswer(true)}>Show answer</button>}
+				: <button className="submit-answer-qg" onClick={() => setShowAnswer(true)}>Reveal answer</button>}
 		</div>
 	);
 };
