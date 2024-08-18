@@ -108,7 +108,7 @@ export default class SelectorModal extends Modal {
 			}
 
 			try {
-				const quiz: Quiz = JSON.parse(generatedQuestions.replace(/\\/g, "\\\\"));
+				const quiz: Quiz = JSON.parse(generatedQuestions.replace(/\\+/g, "\\\\"));
 				if (!Array.isArray(quiz.questions)) {
 					new Notice("Error: Generation returned incorrect format");
 				}
