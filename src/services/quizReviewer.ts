@@ -232,7 +232,7 @@ export default class QuizReviewer {
 			} else if (/`_+`/.test(match[1])) {
 				this.questions.push({
 					question: match[1],
-					answer: match[2].split(/\s*,\s*/)
+					answer: match[2].split(/\s*,\s+/)
 				} as FillInTheBlank);
 			} else {
 				this.questions.push({

@@ -312,7 +312,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Automatically save questions")
-			.setDesc("Auto-save all questions upon generation.")
+			.setDesc("Autosave all questions upon generation.")
 			.addToggle((toggle) =>
 				toggle
 					.setValue(this.plugin.settings.autoSave)
@@ -324,7 +324,7 @@ export default class QuizSettingsTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName("Save location")
-			.setDesc("Enter vault path to folder where questions are saved (leave blank to save in vault root folder).")
+			.setDesc("Enter vault path to folder where questions are saved.")
 			.addSearch((search) => {
 				new FolderSuggester(this.app, search.inputEl);
 				search

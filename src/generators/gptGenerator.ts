@@ -15,7 +15,7 @@ export default class GptGenerator extends Generator {
 		});
 	}
 
-	public async generateQuestions(contents: string[]): Promise<string | undefined> {
+	public async generateQuestions(contents: string[]): Promise<string | null> {
 		try {
 			const completion = await this.openai.chat.completions.create({
 				messages: [
@@ -32,9 +32,10 @@ export default class GptGenerator extends Generator {
 				new Notice("Generation truncated: Request token limit reached");
 			}
 
-			return completion.choices[0].message.content?.replace(/```json\n?|```/g, "");
+			return completion.choices[0].message.content;
 		} catch (error) {
 			new Notice((error as Error).message);
+			return null;
 		}
 	}
 }

@@ -61,17 +61,17 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 	const renderQuestion = () => {
 		const question = questions[questionIndex];
 		if (isTrueFalse(question)) {
-			return <TrueFalseQuestion app={app} question={question} />;
+			return <TrueFalseQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isMultipleChoice(question)) {
-			return <MultipleChoiceQuestion app={app} question={question} />;
+			return <MultipleChoiceQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isSelectAllThatApply(question)) {
-			return <SelectAllThatApplyQuestion app={app} question={question} />;
+			return <SelectAllThatApplyQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isFillInTheBlank(question)) {
-			return <FillInTheBlankQuestion app={app} question={question} />;
+			return <FillInTheBlankQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isMatching(question)) {
-			return <MatchingQuestion app={app} question={question} />;
+			return <MatchingQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isShortOrLongAnswer(question)) {
-			return <ShortOrLongAnswerQuestion app={app} question={question} />;
+			return <ShortOrLongAnswerQuestion key={questionIndex} app={app} question={question} />;
 		}
 	};
 

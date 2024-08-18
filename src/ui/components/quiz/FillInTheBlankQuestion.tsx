@@ -16,7 +16,7 @@ const FillInTheBlankQuestion = ({ app, question }: FillInTheBlankQuestionProps) 
 		const generateQuestion = () => {
 			let blankIndex = 0;
 			return question.question.replace(/`_+`/g, match => {
-				if (blankIndex < filledBlanks.length && filledBlanks[blankIndex]) {
+				if (blankIndex < filledBlanks.length && filledBlanks[blankIndex] === question.answer[blankIndex]) {
 					return filledBlanks[blankIndex++];
 				}
 				blankIndex++;
@@ -53,7 +53,7 @@ const FillInTheBlankQuestion = ({ app, question }: FillInTheBlankQuestionProps) 
 		<div>
 			<div className="question-qg" ref={questionRef} />
 			<div className="input-container-qg">
-				<AnswerInput onSubmit={handleSubmit} disabled={!filledBlanks.includes("")} />
+				<AnswerInput onSubmit={handleSubmit} disabled={filledBlanks.every(blank => blank.length > 0)} />
 				<div className="instruction-footnote-qg">
 					Press enter to submit your answer to a blank. Enter "skip" to reveal all answers.
 				</div>
