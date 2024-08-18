@@ -22,7 +22,7 @@ export default class GptGenerator extends Generator {
 					{ role: "system", content: this.systemPrompt() },
 					{ role: "user", content: "Generate " + this.userPromptQuestions() +
 							" about the following text:\n" + contents.join("") +
-							"\nThe overall focus should be on assessing understanding and critical thinking."}
+							"\n\nThe overall focus should be on assessing understanding and critical thinking."}
 				],
 				model: this.settings.model,
 				response_format: { type: "json_object" },
