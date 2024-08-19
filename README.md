@@ -8,19 +8,21 @@
 
 ## Features
 
-- **Personalized Questions:** Select any combination of notes and folders to use as the quiz content.
+- **Personalized Questions:** Select any combination of notes and folders to use as the quiz content. Preview the selected notes and folders to see their content before generating your questions.
 - **Customizable Generation:** Choose the type(s) and number of questions to generate.
-- **Multiple Question Types:** Multiple choice, true/false, and short answer are all supported. Mix and match them to best suit your needs for an effective assessment.
+- **Multiple Question Types:** True or false, multiple choice, select all that apply, fill in the blank, matching, short answer, and long answer are all supported. Mix and match them to best suit your needs for an effective assessment.
 - **Interactive UI:** Answer generated questions in an interactive UI that provides real-time feedback on correctness.
-- **Question Saving:** Save generated questions in either (or both) of the following formats.
+- **Question Saving:** Save generated questions in either of the following formats.
   - Inline and multiline flashcards to review with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
   - Markdown callouts for seamless integration with your notes.
 - **Reviewable Quizzes:** Review saved questions using the interactive UI (you can also create your own questions from scratch and open them in the UI without ever using the generator).
-- **Multiple Languages:** Generate questions in the same language as your notes.
+- **Multiple Languages:** Generate questions in 21 different languages.
 - **Math Support:** Generate questions from notes that contain LaTeX.
-- **Model Options:** Choose between OpenAI's latest GPT-3.5 and GPT-4 models, depending on your needs.
-  - Use `GPT-3.5` (16,385 token context window) for faster response times and efficient question generation with a moderate context window.
-  - Use `GPT-4` (128,000 token context window) for more extensive content and in-depth question generation, suitable for complex educational materials and detailed assessments.
+- **Model Options:** Choose between OpenAI's latest models, depending on your needs.
+  - `GPT-3.5 Turbo` (16k token context window): Ideal for fast response times and efficient question generation. Perfect for handling moderate-sized notes and everyday educational tasks.
+  - `GPT-4 Turbo` (128,000 token context window): Suited for generating questions from extensive notes and complex materials. Offers in-depth question generation, making it great for detailed assessments and advanced study.
+  - `GPT-4o Mini` (128,000 token context window): The optimal choice for balancing speed and performance. Versatile for a wide range of educational tasks, providing solid depth without compromising efficiency.
+  - `GPT-4o` (128,000 token context window): Delivers the most comprehensive and detailed question generation. Excellent for handling intricate content and creating nuanced questions for thorough study and advanced assessments.
 
 ## Usage
 
@@ -52,12 +54,12 @@ This plugin is now available in the **Community plugins** page in Obsidian. You 
 ### Generation
 
 - Open the command palette and select "Quiz Generator: Open generator" or select the [brain-circuit](https://lucide.dev/icons/brain-circuit) icon in the left sidebar.
-- Use the [file](https://lucide.dev/icons/file-plus-2) and [folder](https://lucide.dev/icons/folder-plus) icons to add notes and folders.
-  - Adding a folder adds all of the notes inside it, as well as any notes in its subfolders. If you select an extremely large folder (thousands of files and hundreds of subfolders), it could take a few seconds for it to be added.
-- Use the [x](https://lucide.dev/icons/x) icon to remove individual notes/folders and the [book](https://lucide.dev/icons/book-x) icon to remove everything.
+- Select the [file](https://lucide.dev/icons/file-plus-2) and [folder](https://lucide.dev/icons/folder-plus) icons to add notes and folders.
+  - Adding a folder adds all the notes inside it, as well as any notes in its subfolders (can be changed in the settings). If you select an extremely large folder (thousands of files and hundreds of subfolders), it could take a few seconds for it to be added.
+- Select the [eye](https://lucide.dev/icons/eye) icon to view the contents of selected notes and folders.
+- Select the [x](https://lucide.dev/icons/x) icon to remove individual notes or folders and the [book](https://lucide.dev/icons/book-x) icon to remove everything.
 - Once you've added your notes and/or folders, select the [webhook](https://lucide.dev/icons/webhook) icon to generate the questions.
-  - The Quiz UI will open automatically when the generation is complete (it usually takes at least a few seconds).
-  - The generation time may vary based on the length of your notes and the number of questions to generate.
+  - The quiz UI will open automatically when the generation is complete.
 
 ### Saving
 
@@ -68,117 +70,309 @@ This plugin is now available in the **Community plugins** page in Obsidian. You 
 
 ### Reviewing Saved Quizzes
 
-- Open the command palette and select "Quiz Generator: Open quiz from current note" or right-click a note in the file explorer and select "Open quiz from this note" in the file menu.
-
-### Question Formatting
-
-If you want to modify any saved questions or write your own questions from scratch, they must follow the format below to be opened in the interactive UI. Any text not enclosed by quotation marks must be written exactly as shown. However, deviations in spacing and capitalization are okay (the parser is case-insensitive and ignores whitespace). Text enclosed by quotation marks can be anything.
-
-#### Callout Format
-
-```
-> [!question] "Multiple choice question goes here"
-> a) "Choice 1"
-> b) "Choice 2"
-> c) "Choice 3"
-> d) "Choice 4"
->> [!success]"- Answer"
->> One of a), b), c), or d) "You may optionally add the text of the correct choice in addition to the letter"
-
-> [!question] "True/false question goes here"
-> True or false?
->> [!success]"- Answer"
->> One of true or false
-
-> [!question] "Short answer question goes here"
->> [!success]"- Answer"
->> "Answer goes here"
-
-Note: The hyphen being inside the quotations marks in the nested callout is not a typo. It's optional whether you include it or not.
-```
-
-**Example**
-```
-> [!question] In the realm of artificial intelligence ethics, consider the development of autonomous weapon systems (AWS). Advocates argue that AWS can minimize human casualties in warfare, while critics express concerns about the lack of human control and potential ethical implications. Applying an ethical framework, which option aligns with a consequentialist perspective?
-> a) Reject the use of AWS to preserve human control and uphold moral principles.
-> b) Implement strict regulations and oversight to balance the benefits and risks of AWS.
-> c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
-> d) Encourage international collaboration to establish a global consensus on AWS usage.
->> [!success]- Answer
->> c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
-
-> [!question] In the context of the nature vs. nurture debate in psychology, the consensus among researchers is that intelligence is solely determined by genetic factors.
-> True or false?
->> [!success]- Answer
->> False
-
-> [!question] Explain the concept of the "butterfly effect" in chaos theory and provide an example illustrating its significance.
->> [!success]- Answer
->> The "butterfly effect" is a phenomenon in chaos theory that suggests small initial changes can lead to vastly different outcomes over time. It is metaphorically expressed as the idea that the flap of a butterfly's wings in Brazil could set off a chain of events leading to a tornado in Texas. Essentially, tiny variations in the initial conditions of a complex system can have profound and unpredictable effects on its future state. An example of the butterfly effect is the weather, where a minor disturbance can influence atmospheric conditions, potentially leading to significant changes in weather patterns over time.
-```
-
-#### Spaced Repetition Format
-
-```
-**Multiple Choice:** "Multiple choice question goes here"
-a) "Choice 1"
-b) "Choice 2"
-c) "Choice 3"
-d) "Choice 4"
-Multiline separator you chose in the settings goes here
-One of a), b), c), or d) "You may optionally add the text of the correct choice in addition to the letter"
-
-**True/False:** "True/false question goes here" Inline separator you chose in the settings goes here One of true or false
-
-**Short Answer:** "Short answer question goes here" Inline separator you chose in the settings goes here "Answer goes here"
-```
-
-**Example**
-```
-**Multiple Choice:** In the realm of artificial intelligence ethics, consider the development of autonomous weapon systems (AWS). Advocates argue that AWS can minimize human casualties in warfare, while critics express concerns about the lack of human control and potential ethical implications. Applying an ethical framework, which option aligns with a consequentialist perspective?
-a) Reject the use of AWS to preserve human control and uphold moral principles.
-b) Implement strict regulations and oversight to balance the benefits and risks of AWS.
-c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
-d) Encourage international collaboration to establish a global consensus on AWS usage.
-?
-c) Embrace AWS deployment to reduce overall casualties and enhance military effectiveness.
-
-**True/False:** In the context of the nature vs. nurture debate in psychology, the consensus among researchers is that intelligence is solely determined by genetic factors. :: False
-
-**Short Answer:** Explain the concept of the "butterfly effect" in chaos theory and provide an example illustrating its significance. :: The "butterfly effect" is a phenomenon in chaos theory that suggests small initial changes can lead to vastly different outcomes over time. It is metaphorically expressed as the idea that the flap of a butterfly's wings in Brazil could set off a chain of events leading to a tornado in Texas. Essentially, tiny variations in the initial conditions of a complex system can have profound and unpredictable effects on its future state. An example of the butterfly effect is the weather, where a minor disturbance can influence atmospheric conditions, potentially leading to significant changes in weather patterns over time.
-```
+- Open the command palette and select "Quiz Generator: Open quiz from active note" or right-click a note in the file explorer and select "Open quiz from this note" in the file menu.
 
 ### Miscellaneous
 
-- Select the [scroll](https://lucide.dev/icons/scroll-text) icon in the Generator UI to re-open the most recently generated quiz.
+- Select the [scroll](https://lucide.dev/icons/scroll-text) icon in the generator UI to re-open the most recently generated quiz.
+
+### Manually Creating or Modifying Questions
+
+If you want to write your own questions from scratch or modify any saved questions, they must follow the format below to be opened in the quiz UI. However, deviations in spacing and capitalization are okay (the parser is case-insensitive and ignores whitespace).
+
+Text enclosed by curly braces is required but can be anything. Text enclosed by angle brackets is optional and can be anything. Any other text (not enclosed by either) should be written as shown. You are allowed to make any of the callouts foldable by adding a plus or minus. For spaced repetition, you are allowed to bold or italicize the question type identifier using any combination of asterisks and underscores.
+
+#### True or False Format
+
+**Callout**
+```
+> [!question] {Insert your question here}
+>> [!success] <Answer>
+>> One of true or false
+
+> [!question] HTML is a programming language.
+>> [!success]- Answer
+>> False
+```
+
+**Spaced Repetition**
+```
+True or False: {Insert your question here} Insert inline separator you chose in the settings One of true or false
+
+True or False: HTML is a programming language. :: False
+```
+
+#### Multiple Choice Format
+
+Supports up to 26 choices, denoted by the 26 letters of the English alphabet. You should use the letters in alphabetical order starting from "a" and not reuse letters or things may break. The example below uses 4 choices.
+
+**Callout**
+```
+> [!question] {Insert your question here}
+> a) {Choice 1}
+> b) {Choice 2}
+> c) {Choice 3}
+> d) {Choice 4}
+>> [!success] <Answer>
+>> One of a), b), c), etc. <text of the correct choice>
+
+> [!question] Which of the following is the correct translation of house in Spanish?
+> a) Casa
+> b) Maison
+> c) Haus
+> d) Huis
+>> [!success]- Answer
+>> a) Casa
+```
+
+**Spaced Repetition**
+```
+Multiple Choice: {Insert your question here}
+a) {Choice 1}
+b) {Choice 2}
+c) {Choice 3}
+d) {Choice 4}
+Insert multiline separator you chose in the settings
+One of a), b), c), etc. <text of the correct choice>
+
+Multiple Choice: Which of the following is the correct translation of house in Spanish?
+a) Casa
+b) Maison
+c) Haus
+d) Huis
+?
+a) Casa
+```
+
+#### Select All That Apply Format
+
+Supports up to 26 choices, denoted by the 26 letters of the English alphabet. There must be at least 2 correct answers or this will be treated as a multiple choice question by the UI. You should use the letters in alphabetical order starting from "a" and not reuse letters or things may break. The example below uses 5 choices.
+
+**Callout**
+```
+> [!question] {Insert your question here}
+> a) {Choice 1}
+> b) {Choice 2}
+> c) {Choice 3}
+> d) {Choice 4}
+> e) {Choice 5}
+>> [!success] <Answer>
+>> One of a), b), c), etc. <text of the correct choice>
+>> One of a), b), c), etc. <text of the correct choice>
+
+> [!question] Which of the following are elements on the periodic table?
+> a) Oxygen
+> b) Water
+> c) Hydrogen
+> d) Salt
+> e) Carbon
+>> [!success]- Answer
+>> a) Oxygen
+>> c) Hydrogen
+>> e) Carbon
+```
+
+**Spaced Repetition**
+```
+Select All That Apply: {Insert your question here}
+a) {Choice 1}
+b) {Choice 2}
+c) {Choice 3}
+d) {Choice 4}
+e) {Choice 5}
+Insert multiline separator you chose in the settings
+One of a), b), c), etc. <text of the correct choice>
+One of a), b), c), etc. <text of the correct choice>
+
+Select All That Apply: Which of the following are elements on the periodic table?
+a) Oxygen
+b) Water
+c) Hydrogen
+d) Salt
+e) Carbon
+?
+a) Oxygen
+c) Hydrogen
+e) Carbon
+```
+
+#### Fill in the Blank Format
+
+Supports an infinite number of blanks. The question must contain at least 1 blank, represented as one or more underscores enclosed by backticks. The answer(s) should appear in the same order as the blank(s) they correspond to. So the first answer corresponds to the first blank, the second answer to the second blank, and so on.
+
+The answer(s) to the blank(s) must be separated by commas with at least 1 space after the comma. This spacing condition exists because it allows the parser to recognize the entirety of a large number as a single answer (since numbers greater than 3 digits typically have commas).
+
+**Callout**
+```
+> [!question] {Insert your question here}
+>> [!success] <Answer>
+>> Comma separated list of answer(s)
+
+> [!question] The Battle of `____` was fought in `____`.
+>> [!success]- Answer
+>> Gettysburg, 1863
+```
+
+**Spaced Repetition**
+```
+Fill in the Blank: {Insert your question here} Insert inline separator you chose in the settings Comma separated list of answer(s)
+
+Fill in the Blank: The Battle of `____` was fought in `____`. :: Gettysburg, 1863
+```
+
+#### Matching Format
+
+Supports up to 13 pairs (i.e. 26 choices total, 13 on each "side"). The first group should use the letters a to m and the second group should use the letters n to z. Both groups should use the letters in alphabetical order and not reuse letters or things may break. The answer to a pair is represented as a letter from the first group followed by a letter from the second group, separated by an arrow (one or more hyphens followed by a right angle bracket). The letter from the first group must come first, but you may list the pairs in any order. The example below uses 4 pairs.
+
+**Callout**
+```
+> [!question] {Insert your question here}
+>> [!example] <Group A>
+>> a) {Choice 1}
+>> b) {Choice 2}
+>> c) {Choice 3}
+>> d) {Choice 4}
+>
+>> [!example] <Group B>
+>> n) {Choice 5}
+>> o) {Choice 6}
+>> p) {Choice 7}
+>> q) {Choice 8}
+>
+>> [!success] <Answer>
+>> One of a), b), c), etc. -> One of n), o), p), etc.
+>> One of a), b), c), etc. -> One of n), o), p), etc.
+>> One of a), b), c), etc. -> One of n), o), p), etc.
+>> One of a), b), c), etc. -> One of n), o), p), etc.
+
+> [!question] Match the medical term to its definition.
+>> [!example] Group A
+>> a) Hypertension
+>> b) Bradycardia
+>> c) Tachycardia
+>> d) Hypotension
+>
+>> [!example] <Group B>
+>> n) Fast heart rate
+>> o) High blood pressure
+>> p) Low blood pressure
+>> q) Slow heart rate
+>
+>> [!success]- Answer
+>> a) -> o)
+>> b) -> q)
+>> c) -> n)
+>> d) -> p)
+```
+
+**Spaced Repetition**
+```
+Matching: {Insert your question here}
+{Group A}
+a) {Choice 1}
+b) {Choice 2}
+c) {Choice 3}
+d) {Choice 4}
+{Group B}
+n) {Choice 5}
+o) {Choice 6}
+p) {Choice 7}
+q) {Choice 8}
+Insert multiline separator you chose in the settings
+One of a), b), c), etc. -> One of n), o), p), etc.
+One of a), b), c), etc. -> One of n), o), p), etc.
+One of a), b), c), etc. -> One of n), o), p), etc.
+One of a), b), c), etc. -> One of n), o), p), etc.
+
+Matching: Match the medical term to its definition.
+Group A
+a) Hypertension
+b) Bradycardia
+c) Tachycardia
+d) Hypotension
+Group B
+n) Fast heart rate
+o) High blood pressure
+p) Low blood pressure
+q) Slow heart rate
+?
+a) -> o)
+b) -> q)
+c) -> n)
+d) -> p)
+```
+
+#### Short Answer Format
+
+**Callout**
+```
+> [!question] {Insert your question here}
+>> [!success] <Answer>
+>> {Insert answer here}
+
+> [!question] Who was the first President of the United States and what is he commonly known for?
+>> [!success]- Answer
+>> George Washington was the first President of the United States and is commonly known for leading the American Revolutionary War and serving two terms as president.
+```
+
+**Spaced Repetition**
+```
+Short Answer: {Insert your question here} Insert inline separator you chose in the settings {Insert answer here}
+
+Short Answer: Who was the first President of the United States and what is he commonly known for? :: George Washington was the first President of the United States and is commonly known for leading the American Revolutionary War and serving two terms as president.
+```
+
+#### Long Answer Format
+
+**Callout**
+```
+> [!question] {Insert your question here}
+>> [!success] <Answer>
+>> {Insert answer here}
+
+> [!question] Explain the difference between a stock and a bond, and discuss the risks and potential rewards associated with each investment type.
+>> [!success]- Answer
+>> A stock represents ownership in a company and a claim on part of its profits. The potential rewards include dividends and capital gains if the company's value increases, but the risks include the possibility of losing the entire investment if the company fails. A bond is a loan made to a company or government, which pays interest over time and returns the principal at maturity. Bonds are generally considered less risky than stocks, as they provide regular interest payments and the return of principal, but they offer lower potential returns.
+```
+
+**Spaced Repetition**
+```
+Long Answer: {Insert your question here} Insert inline separator you chose in the settings {Insert answer here}
+
+Long Answer: Explain the difference between a stock and a bond, and discuss the risks and potential rewards associated with each investment type. :: A stock represents ownership in a company and a claim on part of its profits. The potential rewards include dividends and capital gains if the company's value increases, but the risks include the possibility of losing the entire investment if the company fails. A bond is a loan made to a company or government, which pays interest over time and returns the principal at maturity. Bonds are generally considered less risky than stocks, as they provide regular interest payments and the return of principal, but they offer lower potential returns.
+```
 
 ## Coming Soon
 
 I'm actively working on bringing more features and improvements to Quiz Generator. Stay tuned for the following upcoming updates:
 
-### Sequentially Being Developed
+### Next Release
 
-- **Improved Folders:** Click added folders to view the notes they contain.
-- **Improved Notes:** Click added notes to view their contents.
-- **More Question Types:** Fill in the blank, matching, essay/long answer, and select all that apply.
-- **Dynamic Analysis:** Get real-time feedback on your response to short/long answer questions.
-- **More Models:** Support for local LLM's and other LLM providers.
+- **Generation Details:** Save links to notes used for quiz generation.
+- **Dynamic Analysis:** Get real-time feedback on your response to short and long answer questions.
+- **More Models:** Support for Google Gemini, Anthropic Claude, OpenRouter, PerplexityAI, and Cohere.
+
+### Future Releases
+
 - **Better Question Creation:** Custom UI to streamline creating your own questions from scratch.
+- **Callout Aliases:** Specify what callout type identifiers you want to use.
+- **Randomize Choices:** Randomize order in which choices for multiple choice and select all that apply questions are displayed.
+- **New Question Type:** Categorization questions.
+- **Save Format Conversion Tool:** Convert saved questions between callout and spaced repetition format.
+- **Anki Integration:** Sync questions with Anki and vice versa.
+- **Homepage:** Access all your saved quizzes from a custom homepage UI.
+- **Test Mode:** Take quizzes with a time limit and receive a score at the end.
 - **Adjustable Difficulty:** Set the difficulty of generated questions.
+- **Custom View:** Embed the quiz UI directly inside your notes.
+- **Advanced Generation:** Control the number of choices, blanks, and pairs to generate.
 - **Tag Adder:** Add notes by tag.
 - **Dataview Adder:** Add notes using [Dataview](https://github.com/blacksmithgu/obsidian-dataview) queries.
+- **Responsive UI:** Freely resize and move the UI.
 - **Advanced Question Types:** Numerical response and image-based.
 - **Note Links:** Adding a note also adds the notes it links to.
 - **Extended Files:** Generate questions from PDF and image files.
-
-### Concurrently Being Developed
-
-- **Question Variety:** Customization options to control the question style and what it assesses.
+- **Question Variety:** Customization options to control the question scope and what it assesses.
 - **Quality of Life:** Reducing token usage while improving question quality.
-
-## Limitations
-
-Make sure the combined token count of your input (selected notes/folders) and expected output (generated questions) does not exceed the context window of your chosen model. Otherwise your input and/or output will be truncated. The number of input tokens is shown in the Generator UI. For the number of output tokens, on average, a multiple choice question is ~60 tokens, a true/false question is ~30 tokens, and a short answer question is ~100 tokens. I recommend leaving at least 10% of the context window unused to be safe.
 
 ## Issues and Feature Requests
 

@@ -96,7 +96,7 @@ export default abstract class Generator {
 
 	private exampleResponse(): string {
 		const trueFalseExample = `{"question": "HTML is a programming language.", "answer": false}`;
-		const multipleChoiceExample = `{"question": "Which of the following is the correct translation of house in Spanish?", "options": ["Casa", "Maison", "Haus", "Casa"], "answer": 0}`;
+		const multipleChoiceExample = `{"question": "Which of the following is the correct translation of house in Spanish?", "options": ["Casa", "Maison", "Haus", "Huis"], "answer": 0}`;
 		const selectAllThatApplyExample = `{"question": "Which of the following are elements on the periodic table?", "options": ["Oxygen", "Water", "Hydrogen", "Salt", "Carbon"], "answer": [0, 2, 4]}`;
 		const fillInTheBlankExample = `{"question": "The Battle of \`____\` was fought in \`____\`.", "answer": ["Gettysburg", "1863"]}`;
 		const matchingExample = `{"question": "Match the medical term to its definition.", "answer": [{"leftOption": "Hypertension", "rightOption": "High blood pressure"}, {"leftOption": "Bradycardia", "rightOption": "Slow heart rate"}, {"leftOption": "Tachycardia", "rightOption": "Fast heart rate"}, {"leftOption": "Hypotension", "rightOption": "Low blood pressure"}]}`;
