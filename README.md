@@ -4,8 +4,6 @@
 
 **Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of OpenAI's GPT-3.5 and GPT-4 models to automatically generate interactive, exam-style questions (with answers) based on your notes. Whether you're a student looking to quiz yourself or an educator creating assessments, this plugin streamlines the question creation process.
 
-![Demo](assets/Demo.gif)
-
 ## Features
 
 - **Personalized Questions:** Select any combination of notes and folders to use as the quiz content. Preview the selected notes and folders to see their content before generating your questions.
@@ -104,7 +102,7 @@ True or False: HTML is a programming language. :: False
 
 #### Multiple Choice Format
 
-Supports up to 26 choices, denoted by the 26 letters of the English alphabet. You should use the letters in alphabetical order starting from "a" and not reuse letters or things may break. The example below uses 4 choices.
+Supports up to 26 choices, denoted by the 26 letters of the English alphabet. You should use the letters in alphabetical order starting from "a". The example below uses 4 choices.
 
 **Callout**
 ```
@@ -146,7 +144,7 @@ a) Casa
 
 #### Select All That Apply Format
 
-Supports up to 26 choices, denoted by the 26 letters of the English alphabet. There must be at least 2 correct answers or this will be treated as a multiple choice question by the UI. You should use the letters in alphabetical order starting from "a" and not reuse letters or things may break. The example below uses 5 choices.
+Supports up to 26 choices, denoted by the 26 letters of the English alphabet. There must be at least 2 correct answers or this will be treated as a multiple choice question by the quiz UI. You should use the letters in alphabetical order starting from "a". The example below uses 5 choices.
 
 **Callout**
 ```
@@ -222,7 +220,7 @@ Fill in the Blank: The Battle of `____` was fought in `____`. :: Gettysburg, 186
 
 #### Matching Format
 
-Supports up to 13 pairs (i.e. 26 choices total, 13 on each "side"). The first group should use the letters a to m and the second group should use the letters n to z. Both groups should use the letters in alphabetical order and not reuse letters or things may break. The answer to a pair is represented as a letter from the first group followed by a letter from the second group, separated by an arrow (one or more hyphens followed by a right angle bracket). The letter from the first group must come first, but you may list the pairs in any order. The example below uses 4 pairs.
+Supports up to 13 pairs (i.e. 26 choices total, 13 on each "side"). The first group should use letters a to m and the second group should use letters n to z. Both groups should use the letters in alphabetical order. The answer to a pair is represented as a letter from the first group followed by a letter from the second group, separated by an arrow (one or more hyphens followed by a right angle bracket). The letter from the first group must come first, but you may list the pairs in any order. The example below uses 4 pairs.
 
 **Callout**
 ```
@@ -344,7 +342,7 @@ Long Answer: Explain the difference between a stock and a bond, and discuss the 
 
 ## Coming Soon
 
-I'm actively working on bringing more features and improvements to Quiz Generator. Stay tuned for the following upcoming updates:
+I'm actively working on bringing more features and improvements to Quiz Generator. Stay tuned for the following updates:
 
 ### Next Release
 
@@ -377,3 +375,14 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 ## Issues and Feature Requests
 
 If you encounter any errors or have feature requests, please open an issue on the [GitHub repository](https://github.com/ECuiDev/obsidian-quiz-generator/issues).
+
+## Tips
+
+- Button Border Meanings
+  - Solid Green Border: Correct option you selected.
+  - Solid Red Border: Incorrect option you selected.
+  - Dashed Green Border: Correct option you didn't select.
+- Matching Question UI Breakdown
+  - To create a pair, select a button from either column and then select a button from the other column. The UI will connect the buttons by displaying the same number in their respective circles.
+    - If you select an unpaired button and then select a paired button from the other column, the pair will update to match the new selection.
+  - To remove a pair, double-click on the paired button (either left or right).
