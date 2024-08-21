@@ -6,7 +6,6 @@ export const cleanUpNoteContents = (noteContents: string, hasFrontMatter: boolea
 	cleanedContents = cleanUpLinks(cleanedContents);
 	cleanedContents = removeMarkdownHeadings(cleanedContents);
 	cleanedContents = removeMarkdownFormatting(cleanedContents);
-	cleanedContents = removeSpecialCharacters(cleanedContents);
 	return cleanUpWhiteSpace(cleanedContents);
 };
 
@@ -16,30 +15,24 @@ const removeFrontMatter = (input: string): string => {
 };
 
 const cleanUpLinks = (input: string): string => {
-	const combinedRegex = /\[\[([^\]|]+)(?:\|([^\]]+))??]]|\[([^\]]+)]\([^)]+\)/g;
+	const wikiLinkPattern = /\[\[([^\]|]+)(?:\|([^\]]+))??]]/;
+	const markdownLinkPattern = /\[([^\]]+)]\([^)]+\)/;
+
+	const combinedRegex = new RegExp(`${wikiLinkPattern.source}|${markdownLinkPattern.source}`, "g");
 
 	return input.replace(combinedRegex, (match, wikiLink, wikiDisplayText, markdownLink) => {
-		if (wikiLink) {
-			return wikiDisplayText ? wikiDisplayText : wikiLink;
-		} else if (markdownLink) {
-			return markdownLink;
-		}
+		return wikiDisplayText ?? wikiLink ?? markdownLink;
 	});
 };
 
 const removeMarkdownHeadings = (input: string): string => {
-	const headingRegex = /^(#+\s+.*)$/gm;
+	const headingRegex = /^(#+.*)$/gm;
 	return input.replace(headingRegex, "");
 };
 
 const removeMarkdownFormatting = (input: string): string => {
-	const markdownFormattingRegex = /(\*\*\*|___|\*\*|__|\*|_|~~|==|%%)(.*?)\1/g;
+	const markdownFormattingRegex = /([*_]{1,3}|~~|==|%%)(.*?)\1/g;
 	return input.replace(markdownFormattingRegex, "$2");
-};
-
-const removeSpecialCharacters = (input: string): string => {
-	const regex = /[\n`\t]/g;
-	return input.replace(regex, "");
 };
 
 const cleanUpWhiteSpace = (input: string): string => {
