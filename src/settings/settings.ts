@@ -328,9 +328,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.addSearch((search) => {
 				new FolderSuggester(this.app, search.inputEl);
 				search
-					.setValue(this.plugin.settings.questionSavePath)
+					.setValue(this.plugin.settings.savePath)
 					.onChange(async (value) => {
-						this.plugin.settings.questionSavePath = normalizePath(value);
+						this.plugin.settings.savePath = normalizePath(value);
 						await this.plugin.saveSettings();
 					})
 			});
@@ -341,9 +341,9 @@ export default class QuizSettingsTab extends PluginSettingTab {
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOptions(saveFormats)
-					.setValue(this.plugin.settings.questionSaveFormat)
+					.setValue(this.plugin.settings.saveFormat)
 					.onChange(async (value) => {
-						this.plugin.settings.questionSaveFormat = value;
+						this.plugin.settings.saveFormat = value;
 						await this.plugin.saveSettings();
 					})
 			);

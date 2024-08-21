@@ -23,15 +23,15 @@ export default class QuizSaver {
 		this.app = app;
 		this.settings = settings;
 		this.questions = questions;
-		this.fileName = fileName;
+		this.fileName = validSavePath ? normalizePath(this.settings.savePath.trim() + "/" + fileName) : fileName;
 		this.validSavePath = validSavePath;
 		this.fileCreated = fileCreated;
 	}
 
 	public async saveQuestion(questionIndex: number): Promise<void> {
-		const saveFile = await this.createSaveFile();
+		const saveFile = await this.getSaveFile();
 
-		if (this.settings.questionSaveFormat === "Spaced Repetition") {
+		if (this.settings.saveFormat === "Spaced Repetition") {
 			await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(this.questions[questionIndex]));
 		} else {
 			await this.app.vault.append(saveFile, this.createCalloutQuestion(this.questions[questionIndex]));
@@ -45,38 +45,36 @@ export default class QuizSaver {
 	}
 
 	public async saveAllQuestions(): Promise<void> {
-		const saveFile = await this.createSaveFile();
+		if (this.questions.length === 0) return;
 
+		const questions: string[] = [];
 		for (const question of this.questions) {
-			if (this.settings.questionSaveFormat === "Spaced Repetition") {
-				await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(question));
+			if (this.settings.saveFormat === "Spaced Repetition") {
+				questions.push(this.createSpacedRepetitionQuestion(question));
 			} else {
-				await this.app.vault.append(saveFile, this.createCalloutQuestion(question));
+				questions.push(this.createCalloutQuestion(question));
 			}
 		}
 
-		if (this.validSavePath && this.questions.length > 0) {
+		const saveFile = await this.getSaveFile();
+		await this.app.vault.append(saveFile, questions.join(""));
+		if (this.validSavePath) {
 			new Notice("All questions saved");
 		} else {
 			new Notice("Invalid save path: All questions saved in vault root folder");
 		}
 	}
 
-	private async createSaveFile(): Promise<TFile> {
-		let path = this.fileName;
-		if (this.validSavePath) {
-			path = normalizePath(this.settings.questionSavePath.trim() + "/" + this.fileName);
-		}
-
-		const initialContent = this.settings.questionSaveFormat === "Spaced Repetition" ? "---\ntags:\n  - flashcards\n---\n" : "";
+	private async getSaveFile(): Promise<TFile> {
+		const initialContent = this.settings.saveFormat === "Spaced Repetition" ? "---\ntags:\n  - flashcards\n---\n" : "";
 		if (!this.fileCreated) {
-			return await this.app.vault.create(path, initialContent);
+			return await this.app.vault.create(this.fileName, initialContent);
 		}
-		const file = this.app.vault.getAbstractFileByPath(path);
+		const file = this.app.vault.getAbstractFileByPath(this.fileName);
 		if (file instanceof TFile) {
 			return file;
 		}
-		return await this.app.vault.create(path, initialContent);
+		return await this.app.vault.create(this.fileName, initialContent);
 	}
 
 	private createCalloutQuestion(question: Question): string {
@@ -155,7 +153,7 @@ export default class QuizSaver {
 				`${this.settings.multilineSeparator}\n` +
 				`${answers.join("\n")}\n\n`;
 		} else if (isShortOrLongAnswer(question)) {
-			if (question.answer.length < 300) {
+			if (question.answer.length < 250) {
 				return `**Short Answer:** ${question.question} ${this.settings.inlineSeparator} ${question.answer}\n\n`;
 			}
 			return `**Long Answer:** ${question.question} ${this.settings.inlineSeparator} ${question.answer}\n\n`;

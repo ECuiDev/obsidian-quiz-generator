@@ -35,10 +35,10 @@ export default class SelectorModal extends Modal {
 	constructor(app: App, settings: QuizSettings) {
 		super(app);
 		this.settings = settings;
-		this.notePaths = this.app.vault.getMarkdownFiles().map((file: TFile) => file.path);
+		this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
 		this.folderPaths = this.app.vault.getAllLoadedFiles()
-			.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
-			.map((folder: TFolder) => folder.path);
+			.filter(abstractFile => abstractFile instanceof TFolder)
+			.map(folder => folder.path);
 		this.scope = new Scope(this.app.scope);
 		this.scope.register([], "Escape", () => this.close());
 
@@ -81,10 +81,10 @@ export default class SelectorModal extends Modal {
 			this.selectedNotes.clear();
 			this.itemContainer.empty();
 			this.updatePromptTokens(0);
-			this.notePaths = this.app.vault.getMarkdownFiles().map((file: TFile) => file.path);
+			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
 			this.folderPaths = this.app.vault.getAllLoadedFiles()
-				.filter((abstractFile: TAbstractFile) => abstractFile instanceof TFolder)
-				.map((folder: TFolder) => folder.path);
+				.filter(abstractFile => abstractFile instanceof TFolder)
+				.map(folder => folder.path);
 		};
 		const openQuizHandler = async (): Promise<void> => await this.quiz?.renderQuiz();
 		const addNoteHandler = (): void => this.openNoteSelector();

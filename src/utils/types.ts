@@ -101,8 +101,8 @@ export interface QuizSettings {
 	generateLongAnswer: boolean;
 	numberOfLongAnswer: number;
 	autoSave: boolean;
-	questionSavePath: string;
-	questionSaveFormat: string;
+	savePath: string;
+	saveFormat: string;
 	inlineSeparator: string;
 	multilineSeparator: string;
 }
@@ -131,8 +131,8 @@ export const DEFAULT_SETTINGS: QuizSettings = {
 	generateLongAnswer: true,
 	numberOfLongAnswer: 1,
 	autoSave: false,
-	questionSavePath: "",
-	questionSaveFormat: "Callout",
+	savePath: "",
+	saveFormat: "Callout",
 	inlineSeparator: "::",
 	multilineSeparator: "?",
 };

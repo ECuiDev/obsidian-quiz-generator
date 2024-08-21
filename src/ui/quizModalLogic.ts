@@ -69,7 +69,7 @@ export default class QuizModalLogic {
 	private getFileName(): string {
 		let count = 1;
 		let fileNames: string[];
-		const saveFolder = this.app.vault.getAbstractFileByPath(normalizePath(this.settings.questionSavePath.trim()));
+		const saveFolder = this.app.vault.getAbstractFileByPath(normalizePath(this.settings.savePath.trim()));
 
 		if (saveFolder instanceof TFolder) {
 			fileNames = this.getFileNames(saveFolder);
