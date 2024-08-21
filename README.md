@@ -350,7 +350,7 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 
 - **Generation Details:** Save links to notes used for quiz generation.
 - **Dynamic Analysis:** Get real-time feedback on your response to short and long answer questions.
-- **More Models:** Support for Google Gemini, Anthropic Claude, OpenRouter, PerplexityAI, and Cohere.
+- **More Models:** Support for Google Gemini, Anthropic Claude, OpenRouter, PerplexityAI, Cohere, and Ollama.
 
 ### Future Releases
 

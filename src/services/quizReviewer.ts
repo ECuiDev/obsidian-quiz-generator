@@ -22,13 +22,19 @@ export default class QuizReviewer {
 	}
 
 	public async openQuiz(file: TFile | null): Promise<void> {
-		if (file instanceof TFile) {
-			const fileContents = await this.app.vault.cachedRead(file);
-			this.calloutParser(fileContents);
-			this.spacedRepetitionParser(fileContents);
+		if (!(file instanceof TFile)) {
+			new Notice("No active file");
+			return;
+		}
+
+		const fileContents = await this.app.vault.cachedRead(file);
+		this.calloutParser(fileContents);
+		this.spacedRepetitionParser(fileContents);
+
+		if (this.questions.length > 0) {
 			await new QuizModalLogic(this.app, this.settings, this.questions, Array(this.questions.length).fill(true)).renderQuiz();
 		} else {
-			new Notice("No active file");
+			new Notice("No questions in this note");
 		}
 	}
 
