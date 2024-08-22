@@ -1,7 +1,7 @@
 {
 	"id": "quiz-generator",
 	"name": "Quiz Generator",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"minAppVersion": "0.15.0",
 	"description": "Generate interactive quizzes from your notes using OpenAI's GPT-3.5 and GPT-4 models.",
 	"author": "Edward Cui",
