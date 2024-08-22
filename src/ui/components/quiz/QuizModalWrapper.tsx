@@ -5,18 +5,18 @@ import QuizModal from "./QuizModal";
 interface QuizModalWrapperProps {
 	app: App;
 	settings: QuizSettings;
-	questions: Question[];
+	quiz: Question[];
 	initialSavedQuestions: boolean[];
 	fileName: string;
 	validSavePath: boolean;
 	handleClose: () => void;
 }
 
-const QuizModalWrapper = ({ app, settings, questions, initialSavedQuestions, fileName, validSavePath, handleClose }: QuizModalWrapperProps) => {
+const QuizModalWrapper = ({ app, settings, quiz, initialSavedQuestions, fileName, validSavePath, handleClose }: QuizModalWrapperProps) => {
 	return <QuizModal
 		app={app}
 		settings={settings}
-		questions={questions}
+		quiz={quiz}
 		initialSavedQuestions={initialSavedQuestions}
 		fileName={fileName}
 		validSavePath={validSavePath}

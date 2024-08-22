@@ -8,7 +8,7 @@ import { shuffleArray } from "../utils/helpers";
 export default class QuizModalLogic {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
-	private questions: Question[];
+	private quiz: Question[];
 	private readonly savedQuestions: boolean[];
 	private readonly fileName: string;
 	private validSavePath: boolean = false;
@@ -16,10 +16,10 @@ export default class QuizModalLogic {
 	private root: Root | undefined;
 	private readonly handleEscapePressed: (event: KeyboardEvent) => void;
 
-	constructor(app: App, settings: QuizSettings, questions: Question[], savedQuestions: boolean[]) {
+	constructor(app: App, settings: QuizSettings, quiz: Question[], savedQuestions: boolean[]) {
 		this.app = app;
 		this.settings = settings;
-		this.questions = questions;
+		this.quiz = quiz;
 		this.savedQuestions = savedQuestions;
 		this.fileName = this.getFileName();
 		this.handleEscapePressed = (event: KeyboardEvent): void => {
@@ -31,10 +31,10 @@ export default class QuizModalLogic {
 
 	public async renderQuiz(): Promise<void> {
 		if (this.settings.randomizeQuestions) {
-			this.questions = shuffleArray(this.questions);
+			this.quiz = shuffleArray(this.quiz);
 		}
 		if (this.settings.autoSave) {
-			const unsavedQuestions = this.questions.filter((_, index) => !this.savedQuestions[index]);
+			const unsavedQuestions = this.quiz.filter((_, index) => !this.savedQuestions[index]);
 			await new QuizSaver(this.app, this.settings, unsavedQuestions, this.fileName,
 				this.validSavePath, this.savedQuestions.includes(true)).saveAllQuestions();
 			this.savedQuestions.fill(true);
@@ -44,7 +44,7 @@ export default class QuizModalLogic {
 		this.root.render(QuizModalWrapper({
 			app: this.app,
 			settings: this.settings,
-			questions: this.questions,
+			quiz: this.quiz,
 			initialSavedQuestions: this.savedQuestions,
 			fileName: this.fileName,
 			validSavePath: this.validSavePath,

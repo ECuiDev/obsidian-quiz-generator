@@ -13,16 +13,16 @@ import { shuffleArray } from "../utils/helpers";
 export default class QuizSaver {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
-	private readonly questions: Question[];
+	private readonly quiz: Question[];
 	private readonly fileName: string;
 	private readonly validSavePath: boolean;
 	private readonly fileCreated: boolean;
 
-	constructor(app: App, settings: QuizSettings, questions: Question[],
+	constructor(app: App, settings: QuizSettings, quiz: Question[],
 				fileName: string, validSavePath: boolean, fileCreated: boolean) {
 		this.app = app;
 		this.settings = settings;
-		this.questions = questions;
+		this.quiz = quiz;
 		this.fileName = validSavePath ? normalizePath(this.settings.savePath.trim() + "/" + fileName) : fileName;
 		this.validSavePath = validSavePath;
 		this.fileCreated = fileCreated;
@@ -32,9 +32,9 @@ export default class QuizSaver {
 		const saveFile = await this.getSaveFile();
 
 		if (this.settings.saveFormat === "Spaced Repetition") {
-			await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(this.questions[questionIndex]));
+			await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(this.quiz[questionIndex]));
 		} else {
-			await this.app.vault.append(saveFile, this.createCalloutQuestion(this.questions[questionIndex]));
+			await this.app.vault.append(saveFile, this.createCalloutQuestion(this.quiz[questionIndex]));
 		}
 
 		if (this.validSavePath) {
@@ -45,19 +45,19 @@ export default class QuizSaver {
 	}
 
 	public async saveAllQuestions(): Promise<void> {
-		if (this.questions.length === 0) return;
+		if (this.quiz.length === 0) return;
 
-		const questions: string[] = [];
-		for (const question of this.questions) {
+		const quiz: string[] = [];
+		for (const question of this.quiz) {
 			if (this.settings.saveFormat === "Spaced Repetition") {
-				questions.push(this.createSpacedRepetitionQuestion(question));
+				quiz.push(this.createSpacedRepetitionQuestion(question));
 			} else {
-				questions.push(this.createCalloutQuestion(question));
+				quiz.push(this.createCalloutQuestion(question));
 			}
 		}
 
 		const saveFile = await this.getSaveFile();
-		await this.app.vault.append(saveFile, questions.join(""));
+		await this.app.vault.append(saveFile, quiz.join(""));
 		if (this.validSavePath) {
 			new Notice("All questions saved");
 		} else {

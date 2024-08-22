@@ -14,7 +14,7 @@ import QuizModalLogic from "../ui/quizModalLogic";
 export default class QuizReviewer {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
-	private readonly questions: Question[] = [];
+	private readonly quiz: Question[] = [];
 
 	constructor(app: App, settings: QuizSettings) {
 		this.app = app;
@@ -31,8 +31,8 @@ export default class QuizReviewer {
 		this.calloutParser(fileContents);
 		this.spacedRepetitionParser(fileContents);
 
-		if (this.questions.length > 0) {
-			await new QuizModalLogic(this.app, this.settings, this.questions, Array(this.questions.length).fill(true)).renderQuiz();
+		if (this.quiz.length > 0) {
+			await new QuizModalLogic(this.app, this.settings, this.quiz, Array(this.quiz.length).fill(true)).renderQuiz();
 		} else {
 			new Notice("No questions in this note");
 		}
@@ -187,13 +187,13 @@ export default class QuizReviewer {
 			const answer = match.slice(28).filter(letter => typeof letter !== "undefined");
 			if (options.length === 0 || answer.length === 0 || answer.length > options.length) continue;
 			if (answer.length === 1) {
-				this.questions.push({
+				this.quiz.push({
 					question: match[1],
 					options: options,
 					answer: answer[0].toLowerCase().charCodeAt(0) - "a".charCodeAt(0)
 				} as MultipleChoice)
 			} else {
-				this.questions.push({
+				this.quiz.push({
 					question: match[1],
 					options: options,
 					answer: answer.map(letter => letter.toLowerCase().charCodeAt(0) - "a".charCodeAt(0))
@@ -220,7 +220,7 @@ export default class QuizReviewer {
 			if (leftLength === 0 || rightLength === 0 || answer.length === 0) continue;
 			if (leftLength !== rightLength || leftLength !== answer.length || rightLength !== answer.length) continue;
 
-			this.questions.push({
+			this.quiz.push({
 				question: match[1],
 				answer: answer
 			} as Matching);
@@ -231,17 +231,17 @@ export default class QuizReviewer {
 		const matches = fileContents.matchAll(pattern);
 		for (const match of matches) {
 			if (match[2].toLowerCase() === "true" || match[2].toLowerCase() === "false") {
-				this.questions.push({
+				this.quiz.push({
 					question: match[1],
 					answer: match[2] === "true"
 				} as TrueFalse);
 			} else if (/`_+`/.test(match[1])) {
-				this.questions.push({
+				this.quiz.push({
 					question: match[1],
 					answer: match[2].split(/\s*,\s+/)
 				} as FillInTheBlank);
 			} else {
-				this.questions.push({
+				this.quiz.push({
 					question: match[1],
 					answer: match[2]
 				} as ShortOrLongAnswer);

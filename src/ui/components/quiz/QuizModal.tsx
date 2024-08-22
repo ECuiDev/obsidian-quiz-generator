@@ -21,14 +21,14 @@ import QuizSaver from "../../../services/quizSaver";
 interface QuizModalProps {
 	app: App;
 	settings: QuizSettings;
-	questions: Question[];
+	quiz: Question[];
 	initialSavedQuestions: boolean[];
 	fileName: string;
 	validSavePath: boolean;
 	handleClose: () => void;
 }
 
-const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, validSavePath, handleClose }: QuizModalProps) => {
+const QuizModal = ({ app, settings, quiz, initialSavedQuestions, fileName, validSavePath, handleClose }: QuizModalProps) => {
 	const [questionIndex, setQuestionIndex] = useState<number>(0);
 	const [savedQuestions, setSavedQuestions] = useState<boolean[]>(initialSavedQuestions);
 
@@ -42,24 +42,24 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 		const updatedSavedQuestions = [...savedQuestions];
 		updatedSavedQuestions[questionIndex] = true;
 		setSavedQuestions(updatedSavedQuestions);
-		await new QuizSaver(app, settings, questions, fileName, validSavePath, savedQuestions.includes(true)).saveQuestion(questionIndex);
+		await new QuizSaver(app, settings, quiz, fileName, validSavePath, savedQuestions.includes(true)).saveQuestion(questionIndex);
 	};
 
 	const handleSaveAllQuestions = async () => {
-		const unsavedQuestions = questions.filter((_, index) => !savedQuestions[index]);
+		const unsavedQuestions = quiz.filter((_, index) => !savedQuestions[index]);
 		const updatedSavedQuestions = savedQuestions.map(() => true);
 		setSavedQuestions(updatedSavedQuestions);
 		await new QuizSaver(app, settings, unsavedQuestions, fileName, validSavePath, savedQuestions.includes(true)).saveAllQuestions();
 	};
 
 	const handleNextQuestion = () => {
-		if (questionIndex < questions.length - 1) {
+		if (questionIndex < quiz.length - 1) {
 			setQuestionIndex(questionIndex + 1);
 		}
 	};
 
 	const renderQuestion = () => {
-		const question = questions[questionIndex];
+		const question = quiz[questionIndex];
 		if (isTrueFalse(question)) {
 			return <TrueFalseQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isMultipleChoice(question)) {
@@ -80,7 +80,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 			<div className="modal-bg" style={{opacity: 0.85}} onClick={handleClose} />
 			<div className="modal modal-qg">
 				<div className="modal-close-button" onClick={handleClose} />
-				<div className="modal-title modal-title-qg">Question {questionIndex + 1} of {questions.length}</div>
+				<div className="modal-title modal-title-qg">Question {questionIndex + 1} of {quiz.length}</div>
 				<div className="modal-content modal-content-qg">
 					<div className="modal-button-container-qg">
 						<ModalButton
@@ -105,7 +105,7 @@ const QuizModal = ({ app, settings, questions, initialSavedQuestions, fileName, 
 							icon="arrow-right"
 							tooltip="Next"
 							onClick={handleNextQuestion}
-							disabled={questionIndex === questions.length - 1}
+							disabled={questionIndex === quiz.length - 1}
 						/>
 					</div>
 					<hr className="quiz-divider-qg" />
