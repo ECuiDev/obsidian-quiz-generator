@@ -1,5 +1,5 @@
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
-import { languages, models, saveFormats } from "../utils/types";
+import { googleTextGenModels, languages, openAITextGenModels, providers, saveFormats } from "../utils/types";
 import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
 
@@ -17,38 +17,14 @@ export default class QuizSettingsTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("API key")
-			.setDesc("Enter your OpenAI API key here.")
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.apiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value.trim();
-						await this.plugin.saveSettings();
-					}).inputEl.type = "password"
-			);
-
-		new Setting(containerEl)
-			.setName("API base url")
-			.setDesc("Enter your OpenAI API base URL here.")
-			.addText((text) =>
-				text
-					.setValue(this.plugin.settings.apiBaseURL)
-					.onChange(async (value) => {
-						this.plugin.settings.apiBaseURL = value.trim();
-						await this.plugin.saveSettings();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName("Model")
-			.setDesc("Model used for question generation.")
+			.setName("LLM provider")
+			.setDesc("LLM provider used for quiz generation.")
 			.addDropdown((dropdown) =>
 				dropdown
-					.addOptions(models)
-					.setValue(this.plugin.settings.model)
+					.addOptions(providers)
+					.setValue(this.plugin.settings.provider)
 					.onChange(async (value) => {
-						this.plugin.settings.model = value;
+						this.plugin.settings.provider = value;
 						await this.plugin.saveSettings();
 					})
 			);
@@ -112,6 +88,72 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						this.plugin.settings.language = value;
 						await this.plugin.saveSettings();
 				})
+			);
+
+		new Setting(containerEl).setName("OpenAI").setHeading();
+
+		new Setting(containerEl)
+			.setName("OpenAI API key")
+			.setDesc("Enter your OpenAI API key here.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.openAIApiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.openAIApiKey = value.trim();
+						await this.plugin.saveSettings();
+					}).inputEl.type = "password"
+			);
+
+		new Setting(containerEl)
+			.setName("OpenAI API base url")
+			.setDesc("Enter your OpenAI API base URL here.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.openAIBaseURL)
+					.onChange(async (value) => {
+						this.plugin.settings.openAIBaseURL = value.trim();
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl)
+			.setName("Model")
+			.setDesc("Model used for quiz generation.")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOptions(openAITextGenModels)
+					.setValue(this.plugin.settings.openAITextGenModel)
+					.onChange(async (value) => {
+						this.plugin.settings.openAITextGenModel = value;
+						await this.plugin.saveSettings();
+					})
+			);
+
+		new Setting(containerEl).setName("Google").setHeading();
+
+		new Setting(containerEl)
+			.setName("Google API key")
+			.setDesc("Enter your Google API key here.")
+			.addText((text) =>
+				text
+					.setValue(this.plugin.settings.googleApiKey)
+					.onChange(async (value) => {
+						this.plugin.settings.googleApiKey = value.trim();
+						await this.plugin.saveSettings();
+					}).inputEl.type = "password"
+			);
+
+		new Setting(containerEl)
+			.setName("Model")
+			.setDesc("Model used for quiz generation.")
+			.addDropdown((dropdown) =>
+				dropdown
+					.addOptions(googleTextGenModels)
+					.setValue(this.plugin.settings.googleTextGenModel)
+					.onChange(async (value) => {
+						this.plugin.settings.googleTextGenModel = value;
+						await this.plugin.saveSettings();
+					})
 			);
 
 		new Setting(containerEl).setName("Generation").setHeading();

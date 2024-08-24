@@ -7,35 +7,7 @@ export default abstract class Generator {
 		this.settings = settings;
 	}
 
-	protected userPromptQuestions(): string {
-		const questionTypes = [
-			{ generate: this.settings.generateTrueFalse, count: this.settings.numberOfTrueFalse, singular: "true or false question", plural: "true or false questions" },
-			{ generate: this.settings.generateMultipleChoice, count: this.settings.numberOfMultipleChoice, singular: "multiple choice question", plural: "multiple choice questions" },
-			{ generate: this.settings.generateSelectAllThatApply, count: this.settings.numberOfSelectAllThatApply, singular: "select all that apply question", plural: "select all that apply questions" },
-			{ generate: this.settings.generateFillInTheBlank, count: this.settings.numberOfFillInTheBlank, singular: "fill in the blank question", plural: "fill in the blank questions" },
-			{ generate: this.settings.generateMatching, count: this.settings.numberOfMatching, singular: "matching question", plural: "matching questions" },
-			{ generate: this.settings.generateShortAnswer, count: this.settings.numberOfShortAnswer, singular: "short answer question", plural: "short answer questions" },
-			{ generate: this.settings.generateLongAnswer, count: this.settings.numberOfLongAnswer, singular: "long answer question", plural: "long answer questions" },
-		];
-
-		const activeQuestionTypes = questionTypes.filter(q => q.generate);
-		const parts = activeQuestionTypes.map(q => {
-			if (q.count > 1) {
-				return `${q.count} ${q.plural}`;
-			} else {
-				return `1 ${q.singular}`;
-			}
-		});
-
-		if (parts.length === 1) {
-			return parts[0];
-		} else if (parts.length === 2) {
-			return parts.join(" and ");
-		} else {
-			const lastPart = parts.pop();
-			return `${parts.join(", ")}, and ${lastPart}`;
-		}
-	}
+	public abstract generateQuiz(contents: string[]): Promise<string | null>;
 
 	protected systemPrompt(): string {
 		const trueFalseFormat = `"question": The question\n"answer": A boolean representing the answer\n`;
@@ -70,6 +42,12 @@ export default abstract class Generator {
 			`${this.exampleResponse()}` + (this.settings.language !== "English" ? `\n\n${this.generationLanguage()}` : "");
 	}
 
+	protected userPrompt(contents: string[]): string {
+		return "Generate " + this.userPromptQuestions() + " about the following text:\n" + contents.join("") +
+			"\n\nIf the above text contains LaTeX, you should use $...$ (inline math mode) for mathematical symbols. " +
+			"The overall focus should be on assessing understanding and critical thinking.";
+	}
+
 	private systemPromptQuestions(): string {
 		const questionTypes = [
 			{ generate: this.settings.generateTrueFalse, singular: "true or false question" },
@@ -83,6 +61,36 @@ export default abstract class Generator {
 
 		const activeQuestionTypes = questionTypes.filter(q => q.generate);
 		const parts = activeQuestionTypes.map(q => `1 ${q.singular}`);
+
+		if (parts.length === 1) {
+			return parts[0];
+		} else if (parts.length === 2) {
+			return parts.join(" and ");
+		} else {
+			const lastPart = parts.pop();
+			return `${parts.join(", ")}, and ${lastPart}`;
+		}
+	}
+
+	private userPromptQuestions(): string {
+		const questionTypes = [
+			{ generate: this.settings.generateTrueFalse, count: this.settings.numberOfTrueFalse, singular: "true or false question", plural: "true or false questions" },
+			{ generate: this.settings.generateMultipleChoice, count: this.settings.numberOfMultipleChoice, singular: "multiple choice question", plural: "multiple choice questions" },
+			{ generate: this.settings.generateSelectAllThatApply, count: this.settings.numberOfSelectAllThatApply, singular: "select all that apply question", plural: "select all that apply questions" },
+			{ generate: this.settings.generateFillInTheBlank, count: this.settings.numberOfFillInTheBlank, singular: "fill in the blank question", plural: "fill in the blank questions" },
+			{ generate: this.settings.generateMatching, count: this.settings.numberOfMatching, singular: "matching question", plural: "matching questions" },
+			{ generate: this.settings.generateShortAnswer, count: this.settings.numberOfShortAnswer, singular: "short answer question", plural: "short answer questions" },
+			{ generate: this.settings.generateLongAnswer, count: this.settings.numberOfLongAnswer, singular: "long answer question", plural: "long answer questions" },
+		];
+
+		const activeQuestionTypes = questionTypes.filter(q => q.generate);
+		const parts = activeQuestionTypes.map(q => {
+			if (q.count > 1) {
+				return `${q.count} ${q.plural}`;
+			} else {
+				return `1 ${q.singular}`;
+			}
+		});
 
 		if (parts.length === 1) {
 			return parts[0];

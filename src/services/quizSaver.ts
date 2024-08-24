@@ -1,5 +1,5 @@
 import { App, normalizePath, Notice, TFile } from "obsidian";
-import { Question, QuizSettings } from "../utils/types";
+import { Question, QuizSettings, SaveFormat } from "../utils/types";
 import {
 	isFillInTheBlank,
 	isMatching,
@@ -31,7 +31,7 @@ export default class QuizSaver {
 	public async saveQuestion(questionIndex: number): Promise<void> {
 		const saveFile = await this.getSaveFile();
 
-		if (this.settings.saveFormat === "Spaced Repetition") {
+		if (this.settings.saveFormat === SaveFormat.SPACED_REPETITION) {
 			await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(this.quiz[questionIndex]));
 		} else {
 			await this.app.vault.append(saveFile, this.createCalloutQuestion(this.quiz[questionIndex]));
@@ -49,7 +49,7 @@ export default class QuizSaver {
 
 		const quiz: string[] = [];
 		for (const question of this.quiz) {
-			if (this.settings.saveFormat === "Spaced Repetition") {
+			if (this.settings.saveFormat === SaveFormat.SPACED_REPETITION) {
 				quiz.push(this.createSpacedRepetitionQuestion(question));
 			} else {
 				quiz.push(this.createCalloutQuestion(question));
@@ -66,7 +66,7 @@ export default class QuizSaver {
 	}
 
 	private async getSaveFile(): Promise<TFile> {
-		const initialContent = this.settings.saveFormat === "Spaced Repetition" ? "---\ntags:\n  - flashcards\n---\n" : "";
+		const initialContent = this.settings.saveFormat === SaveFormat.SPACED_REPETITION ? "---\ntags:\n  - flashcards\n---\n" : "";
 		if (!this.fileCreated) {
 			return await this.app.vault.create(this.fileName, initialContent);
 		}

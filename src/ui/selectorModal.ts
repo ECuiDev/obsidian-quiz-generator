@@ -8,12 +8,12 @@ import {
 	isShortOrLongAnswer,
 	isTrueFalse
 } from "../utils/typeGuards";
-import { cleanUpNoteContents } from "../utils/markdownCleaner";
-import GptGenerator from "../generators/gptGenerator";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import NoteViewerModal from "./noteViewerModal";
 import FolderViewerModal from "./folderViewerModal";
+import GeneratorFactory from "../generators/generatorFactory";
 import QuizModalLogic from "./quizModalLogic";
+import { cleanUpNoteContents } from "../utils/markdownCleaner";
 import { countNoteTokens, setIconAndTooltip } from "../utils/helpers";
 
 export default class SelectorModal extends Modal {
@@ -62,7 +62,7 @@ export default class SelectorModal extends Modal {
 
 	public onOpen(): void {
 		super.onOpen();
-		this.toggleButtons(["clear", "quiz", "generate"], true);
+		this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.QUIZ, SelectorModalButton.GENERATE], true);
 	}
 
 	public onClose(): void {
@@ -77,7 +77,7 @@ export default class SelectorModal extends Modal {
 		setIconAndTooltip(this.generateQuizButton, "webhook", "Generate");
 
 		const clearHandler = (): void => {
-			this.toggleButtons(["clear", "generate"], true);
+			this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.GENERATE], true);
 			this.selectedNotes.clear();
 			this.itemContainer.empty();
 			this.updatePromptTokens(0);
@@ -95,24 +95,19 @@ export default class SelectorModal extends Modal {
 				return;
 			}
 
-			this.toggleButtons(["generate"], true);
-			const generator = new GptGenerator(this.settings);
-
-			new Notice("Generating...");
-
-			const generatedQuestions = await generator.generateQuestions([...this.selectedNotes.values()]);
-			if (!generatedQuestions) {
-				this.toggleButtons(["generate"], false);
-				new Notice("Error: Generation returned nothing");
-				return;
-			}
+			this.toggleButtons([SelectorModalButton.GENERATE], true);
 
 			try {
-				const quiz: Quiz = JSON.parse(generatedQuestions.replace(/\\+/g, "\\\\"));
-				if (!Array.isArray(quiz.questions)) {
-					new Notice("Error: Generation returned incorrect format");
+				new Notice("Generating...");
+				const generator = GeneratorFactory.createInstance(this.settings);
+				const generatedQuestions = await generator.generateQuiz([...this.selectedNotes.values()]);
+				if (!generatedQuestions) {
+					this.toggleButtons([SelectorModalButton.GENERATE], false);
+					new Notice("Error: Generation returned nothing");
+					return;
 				}
 
+				const quiz: Quiz = JSON.parse(generatedQuestions.replace(/\\+/g, "\\\\"));
 				const questions: Question[] = [];
 				quiz.questions.forEach(question => {
 					if (isTrueFalse(question)) {
@@ -134,11 +129,11 @@ export default class SelectorModal extends Modal {
 
 				this.quiz = new QuizModalLogic(this.app, this.settings, questions, Array(questions.length).fill(false));
 				await this.quiz.renderQuiz();
-				this.toggleButtons(["quiz"], false);
+				this.toggleButtons([SelectorModalButton.QUIZ], false);
 			} catch (error) {
-				new Notice((error as Error).message);
+				new Notice((error as Error).message, 0);
 			} finally {
-				this.toggleButtons(["generate"], false);
+				this.toggleButtons([SelectorModalButton.GENERATE], false);
 			}
 		};
 
@@ -200,7 +195,7 @@ export default class SelectorModal extends Modal {
 
 	private renderNote(note: TFile): void {
 		const tokens = this.renderNoteOrFolder(note, this.settings.showNotePath ? note.path : note.basename);
-		this.toggleButtons(["clear", "generate"], false);
+		this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.GENERATE], false);
 		this.updatePromptTokens(this.promptTokens + tokens);
 	}
 
@@ -211,7 +206,7 @@ export default class SelectorModal extends Modal {
 		}
 
 		const tokens = this.renderNoteOrFolder(folder, folderName);
-		this.toggleButtons(["clear", "generate"], false);
+		this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.GENERATE], false);
 		this.updatePromptTokens(this.promptTokens + tokens);
 	}
 
@@ -240,7 +235,7 @@ export default class SelectorModal extends Modal {
 			this.updatePromptTokens(this.promptTokens - tokens);
 
 			if (this.selectedNotes.size === 0) {
-				this.toggleButtons(["clear", "generate"], true);
+				this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.GENERATE], true);
 			}
 		});
 
@@ -255,11 +250,11 @@ export default class SelectorModal extends Modal {
 
 	private toggleButtons(buttons: SelectorModalButton[], disabled: boolean): void {
 		const buttonMap: Record<SelectorModalButton, HTMLButtonElement> = {
-			clear: this.clearButton,
-			quiz: this.openQuizButton,
-			note: this.addNoteButton,
-			folder: this.addFolderButton,
-			generate: this.generateQuizButton,
+			[SelectorModalButton.CLEAR]: this.clearButton,
+			[SelectorModalButton.QUIZ]: this.openQuizButton,
+			[SelectorModalButton.NOTE]: this.addNoteButton,
+			[SelectorModalButton.FOLDER]: this.addFolderButton,
+			[SelectorModalButton.GENERATE]: this.generateQuizButton,
 		};
 		buttons.forEach(button => buttonMap[button].disabled = disabled);
 	}

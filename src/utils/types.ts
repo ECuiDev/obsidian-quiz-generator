@@ -1,8 +1,8 @@
+export type Question = TrueFalse | MultipleChoice | SelectAllThatApply | FillInTheBlank | Matching | ShortOrLongAnswer;
+
 export interface Quiz {
 	questions: Question[];
 }
-
-export type Question = TrueFalse | MultipleChoice | SelectAllThatApply | FillInTheBlank | Matching | ShortOrLongAnswer;
 
 export interface TrueFalse {
 	question: string;
@@ -39,13 +39,12 @@ export interface ShortOrLongAnswer {
 	answer: string;
 }
 
-export type SelectorModalButton = "clear" | "quiz" | "note" | "folder" | "generate";
-
-export const models: Record<string, string> = {
-	"gpt-3.5-turbo": "GPT-3.5 Turbo",
-	"gpt-4-turbo": "GPT-4 Turbo",
-	"gpt-4o-mini": "GPT-4o Mini",
-	"gpt-4o": "GPT-4o",
+export const enum SelectorModalButton {
+	CLEAR = "CLEAR",
+	QUIZ = "QUIZ",
+	NOTE = "NOTE",
+	FOLDER = "FOLDER",
+	GENERATE = "GENERATE",
 }
 
 export const languages: Record<string, string> = {
@@ -72,20 +71,62 @@ export const languages: Record<string, string> = {
 	Greek: "Ελληνικά",
 };
 
-export const saveFormats: Record<string, string> = {
-	"Callout": "Callout",
-	"Spaced Repetition": "Spaced Repetition",
+export enum Provider {
+	OPENAI = "OPENAI",
+	GOOGLE = "GOOGLE",
+}
+
+export const providers: Record<Provider, string> = {
+	[Provider.OPENAI]: "OpenAI",
+	[Provider.GOOGLE]: "Google",
+};
+
+export const enum OpenAITextGenModel {
+	GPT_3_5_TURBO = "gpt-3.5-turbo",
+	GPT_4_TURBO = "gpt-4-turbo",
+	GPT_4o_MINI = "gpt-4o-mini",
+	GPT_4o = "gpt-4o",
+}
+
+export const openAITextGenModels: Record<OpenAITextGenModel, string> = {
+	[OpenAITextGenModel.GPT_3_5_TURBO]: "GPT-3.5 Turbo",
+	[OpenAITextGenModel.GPT_4_TURBO]: "GPT-4 Turbo",
+	[OpenAITextGenModel.GPT_4o_MINI]: "GPT-4o Mini",
+	[OpenAITextGenModel.GPT_4o]: "GPT-4o"
+};
+
+export const enum GoogleTextGenModel {
+	GEMINI_1_5_FLASH = "gemini-1.5-flash",
+	GEMINI_1_5_PRO = "gemini-1.5-pro",
+}
+
+export const googleTextGenModels: Record<GoogleTextGenModel, string> = {
+	[GoogleTextGenModel.GEMINI_1_5_FLASH]: "Gemini 1.5 Flash",
+	[GoogleTextGenModel.GEMINI_1_5_PRO]: "Gemini 1.5 Pro",
+};
+
+export const enum SaveFormat {
+	CALLOUT = "Callout",
+	SPACED_REPETITION = "Spaced Repetition",
+}
+
+export const saveFormats: Record<SaveFormat, string> = {
+	[SaveFormat.CALLOUT]: "Callout",
+	[SaveFormat.SPACED_REPETITION]: "Spaced Repetition",
 };
 
 export interface QuizSettings {
-	apiKey: string;
-	apiBaseURL: string;
-	model: string;
+	provider: string;
 	showNotePath: boolean;
 	showFolderPath: boolean;
 	includeSubfolderNotes: boolean;
 	randomizeQuestions: boolean;
 	language: string;
+	openAIApiKey: string;
+	openAIBaseURL: string;
+	openAITextGenModel: string;
+	googleApiKey: string;
+	googleTextGenModel: string;
 	generateTrueFalse: boolean;
 	numberOfTrueFalse: number;
 	generateMultipleChoice: boolean;
@@ -108,14 +149,17 @@ export interface QuizSettings {
 }
 
 export const DEFAULT_SETTINGS: QuizSettings = {
-	apiKey: "",
-	apiBaseURL: "https://api.openai.com/v1",
-	model: "gpt-3.5-turbo",
+	provider: Provider.OPENAI,
 	showNotePath: false,
 	showFolderPath: false,
 	includeSubfolderNotes: true,
 	randomizeQuestions: true,
 	language: "English",
+	openAIApiKey: "",
+	openAIBaseURL: "https://api.openai.com/v1",
+	openAITextGenModel: OpenAITextGenModel.GPT_3_5_TURBO,
+	googleApiKey: "",
+	googleTextGenModel: GoogleTextGenModel.GEMINI_1_5_FLASH,
 	generateTrueFalse: true,
 	numberOfTrueFalse: 1,
 	generateMultipleChoice: true,
@@ -132,7 +176,7 @@ export const DEFAULT_SETTINGS: QuizSettings = {
 	numberOfLongAnswer: 1,
 	autoSave: false,
 	savePath: "",
-	saveFormat: "Callout",
+	saveFormat: SaveFormat.CALLOUT,
 	inlineSeparator: "::",
 	multilineSeparator: "?",
 };
