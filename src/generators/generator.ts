@@ -36,7 +36,7 @@ export default abstract class Generator {
 			.map(q => `The JSON object representing ${q.type} questions must have the following properties:\n${q.format}`)
 			.join("\n");
 
-		return "You are an assistant specialized in generating exam-style questions and answers. Your response must be a JSON object with the following property:\n" +
+		return "You are an assistant specialized in generating exam-style questions and answers. Your response must only be a JSON object with the following property:\n" +
 			`"questions": An array of JSON objects, where each JSON object represents a question and answer pair. Each question type has a different JSON object format.\n\n` +
 			`${activeFormats}\nFor example, if I ask you to generate ${this.systemPromptQuestions()}, the structure of your response should look like this:\n` +
 			`${this.exampleResponse()}` + (this.settings.language !== "English" ? `\n\n${this.generationLanguage()}` : "");

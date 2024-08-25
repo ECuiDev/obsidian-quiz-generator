@@ -29,6 +29,7 @@
 		"typescript": "5.5.4"
 	},
 	"dependencies": {
+		"@anthropic-ai/sdk": "^0.27.0",
 		"@google/generative-ai": "^0.17.1",
 		"openai": "^4.56.0",
 		"react": "^18.3.1",

@@ -58,11 +58,11 @@
 .modal-button-container-qg {
 	display: flex;
 	justify-content: center;
+	gap: 1rem;
 }
 
 /* SelectorModal, ModalButton */
 .modal-button-qg {
-	margin-right: 1rem;
 	cursor: pointer;
 	box-shadow: none !important;
 }

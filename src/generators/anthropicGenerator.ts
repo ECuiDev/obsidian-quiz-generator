@@ -1,0 +1,42 @@
+import { Notice } from "obsidian";
+import Anthropic from "@anthropic-ai/sdk";
+import Generator from "./generator";
+import { AnthropicTextGenModel, QuizSettings } from "../utils/types";
+
+export default class AnthropicGenerator extends Generator {
+	private readonly anthropic: Anthropic;
+
+	constructor(settings: QuizSettings) {
+		super(settings);
+		this.anthropic = new Anthropic({
+			apiKey: this.settings.anthropicApiKey,
+			baseURL: this.settings.anthropicBaseURL,
+			dangerouslyAllowBrowser: true,
+		});
+	}
+
+	public async generateQuiz(contents: string[]): Promise<string | null> {
+		try {
+			const response = await this.anthropic.messages.create({
+				model: this.settings.anthropicTextGenModel,
+				system: this.systemPrompt(),
+				messages: [
+					{ role: "user", content: this.userPrompt(contents) },
+				],
+				max_tokens: this.getMaxTokens(),
+			});
+
+			if (response.stop_reason === "max_tokens") {
+				new Notice("Generation truncated: Token limit reached");
+			}
+
+			return response.content[0].type === "text" ? response.content[0].text : null;
+		} catch (error) {
+			throw new Error((error as Error).message);
+		}
+	}
+
+	private getMaxTokens(): number {
+		return this.settings.anthropicTextGenModel === AnthropicTextGenModel.CLAUDE_3_5_SONNET ? 8192 : 4096;
+	}
+}

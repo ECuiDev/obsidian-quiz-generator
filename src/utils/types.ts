@@ -74,11 +74,13 @@ export const languages: Record<string, string> = {
 export enum Provider {
 	OPENAI = "OPENAI",
 	GOOGLE = "GOOGLE",
+	ANTHROPIC = "ANTHROPIC",
 }
 
 export const providers: Record<Provider, string> = {
 	[Provider.OPENAI]: "OpenAI",
 	[Provider.GOOGLE]: "Google",
+	[Provider.ANTHROPIC]: "Anthropic",
 };
 
 export const enum OpenAITextGenModel {
@@ -105,6 +107,20 @@ export const googleTextGenModels: Record<GoogleTextGenModel, string> = {
 	[GoogleTextGenModel.GEMINI_1_5_PRO]: "Gemini 1.5 Pro",
 };
 
+export const enum AnthropicTextGenModel {
+	CLAUDE_3_HAIKU = "claude-3-haiku-20240307",
+	CLAUDE_3_SONNET = "claude-3-sonnet-20240229",
+	CLAUDE_3_OPUS = "claude-3-opus-20240229",
+	CLAUDE_3_5_SONNET = "claude-3-5-sonnet-20240620",
+}
+
+export const anthropicTextGenModels: Record<AnthropicTextGenModel, string> = {
+	[AnthropicTextGenModel.CLAUDE_3_HAIKU]: "Claude 3 Haiku",
+	[AnthropicTextGenModel.CLAUDE_3_SONNET]: "Claude 3 Sonnet",
+	[AnthropicTextGenModel.CLAUDE_3_OPUS]: "Claude 3 Opus",
+	[AnthropicTextGenModel.CLAUDE_3_5_SONNET]: "Claude 3.5 Sonnet",
+};
+
 export const enum SaveFormat {
 	CALLOUT = "Callout",
 	SPACED_REPETITION = "Spaced Repetition",
@@ -127,6 +143,9 @@ export interface QuizSettings {
 	openAITextGenModel: string;
 	googleApiKey: string;
 	googleTextGenModel: string;
+	anthropicApiKey: string;
+	anthropicBaseURL: string;
+	anthropicTextGenModel: string;
 	generateTrueFalse: boolean;
 	numberOfTrueFalse: number;
 	generateMultipleChoice: boolean;
@@ -160,6 +179,9 @@ export const DEFAULT_SETTINGS: QuizSettings = {
 	openAITextGenModel: OpenAITextGenModel.GPT_3_5_TURBO,
 	googleApiKey: "",
 	googleTextGenModel: GoogleTextGenModel.GEMINI_1_5_FLASH,
+	anthropicApiKey: "",
+	anthropicBaseURL: "https://api.anthropic.com",
+	anthropicTextGenModel: AnthropicTextGenModel.CLAUDE_3_HAIKU,
 	generateTrueFalse: true,
 	numberOfTrueFalse: 1,
 	generateMultipleChoice: true,

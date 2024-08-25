@@ -27,7 +27,7 @@ export default class OpenAIGenerator extends Generator {
 			});
 
 			if (response.choices[0].finish_reason === "length") {
-				new Notice("Generation truncated: Request token limit reached");
+				new Notice("Generation truncated: Token limit reached");
 			}
 
 			return response.choices[0].message.content;
