@@ -36,12 +36,12 @@ export const saveFormats: Record<SaveFormat, string> = {
 };
 
 export const DEFAULT_SETTINGS: QuizSettings = {
-	provider: Provider.OPENAI,
 	showNotePath: false,
 	showFolderPath: false,
 	includeSubfolderNotes: true,
 	randomizeQuestions: true,
 	language: "English",
+	provider: Provider.OPENAI,
 	openAIApiKey: "",
 	openAIBaseURL: "https://api.openai.com/v1",
 	openAITextGenModel: OpenAITextGenModel.GPT_3_5_TURBO,

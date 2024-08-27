@@ -1,7 +1,7 @@
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
-import { anthropicTextGenModels, googleTextGenModels, openAITextGenModels, providers } from "../utils/models";
+import { anthropicTextGenModels, googleTextGenModels, openAITextGenModels, Provider, providers } from "../utils/models";
 import { DEFAULT_SETTINGS, languages, saveFormats } from "../utils/config";
 
 export default class QuizSettingsTab extends PluginSettingTab {
@@ -16,19 +16,6 @@ export default class QuizSettingsTab extends PluginSettingTab {
 		const { containerEl } = this;
 
 		containerEl.empty();
-
-		new Setting(containerEl)
-			.setName("LLM provider")
-			.setDesc("LLM provider used for quiz generation.")
-			.addDropdown(dropdown =>
-				dropdown
-					.addOptions(providers)
-					.setValue(this.plugin.settings.provider)
-					.onChange(async (value) => {
-						this.plugin.settings.provider = value;
-						await this.plugin.saveSettings();
-					})
-			);
 
 		new Setting(containerEl)
 			.setName("Show note path")
@@ -91,132 +78,144 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				})
 			);
 
-		new Setting(containerEl).setName("OpenAI").setHeading();
+		new Setting(containerEl).setName("Model").setHeading();
 
 		new Setting(containerEl)
-			.setName("OpenAI API key")
-			.setDesc("Enter your OpenAI API key here.")
-			.addText(text =>
-				text
-					.setValue(this.plugin.settings.openAIApiKey)
+			.setName("Model provider")
+			.setDesc("Model provider to use.")
+			.addDropdown(dropdown =>
+				dropdown
+					.addOptions(providers)
+					.setValue(this.plugin.settings.provider)
 					.onChange(async (value) => {
-						this.plugin.settings.openAIApiKey = value.trim();
-						await this.plugin.saveSettings();
-					}).inputEl.type = "password"
-			);
-
-		new Setting(containerEl)
-			.setName("OpenAI API base url")
-			.setDesc("Enter your OpenAI API base URL here.")
-			.addButton(button =>
-				button
-					.setClass("clickable-icon")
-					.setIcon("rotate-ccw")
-					.setTooltip("Restore default")
-					.onClick(async () => {
-						this.plugin.settings.openAIBaseURL = DEFAULT_SETTINGS.openAIBaseURL;
+						this.plugin.settings.provider = value;
 						await this.plugin.saveSettings();
 						this.display();
 					})
-			)
-			.addText(text =>
-				text
-					.setValue(this.plugin.settings.openAIBaseURL)
-					.onChange(async (value) => {
-						this.plugin.settings.openAIBaseURL = value.trim();
-						await this.plugin.saveSettings();
-					})
 			);
 
-		new Setting(containerEl)
-			.setName("Model")
-			.setDesc("Model used for quiz generation.")
-			.addDropdown(dropdown =>
-				dropdown
-					.addOptions(openAITextGenModels)
-					.setValue(this.plugin.settings.openAITextGenModel)
-					.onChange(async (value) => {
-						this.plugin.settings.openAITextGenModel = value;
-						await this.plugin.saveSettings();
-					})
-			);
+		if (this.plugin.settings.provider === Provider.OPENAI) {
+			new Setting(containerEl)
+				.setName("OpenAI API key")
+				.setDesc("Enter your OpenAI API key here.")
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.openAIApiKey)
+						.onChange(async (value) => {
+							this.plugin.settings.openAIApiKey = value.trim();
+							await this.plugin.saveSettings();
+						}).inputEl.type = "password"
+				);
 
-		new Setting(containerEl).setName("Google").setHeading();
+			new Setting(containerEl)
+				.setName("OpenAI API base url")
+				.setDesc("Enter your OpenAI API base URL here.")
+				.addButton(button =>
+					button
+						.setClass("clickable-icon")
+						.setIcon("rotate-ccw")
+						.setTooltip("Restore default")
+						.onClick(async () => {
+							this.plugin.settings.openAIBaseURL = DEFAULT_SETTINGS.openAIBaseURL;
+							await this.plugin.saveSettings();
+							this.display();
+						})
+				)
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.openAIBaseURL)
+						.onChange(async (value) => {
+							this.plugin.settings.openAIBaseURL = value.trim();
+							await this.plugin.saveSettings();
+						})
+				);
 
-		new Setting(containerEl)
-			.setName("Google API key")
-			.setDesc("Enter your Google API key here.")
-			.addText(text =>
-				text
-					.setValue(this.plugin.settings.googleApiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.googleApiKey = value.trim();
-						await this.plugin.saveSettings();
-					}).inputEl.type = "password"
-			);
+			new Setting(containerEl)
+				.setName("Model")
+				.setDesc("Model used for quiz generation.")
+				.addDropdown(dropdown =>
+					dropdown
+						.addOptions(openAITextGenModels)
+						.setValue(this.plugin.settings.openAITextGenModel)
+						.onChange(async (value) => {
+							this.plugin.settings.openAITextGenModel = value;
+							await this.plugin.saveSettings();
+						})
+				);
+		} else if (this.plugin.settings.provider === Provider.GOOGLE) {
+			new Setting(containerEl)
+				.setName("Google API key")
+				.setDesc("Enter your Google API key here.")
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.googleApiKey)
+						.onChange(async (value) => {
+							this.plugin.settings.googleApiKey = value.trim();
+							await this.plugin.saveSettings();
+						}).inputEl.type = "password"
+				);
 
-		new Setting(containerEl)
-			.setName("Model")
-			.setDesc("Model used for quiz generation.")
-			.addDropdown(dropdown =>
-				dropdown
-					.addOptions(googleTextGenModels)
-					.setValue(this.plugin.settings.googleTextGenModel)
-					.onChange(async (value) => {
-						this.plugin.settings.googleTextGenModel = value;
-						await this.plugin.saveSettings();
-					})
-			);
+			new Setting(containerEl)
+				.setName("Model")
+				.setDesc("Model used for quiz generation.")
+				.addDropdown(dropdown =>
+					dropdown
+						.addOptions(googleTextGenModels)
+						.setValue(this.plugin.settings.googleTextGenModel)
+						.onChange(async (value) => {
+							this.plugin.settings.googleTextGenModel = value;
+							await this.plugin.saveSettings();
+						})
+				);
+		} else if (this.plugin.settings.provider === Provider.ANTHROPIC) {
+			new Setting(containerEl)
+				.setName("Anthropic API key")
+				.setDesc("Enter your Anthropic API key here.")
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.anthropicApiKey)
+						.onChange(async (value) => {
+							this.plugin.settings.anthropicApiKey = value.trim();
+							await this.plugin.saveSettings();
+						}).inputEl.type = "password"
+				);
 
-		new Setting(containerEl).setName("Anthropic").setHeading();
+			new Setting(containerEl)
+				.setName("Anthropic API base url")
+				.setDesc("Enter your Anthropic API base URL here.")
+				.addButton(button =>
+					button
+						.setClass("clickable-icon")
+						.setIcon("rotate-ccw")
+						.setTooltip("Restore default")
+						.onClick(async () => {
+							this.plugin.settings.anthropicBaseURL = DEFAULT_SETTINGS.anthropicBaseURL;
+							await this.plugin.saveSettings();
+							this.display();
+						})
+				)
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.anthropicBaseURL)
+						.onChange(async (value) => {
+							this.plugin.settings.anthropicBaseURL = value.trim();
+							await this.plugin.saveSettings();
+						})
+				);
 
-		new Setting(containerEl)
-			.setName("Anthropic API key")
-			.setDesc("Enter your Anthropic API key here.")
-			.addText(text =>
-				text
-					.setValue(this.plugin.settings.anthropicApiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.anthropicApiKey = value.trim();
-						await this.plugin.saveSettings();
-					}).inputEl.type = "password"
-			);
-
-		new Setting(containerEl)
-			.setName("Anthropic API base url")
-			.setDesc("Enter your Anthropic API base URL here.")
-			.addButton(button =>
-				button
-					.setClass("clickable-icon")
-					.setIcon("rotate-ccw")
-					.setTooltip("Restore default")
-					.onClick(async () => {
-						this.plugin.settings.anthropicBaseURL = DEFAULT_SETTINGS.anthropicBaseURL;
-						await this.plugin.saveSettings();
-						this.display();
-					})
-			)
-			.addText(text =>
-				text
-					.setValue(this.plugin.settings.anthropicBaseURL)
-					.onChange(async (value) => {
-						this.plugin.settings.anthropicBaseURL = value.trim();
-						await this.plugin.saveSettings();
-					})
-			);
-
-		new Setting(containerEl)
-			.setName("Model")
-			.setDesc("Model used for quiz generation.")
-			.addDropdown(dropdown =>
-				dropdown
-					.addOptions(anthropicTextGenModels)
-					.setValue(this.plugin.settings.anthropicTextGenModel)
-					.onChange(async (value) => {
-						this.plugin.settings.anthropicTextGenModel = value;
-						await this.plugin.saveSettings();
-					})
-			);
+			new Setting(containerEl)
+				.setName("Model")
+				.setDesc("Model used for quiz generation.")
+				.addDropdown(dropdown =>
+					dropdown
+						.addOptions(anthropicTextGenModels)
+						.setValue(this.plugin.settings.anthropicTextGenModel)
+						.onChange(async (value) => {
+							this.plugin.settings.anthropicTextGenModel = value;
+							await this.plugin.saveSettings();
+						})
+				);
+		}
 
 		new Setting(containerEl).setName("Generation").setHeading();
 

@@ -39,21 +39,36 @@ export interface ShortOrLongAnswer {
 	answer: string;
 }
 
-export interface QuizSettings {
-	provider: string;
+export interface QuizSettings extends Model, Generation, Saving {
 	showNotePath: boolean;
 	showFolderPath: boolean;
 	includeSubfolderNotes: boolean;
 	randomizeQuestions: boolean;
 	language: string;
+}
+
+interface Model extends OpenAI, Google, Anthropic {
+	provider: string;
+}
+
+interface OpenAI {
 	openAIApiKey: string;
 	openAIBaseURL: string;
 	openAITextGenModel: string;
+}
+
+interface Google {
 	googleApiKey: string;
 	googleTextGenModel: string;
+}
+
+interface Anthropic {
 	anthropicApiKey: string;
 	anthropicBaseURL: string;
 	anthropicTextGenModel: string;
+}
+
+interface Generation {
 	generateTrueFalse: boolean;
 	numberOfTrueFalse: number;
 	generateMultipleChoice: boolean;
@@ -68,6 +83,9 @@ export interface QuizSettings {
 	numberOfShortAnswer: number;
 	generateLongAnswer: boolean;
 	numberOfLongAnswer: number;
+}
+
+interface Saving {
 	autoSave: boolean;
 	savePath: string;
 	saveFormat: string;
