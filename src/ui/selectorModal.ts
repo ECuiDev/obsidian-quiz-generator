@@ -1,5 +1,5 @@
 import { App, getFrontMatterInfo, Modal, Notice, Scope, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
-import { Question, Quiz, QuizSettings, SelectorModalButton } from "../utils/types";
+import { Question, Quiz, QuizSettings } from "../utils/types";
 import {
 	isFillInTheBlank,
 	isMatching,
@@ -15,6 +15,14 @@ import GeneratorFactory from "../generators/generatorFactory";
 import QuizModalLogic from "./quizModalLogic";
 import { cleanUpNoteContents } from "../utils/markdownCleaner";
 import { countNoteTokens, setIconAndTooltip } from "../utils/helpers";
+
+const enum SelectorModalButton {
+	CLEAR,
+	QUIZ,
+	NOTE,
+	FOLDER,
+	GENERATE,
+}
 
 export default class SelectorModal extends Modal {
 	private readonly settings: QuizSettings;

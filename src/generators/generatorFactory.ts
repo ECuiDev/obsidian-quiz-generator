@@ -2,7 +2,8 @@ import Generator from "./generator";
 import OpenAIGenerator from "./openAIGenerator";
 import GoogleGenerator from "./googleGenerator";
 import AnthropicGenerator from "./anthropicGenerator";
-import { Provider, QuizSettings } from "../utils/types";
+import { QuizSettings } from "../utils/types";
+import { Provider } from "../utils/models";
 
 export default class GeneratorFactory {
 	private static generatorMap: { [key in Provider]: new (settings: QuizSettings) => Generator } = {

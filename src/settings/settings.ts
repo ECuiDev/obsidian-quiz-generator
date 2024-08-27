@@ -1,15 +1,8 @@
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
-import {
-	anthropicTextGenModels,
-	DEFAULT_SETTINGS,
-	googleTextGenModels,
-	languages,
-	openAITextGenModels,
-	providers,
-	saveFormats
-} from "../utils/types";
 import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
+import { anthropicTextGenModels, googleTextGenModels, openAITextGenModels, providers } from "../utils/models";
+import { DEFAULT_SETTINGS, languages, saveFormats } from "../utils/config";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private readonly plugin: QuizGenerator;
