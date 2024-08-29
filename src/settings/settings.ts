@@ -163,6 +163,29 @@ export default class QuizSettingsTab extends PluginSettingTab {
 				);
 
 			new Setting(containerEl)
+				.setName("Google API base url")
+				.setDesc("Enter your Google API base URL here.")
+				.addButton(button =>
+					button
+						.setClass("clickable-icon")
+						.setIcon("rotate-ccw")
+						.setTooltip("Restore default")
+						.onClick(async () => {
+							this.plugin.settings.googleBaseURL = DEFAULT_SETTINGS.googleBaseURL;
+							await this.plugin.saveSettings();
+							this.display();
+						})
+				)
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.googleBaseURL)
+						.onChange(async (value) => {
+							this.plugin.settings.googleBaseURL = value.trim();
+							await this.plugin.saveSettings();
+						})
+				);
+
+			new Setting(containerEl)
 				.setName("Model")
 				.setDesc("Model used for quiz generation.")
 				.addDropdown(dropdown =>

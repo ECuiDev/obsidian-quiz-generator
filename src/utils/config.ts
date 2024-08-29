@@ -52,6 +52,7 @@ export const DEFAULT_SETTINGS: QuizSettings = {
 	openAIBaseURL: "https://api.openai.com/v1",
 	openAITextGenModel: OpenAITextGenModel.GPT_3_5_TURBO,
 	googleApiKey: "",
+	googleBaseURL: "https://generativelanguage.googleapis.com",
 	googleTextGenModel: GoogleTextGenModel.GEMINI_1_5_FLASH,
 	anthropicApiKey: "",
 	anthropicBaseURL: "https://api.anthropic.com",

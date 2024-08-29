@@ -59,6 +59,7 @@ interface OpenAI {
 
 interface Google {
 	googleApiKey: string;
+	googleBaseURL: string;
 	googleTextGenModel: string;
 }
 

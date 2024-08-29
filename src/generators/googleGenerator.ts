@@ -12,11 +12,16 @@ export default class GoogleGenerator extends Generator {
 
 	public async generateQuiz(contents: string[]): Promise<string> {
 		try {
-			const model = this.google.getGenerativeModel({
-				model: this.settings.googleTextGenModel,
-				systemInstruction: this.systemPrompt(),
-				generationConfig: { responseMimeType: "application/json" },
-			});
+			const model = this.google.getGenerativeModel(
+				{
+					model: this.settings.googleTextGenModel,
+					systemInstruction: this.systemPrompt(),
+					generationConfig: { responseMimeType: "application/json" },
+				},
+				{
+					baseUrl: this.settings.googleBaseURL,
+				},
+			);
 			const response = await model.generateContent(this.userPrompt(contents));
 
 			return response.response.text();
