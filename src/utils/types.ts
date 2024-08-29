@@ -47,7 +47,7 @@ export interface QuizSettings extends Model, Generation, Saving {
 	language: string;
 }
 
-interface Model extends OpenAI, Google, Anthropic {
+interface Model extends OpenAI, Google, Anthropic, Perplexity {
 	provider: string;
 }
 
@@ -66,6 +66,11 @@ interface Anthropic {
 	anthropicApiKey: string;
 	anthropicBaseURL: string;
 	anthropicTextGenModel: string;
+}
+
+interface Perplexity {
+	perplexityApiKey: string;
+	perplexityTextGenModel: string;
 }
 
 interface Generation {

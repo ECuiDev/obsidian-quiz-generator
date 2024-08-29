@@ -1,7 +1,14 @@
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
-import { anthropicTextGenModels, googleTextGenModels, openAITextGenModels, Provider, providers } from "../utils/models";
+import {
+	anthropicTextGenModels,
+	googleTextGenModels,
+	openAITextGenModels,
+	perplexityTextGenModels,
+	Provider,
+	providers
+} from "../utils/models";
 import { DEFAULT_SETTINGS, languages, saveFormats } from "../utils/config";
 
 export default class QuizSettingsTab extends PluginSettingTab {
@@ -212,6 +219,31 @@ export default class QuizSettingsTab extends PluginSettingTab {
 						.setValue(this.plugin.settings.anthropicTextGenModel)
 						.onChange(async (value) => {
 							this.plugin.settings.anthropicTextGenModel = value;
+							await this.plugin.saveSettings();
+						})
+				);
+		} else if (this.plugin.settings.provider === Provider.PERPLEXITY) {
+			new Setting(containerEl)
+				.setName("Perplexity API key")
+				.setDesc("Enter your Perplexity API key here.")
+				.addText(text =>
+					text
+						.setValue(this.plugin.settings.perplexityApiKey)
+						.onChange(async (value) => {
+							this.plugin.settings.perplexityApiKey = value.trim();
+							await this.plugin.saveSettings();
+						}).inputEl.type = "password"
+				);
+
+			new Setting(containerEl)
+				.setName("Model")
+				.setDesc("Model used for quiz generation.")
+				.addDropdown(dropdown =>
+					dropdown
+						.addOptions(perplexityTextGenModels)
+						.setValue(this.plugin.settings.perplexityTextGenModel)
+						.onChange(async (value) => {
+							this.plugin.settings.perplexityTextGenModel = value;
 							await this.plugin.saveSettings();
 						})
 				);

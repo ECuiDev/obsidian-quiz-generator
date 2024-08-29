@@ -2,6 +2,7 @@ import Generator from "./generator";
 import OpenAIGenerator from "./openAIGenerator";
 import GoogleGenerator from "./googleGenerator";
 import AnthropicGenerator from "./anthropicGenerator";
+import PerplexityGenerator from "./perplexityGenerator";
 import { QuizSettings } from "../utils/types";
 import { Provider } from "../utils/models";
 
@@ -10,6 +11,7 @@ export default class GeneratorFactory {
 		[Provider.OPENAI]: OpenAIGenerator,
 		[Provider.GOOGLE]: GoogleGenerator,
 		[Provider.ANTHROPIC]: AnthropicGenerator,
+		[Provider.PERPLEXITY]: PerplexityGenerator,
 	};
 
 	public static createInstance(settings: QuizSettings): Generator {

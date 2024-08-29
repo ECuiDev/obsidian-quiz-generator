@@ -1,4 +1,10 @@
-import { AnthropicTextGenModel, GoogleTextGenModel, OpenAITextGenModel, Provider } from "./models";
+import {
+	AnthropicTextGenModel,
+	GoogleTextGenModel,
+	OpenAITextGenModel,
+	PerplexityTextGenModel,
+	Provider
+} from "./models";
 import { QuizSettings } from "./types";
 
 export const languages: Record<string, string> = {
@@ -50,6 +56,8 @@ export const DEFAULT_SETTINGS: QuizSettings = {
 	anthropicApiKey: "",
 	anthropicBaseURL: "https://api.anthropic.com",
 	anthropicTextGenModel: AnthropicTextGenModel.CLAUDE_3_HAIKU,
+	perplexityApiKey: "",
+	perplexityTextGenModel: PerplexityTextGenModel.LLAMA_3_1_SONAR_SMALL_ONLINE,
 	generateTrueFalse: true,
 	numberOfTrueFalse: 1,
 	generateMultipleChoice: true,
