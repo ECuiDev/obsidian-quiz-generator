@@ -1,4 +1,4 @@
-import { PerplexityTextGenModel } from "../../generators/perplexity/perplexityModels";
+import { PerplexityTextGenModel } from "../../../generators/perplexity/perplexityModels";
 
 export interface PerplexityConfig {
 	perplexityApiKey: string;

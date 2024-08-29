@@ -1,4 +1,4 @@
-import { OpenAITextGenModel } from "../../generators/openai/openAIModels";
+import { OpenAITextGenModel } from "../../../generators/openai/openAIModels";
 
 export interface OpenAIConfig {
 	openAIApiKey: string;

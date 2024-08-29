@@ -1,8 +1,8 @@
 import { Provider } from "../../generators/providers";
-import { DEFAULT_OPENAI_SETTINGS, OpenAIConfig } from "./openAIConfig";
-import { DEFAULT_GOOGLE_SETTINGS, GoogleConfig } from "./googleConfig";
-import { AnthropicConfig, DEFAULT_ANTHROPIC_SETTINGS } from "./anthropicConfig";
-import { DEFAULT_PERPLEXITY_SETTINGS, PerplexityConfig } from "./perplexityConfig";
+import { DEFAULT_OPENAI_SETTINGS, OpenAIConfig } from "./openai/openAIConfig";
+import { DEFAULT_GOOGLE_SETTINGS, GoogleConfig } from "./google/googleConfig";
+import { AnthropicConfig, DEFAULT_ANTHROPIC_SETTINGS } from "./anthropic/anthropicConfig";
+import { DEFAULT_PERPLEXITY_SETTINGS, PerplexityConfig } from "./perplexity/perplexityConfig";
 
 export interface ModelConfig extends OpenAIConfig, GoogleConfig, AnthropicConfig, PerplexityConfig {
 	provider: string;

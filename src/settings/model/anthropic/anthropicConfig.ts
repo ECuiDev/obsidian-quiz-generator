@@ -1,4 +1,4 @@
-import { AnthropicTextGenModel } from "../../generators/anthropic/anthropicModels";
+import { AnthropicTextGenModel } from "../../../generators/anthropic/anthropicModels";
 
 export interface AnthropicConfig {
 	anthropicApiKey: string;
