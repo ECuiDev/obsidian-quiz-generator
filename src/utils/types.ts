@@ -1,3 +1,10 @@
+import { GeneralConfig } from "../settings/general/generalConfig";
+import { ModelConfig } from "../settings/model/modelConfig";
+import { GenerationConfig } from "../settings/generation/generationConfig";
+import { SavingConfig } from "../settings/saving/savingConfig";
+
+export type QuizSettings = GeneralConfig & ModelConfig & GenerationConfig & SavingConfig;
+
 export type Question = TrueFalse | MultipleChoice | SelectAllThatApply | FillInTheBlank | Matching | ShortOrLongAnswer;
 
 export interface Quiz {
@@ -37,64 +44,4 @@ export interface Matching {
 export interface ShortOrLongAnswer {
 	question: string;
 	answer: string;
-}
-
-export interface QuizSettings extends Model, Generation, Saving {
-	showNotePath: boolean;
-	showFolderPath: boolean;
-	includeSubfolderNotes: boolean;
-	randomizeQuestions: boolean;
-	language: string;
-}
-
-interface Model extends OpenAI, Google, Anthropic, Perplexity {
-	provider: string;
-}
-
-interface OpenAI {
-	openAIApiKey: string;
-	openAIBaseURL: string;
-	openAITextGenModel: string;
-}
-
-interface Google {
-	googleApiKey: string;
-	googleBaseURL: string;
-	googleTextGenModel: string;
-}
-
-interface Anthropic {
-	anthropicApiKey: string;
-	anthropicBaseURL: string;
-	anthropicTextGenModel: string;
-}
-
-interface Perplexity {
-	perplexityApiKey: string;
-	perplexityTextGenModel: string;
-}
-
-interface Generation {
-	generateTrueFalse: boolean;
-	numberOfTrueFalse: number;
-	generateMultipleChoice: boolean;
-	numberOfMultipleChoice: number;
-	generateSelectAllThatApply: boolean;
-	numberOfSelectAllThatApply: number;
-	generateFillInTheBlank: boolean;
-	numberOfFillInTheBlank: number;
-	generateMatching: boolean;
-	numberOfMatching: number;
-	generateShortAnswer: boolean;
-	numberOfShortAnswer: number;
-	generateLongAnswer: boolean;
-	numberOfLongAnswer: number;
-}
-
-interface Saving {
-	autoSave: boolean;
-	savePath: string;
-	saveFormat: string;
-	inlineSeparator: string;
-	multilineSeparator: string;
 }

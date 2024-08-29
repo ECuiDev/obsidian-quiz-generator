@@ -1,12 +1,14 @@
 import { App, normalizePath, PluginSettingTab, Setting } from "obsidian";
 import QuizGenerator from "../main";
 import FolderSuggester from "./folderSuggester";
-import { DEFAULT_SETTINGS, languages, saveFormats } from "../utils/config";
+import { DEFAULT_SETTINGS } from "./config";
 import { Provider, providers } from "../generators/providers";
 import { openAITextGenModels } from "../generators/openai/openAIModels";
 import { googleTextGenModels } from "../generators/google/googleModels";
 import { anthropicTextGenModels } from "../generators/anthropic/anthropicModels";
 import { perplexityTextGenModels } from "../generators/perplexity/perplexityModels";
+import { saveFormats } from "./saving/savingConfig";
+import { languages } from "./general/generalConfig";
 
 export default class QuizSettingsTab extends PluginSettingTab {
 	private readonly plugin: QuizGenerator;

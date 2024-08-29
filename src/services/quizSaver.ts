@@ -1,6 +1,5 @@
 import { App, normalizePath, Notice, TFile } from "obsidian";
 import { Question, QuizSettings } from "../utils/types";
-import { SaveFormat } from "../utils/config";
 import {
 	isFillInTheBlank,
 	isMatching,
@@ -10,6 +9,7 @@ import {
 	isTrueFalse
 } from "../utils/typeGuards";
 import { shuffleArray } from "../utils/helpers";
+import { SaveFormat } from "../settings/saving/savingConfig";
 
 export default class QuizSaver {
 	private readonly app: App;
