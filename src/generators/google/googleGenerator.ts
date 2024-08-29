@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import Generator from "./generator";
-import { QuizSettings } from "../utils/types";
+import Generator from "../generator";
+import { QuizSettings } from "../../utils/types";
 
 export default class GoogleGenerator extends Generator {
 	private readonly google: GoogleGenerativeAI;

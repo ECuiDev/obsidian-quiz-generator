@@ -1,8 +1,8 @@
 import { Notice } from "obsidian";
 import Anthropic from "@anthropic-ai/sdk";
-import Generator from "./generator";
-import { QuizSettings } from "../utils/types";
-import { AnthropicTextGenModel } from "../utils/models";
+import Generator from "../generator";
+import { QuizSettings } from "../../utils/types";
+import { AnthropicTextGenModel } from "./anthropicModels";
 
 export default class AnthropicGenerator extends Generator {
 	private readonly anthropic: Anthropic;

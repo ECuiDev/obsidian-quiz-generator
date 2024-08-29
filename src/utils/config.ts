@@ -1,11 +1,9 @@
-import {
-	AnthropicTextGenModel,
-	GoogleTextGenModel,
-	OpenAITextGenModel,
-	PerplexityTextGenModel,
-	Provider
-} from "./models";
 import { QuizSettings } from "./types";
+import { Provider } from "../generators/providers";
+import { OpenAITextGenModel } from "../generators/openai/openAIModels";
+import { GoogleTextGenModel } from "../generators/google/googleModels";
+import { AnthropicTextGenModel } from "../generators/anthropic/anthropicModels";
+import { PerplexityTextGenModel } from "../generators/perplexity/perplexityModels";
 
 export const languages: Record<string, string> = {
 	English: "English",

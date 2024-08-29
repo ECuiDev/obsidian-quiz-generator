@@ -1,7 +1,7 @@
 import { Notice } from "obsidian";
 import OpenAI from "openai";
-import Generator from "./generator";
-import { QuizSettings } from "../utils/types";
+import Generator from "../generator";
+import { QuizSettings } from "../../utils/types";
 
 export default class OpenAIGenerator extends Generator {
 	private readonly openai: OpenAI;
