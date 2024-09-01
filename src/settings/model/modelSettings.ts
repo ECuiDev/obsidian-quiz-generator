@@ -31,7 +31,7 @@ const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, r
 	} else if (plugin.settings.provider === Provider.ANTHROPIC) {
 		displayAnthropicSettings(containerEl, plugin, refreshSettings);
 	} else if (plugin.settings.provider === Provider.PERPLEXITY) {
-		displayPerplexitySettings(containerEl, plugin);
+		displayPerplexitySettings(containerEl, plugin, refreshSettings);
 	} else if (plugin.settings.provider === Provider.MISTRAL) {
 		displayMistralSettings(containerEl, plugin, refreshSettings);
 	}

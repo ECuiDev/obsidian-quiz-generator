@@ -10,7 +10,7 @@ export default class PerplexityGenerator extends Generator {
 		super(settings);
 		this.perplexity = new OpenAI({
 			apiKey: this.settings.perplexityApiKey,
-			baseURL: "https://api.perplexity.ai",
+			baseURL: this.settings.perplexityBaseURL,
 			dangerouslyAllowBrowser: true,
 		});
 	}
