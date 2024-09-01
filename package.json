@@ -16,7 +16,7 @@
 	"author": "Edward Cui",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^22.5.0",
+		"@types/node": "^22.5.1",
 		"@types/react": "^18.3.4",
 		"@types/react-dom": "^18.3.0",
 		"@typescript-eslint/eslint-plugin": "7.16.1",
@@ -29,9 +29,10 @@
 		"typescript": "5.5.4"
 	},
 	"dependencies": {
-		"@anthropic-ai/sdk": "^0.27.0",
+		"@anthropic-ai/sdk": "^0.27.1",
 		"@google/generative-ai": "^0.17.1",
-		"openai": "^4.56.0",
+		"@mistralai/mistralai": "^1.0.4",
+		"openai": "^4.57.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	}

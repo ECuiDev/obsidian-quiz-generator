@@ -3,6 +3,7 @@ export enum Provider {
 	GOOGLE = "GOOGLE",
 	ANTHROPIC = "ANTHROPIC",
 	PERPLEXITY = "PERPLEXITY",
+	MISTRAL = "MISTRAL"
 }
 
 export const providers: Record<Provider, string> = {
@@ -10,4 +11,5 @@ export const providers: Record<Provider, string> = {
 	[Provider.GOOGLE]: "Google",
 	[Provider.ANTHROPIC]: "Anthropic",
 	[Provider.PERPLEXITY]: "Perplexity",
+	[Provider.MISTRAL]: "Mistral",
 };

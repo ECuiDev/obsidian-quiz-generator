@@ -5,6 +5,7 @@ import displayOpenAISettings from "./openai/openAISettings";
 import displayGoogleSettings from "./google/googleSettings";
 import displayAnthropicSettings from "./anthropic/anthropicSettings";
 import displayPerplexitySettings from "./perplexity/perplexitySettings";
+import displayMistralSettings from "./mistral/mistralSettings";
 
 const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
 	new Setting(containerEl).setName("Model").setHeading();
@@ -31,6 +32,8 @@ const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, r
 		displayAnthropicSettings(containerEl, plugin, refreshSettings);
 	} else if (plugin.settings.provider === Provider.PERPLEXITY) {
 		displayPerplexitySettings(containerEl, plugin);
+	} else if (plugin.settings.provider === Provider.MISTRAL) {
+		displayMistralSettings(containerEl, plugin, refreshSettings);
 	}
 };
 

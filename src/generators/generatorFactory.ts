@@ -1,10 +1,11 @@
 import Generator from "./generator";
 import { Provider } from "./providers";
+import { QuizSettings } from "../utils/types";
 import OpenAIGenerator from "./openai/openAIGenerator";
 import GoogleGenerator from "./google/googleGenerator";
 import AnthropicGenerator from "./anthropic/anthropicGenerator";
 import PerplexityGenerator from "./perplexity/perplexityGenerator";
-import { QuizSettings } from "../utils/types";
+import MistralGenerator from "./mistral/mistralGenerator";
 
 export default class GeneratorFactory {
 	private static generatorMap: { [key in Provider]: new (settings: QuizSettings) => Generator } = {
@@ -12,6 +13,7 @@ export default class GeneratorFactory {
 		[Provider.GOOGLE]: GoogleGenerator,
 		[Provider.ANTHROPIC]: AnthropicGenerator,
 		[Provider.PERPLEXITY]: PerplexityGenerator,
+		[Provider.MISTRAL]: MistralGenerator,
 	};
 
 	public static createInstance(settings: QuizSettings): Generator {
