@@ -109,7 +109,7 @@ export default class SelectorModal extends Modal {
 				new Notice("Generating...");
 				const generator = GeneratorFactory.createInstance(this.settings);
 				const generatedQuestions = await generator.generateQuiz([...this.selectedNotes.values()]);
-				if (!generatedQuestions) {
+				if (generatedQuestions === null) {
 					this.toggleButtons([SelectorModalButton.GENERATE], false);
 					new Notice("Error: Generation returned nothing");
 					return;
@@ -125,7 +125,12 @@ export default class SelectorModal extends Modal {
 					} else if (isSelectAllThatApply(question)) {
 						questions.push(question);
 					} else if (isFillInTheBlank(question)) {
-						questions.push(question);
+						const normalizeBlanks = (str: string): string => {
+							return str.replace(/(^|[^`])_+([^`]|$)/g, (match, p1, p2) => {
+								return `${p1}\`____\`${p2}`;
+							});
+						};
+						questions.push({ question: normalizeBlanks(question.question), answer: question.answer });
 					} else if (isMatching(question)) {
 						questions.push(question);
 					} else if (isShortOrLongAnswer(question)) {

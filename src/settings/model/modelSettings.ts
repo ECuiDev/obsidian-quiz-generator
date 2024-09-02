@@ -6,6 +6,7 @@ import displayGoogleSettings from "./google/googleSettings";
 import displayAnthropicSettings from "./anthropic/anthropicSettings";
 import displayPerplexitySettings from "./perplexity/perplexitySettings";
 import displayMistralSettings from "./mistral/mistralSettings";
+import displayCohereSettings from "./cohere/cohereSettings";
 
 const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
 	new Setting(containerEl).setName("Model").setHeading();
@@ -34,6 +35,8 @@ const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, r
 		displayPerplexitySettings(containerEl, plugin, refreshSettings);
 	} else if (plugin.settings.provider === Provider.MISTRAL) {
 		displayMistralSettings(containerEl, plugin, refreshSettings);
+	} else if (plugin.settings.provider === Provider.COHERE) {
+		displayCohereSettings(containerEl, plugin, refreshSettings);
 	}
 };
 
