@@ -7,6 +7,7 @@ import AnthropicGenerator from "./anthropic/anthropicGenerator";
 import PerplexityGenerator from "./perplexity/perplexityGenerator";
 import MistralGenerator from "./mistral/mistralGenerator";
 import CohereGenerator from "./cohere/cohereGenerator";
+import OllamaGenerator from "./ollama/ollamaGenerator";
 
 export default class GeneratorFactory {
 	private static generatorMap: { [key in Provider]: new (settings: QuizSettings) => Generator } = {
@@ -16,6 +17,7 @@ export default class GeneratorFactory {
 		[Provider.PERPLEXITY]: PerplexityGenerator,
 		[Provider.MISTRAL]: MistralGenerator,
 		[Provider.COHERE]: CohereGenerator,
+		[Provider.OLLAMA]: OllamaGenerator,
 	};
 
 	public static createInstance(settings: QuizSettings): Generator {

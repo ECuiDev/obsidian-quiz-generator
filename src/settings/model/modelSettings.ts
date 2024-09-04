@@ -7,6 +7,7 @@ import displayAnthropicSettings from "./anthropic/anthropicSettings";
 import displayPerplexitySettings from "./perplexity/perplexitySettings";
 import displayMistralSettings from "./mistral/mistralSettings";
 import displayCohereSettings from "./cohere/cohereSettings";
+import displayOllamaSettings from "./ollama/ollamaSettings";
 
 const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
 	new Setting(containerEl).setName("Model").setHeading();
@@ -37,6 +38,8 @@ const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, r
 		displayMistralSettings(containerEl, plugin, refreshSettings);
 	} else if (plugin.settings.provider === Provider.COHERE) {
 		displayCohereSettings(containerEl, plugin, refreshSettings);
+	} else if (plugin.settings.provider === Provider.OLLAMA) {
+		displayOllamaSettings(containerEl, plugin, refreshSettings);
 	}
 };
 

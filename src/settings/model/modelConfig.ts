@@ -5,8 +5,9 @@ import { AnthropicConfig, DEFAULT_ANTHROPIC_SETTINGS } from "./anthropic/anthrop
 import { DEFAULT_PERPLEXITY_SETTINGS, PerplexityConfig } from "./perplexity/perplexityConfig";
 import { DEFAULT_MISTRAL_SETTINGS, MistralConfig } from "./mistral/mistralConfig";
 import { CohereConfig, DEFAULT_COHERE_SETTINGS } from "./cohere/cohereConfig";
+import { DEFAULT_OLLAMA_SETTINGS, OllamaConfig } from "./ollama/ollamaConfig";
 
-export interface ModelConfig extends OpenAIConfig, GoogleConfig, AnthropicConfig, PerplexityConfig, MistralConfig, CohereConfig {
+export interface ModelConfig extends OpenAIConfig, GoogleConfig, AnthropicConfig, PerplexityConfig, MistralConfig, CohereConfig, OllamaConfig {
 	provider: string;
 }
 
@@ -18,4 +19,5 @@ export const DEFAULT_MODEL_SETTINGS: ModelConfig = {
 	...DEFAULT_PERPLEXITY_SETTINGS,
 	...DEFAULT_MISTRAL_SETTINGS,
 	...DEFAULT_COHERE_SETTINGS,
+	...DEFAULT_OLLAMA_SETTINGS,
 };

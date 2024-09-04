@@ -5,6 +5,7 @@ export enum Provider {
 	PERPLEXITY = "PERPLEXITY",
 	MISTRAL = "MISTRAL",
 	COHERE = "COHERE",
+	OLLAMA = "OLLAMA",
 }
 
 export const providers: Record<Provider, string> = {
@@ -14,4 +15,5 @@ export const providers: Record<Provider, string> = {
 	[Provider.PERPLEXITY]: "Perplexity",
 	[Provider.MISTRAL]: "Mistral",
 	[Provider.COHERE]: "Cohere",
+	[Provider.OLLAMA]: "Ollama",
 };
