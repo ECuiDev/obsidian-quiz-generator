@@ -1,4 +1,4 @@
-import { QuizSettings } from "../utils/types";
+import { QuizSettings } from "../settings/config";
 
 export default abstract class Generator {
 	protected readonly settings: QuizSettings;

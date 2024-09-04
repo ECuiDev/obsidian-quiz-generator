@@ -1,7 +1,7 @@
 import { App, getFrontMatterInfo, Modal, Scope, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
 import NoteViewerModal from "./noteViewerModal";
-import  {cleanUpNoteContents } from "../utils/markdownCleaner";
-import { QuizSettings } from "../utils/types";
+import { cleanUpNoteContents } from "../utils/markdownCleaner";
+import { QuizSettings } from "../settings/config";
 import { countNoteTokens, setIconAndTooltip } from "../utils/helpers";
 
 export default class FolderViewerModal extends Modal {

@@ -1,7 +1,7 @@
 import { Notice } from "obsidian";
 import { Mistral } from "@mistralai/mistralai";
 import Generator from "../generator";
-import { QuizSettings } from "../../utils/types";
+import { QuizSettings } from "../../settings/config";
 
 export default class MistralGenerator extends Generator {
 	private readonly mistral: Mistral;

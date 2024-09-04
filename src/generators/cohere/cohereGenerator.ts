@@ -1,7 +1,7 @@
 import { Notice } from "obsidian";
 import { CohereClient } from "cohere-ai/Client";
 import Generator from "../generator";
-import { QuizSettings } from "../../utils/types";
+import { QuizSettings } from "../../settings/config";
 
 export default class CohereGenerator extends Generator {
 	private readonly cohere: CohereClient;

@@ -1,5 +1,6 @@
 import { App, getFrontMatterInfo, Modal, Notice, Scope, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
-import { Question, Quiz, QuizSettings } from "../utils/types";
+import { QuizSettings } from "../settings/config";
+import { Question, Quiz } from "../utils/types";
 import {
 	isFillInTheBlank,
 	isMatching,

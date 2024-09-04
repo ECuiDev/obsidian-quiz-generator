@@ -1,6 +1,7 @@
 import { App, normalizePath, TFile, TFolder } from "obsidian";
 import { createRoot, Root } from "react-dom/client";
-import { Question, QuizSettings } from "../utils/types";
+import { QuizSettings } from "../settings/config";
+import { Question } from "../utils/types";
 import QuizSaver from "../services/quizSaver";
 import QuizModalWrapper from "./components/quiz/QuizModalWrapper";
 import { shuffleArray } from "../utils/helpers";

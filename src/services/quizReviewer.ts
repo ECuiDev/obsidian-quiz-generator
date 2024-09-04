@@ -1,10 +1,10 @@
 import { App, Notice, TFile } from "obsidian";
+import { QuizSettings } from "../settings/config";
 import {
 	FillInTheBlank,
 	Matching,
 	MultipleChoice,
 	Question,
-	QuizSettings,
 	SelectAllThatApply,
 	ShortOrLongAnswer,
 	TrueFalse

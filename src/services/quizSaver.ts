@@ -1,5 +1,6 @@
 import { App, normalizePath, Notice, TFile } from "obsidian";
-import { Question, QuizSettings } from "../utils/types";
+import { QuizSettings } from "../settings/config";
+import { Question } from "../utils/types";
 import {
 	isFillInTheBlank,
 	isMatching,

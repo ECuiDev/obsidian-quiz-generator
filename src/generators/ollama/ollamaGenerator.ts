@@ -1,6 +1,6 @@
 import { Ollama } from "ollama/dist/browser.mjs";
 import Generator from "../generator";
-import { QuizSettings } from "../../utils/types";
+import { QuizSettings } from "../../settings/config";
 
 export default class OllamaGenerator extends Generator {
 	private readonly ollama: Ollama;

@@ -1,7 +1,7 @@
 import { Notice } from "obsidian";
 import OpenAI from "openai";
 import Generator from "../generator";
-import { QuizSettings } from "../../utils/types";
+import { QuizSettings } from "../../settings/config";
 
 export default class PerplexityGenerator extends Generator {
 	private readonly perplexity: OpenAI;

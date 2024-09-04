@@ -1,6 +1,6 @@
 import Generator from "./generator";
 import { Provider } from "./providers";
-import { QuizSettings } from "../utils/types";
+import { QuizSettings } from "../settings/config";
 import OpenAIGenerator from "./openai/openAIGenerator";
 import GoogleGenerator from "./google/googleGenerator";
 import AnthropicGenerator from "./anthropic/anthropicGenerator";
