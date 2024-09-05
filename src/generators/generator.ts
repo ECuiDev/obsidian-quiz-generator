@@ -9,6 +9,8 @@ export default abstract class Generator {
 
 	public abstract generateQuiz(contents: string[]): Promise<string | null>;
 
+	public abstract shortOrLongAnswerSimilarity(userAnswer: string, answer: string): Promise<number>;
+
 	protected systemPrompt(): string {
 		const trueFalseFormat = `"question": The question\n"answer": A boolean representing the answer\n`;
 		const multipleChoiceFormat = `"question": The question\n"options": An array of 4 to 26 strings representing the choices\n` +

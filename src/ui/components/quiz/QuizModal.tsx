@@ -72,7 +72,7 @@ const QuizModal = ({ app, settings, quiz, initialSavedQuestions, fileName, valid
 		} else if (isMatching(question)) {
 			return <MatchingQuestion key={questionIndex} app={app} question={question} />;
 		} else if (isShortOrLongAnswer(question)) {
-			return <ShortOrLongAnswerQuestion key={questionIndex} app={app} question={question} />;
+			return <ShortOrLongAnswerQuestion key={questionIndex} app={app} question={question} settings={settings} />;
 		}
 	};
 

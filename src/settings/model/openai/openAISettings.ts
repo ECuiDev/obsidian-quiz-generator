@@ -1,6 +1,6 @@
 import { Setting } from "obsidian";
 import QuizGenerator from "../../../main";
-import { openAITextGenModels } from "../../../generators/openai/openAIModels";
+import { openAIEmbeddingModels, openAITextGenModels } from "../../../generators/openai/openAIModels";
 import { DEFAULT_OPENAI_SETTINGS } from "./openAIConfig";
 
 const displayOpenAISettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
@@ -48,6 +48,19 @@ const displayOpenAISettings = (containerEl: HTMLElement, plugin: QuizGenerator, 
 				.setValue(plugin.settings.openAITextGenModel)
 				.onChange(async (value) => {
 					plugin.settings.openAITextGenModel = value;
+					await plugin.saveSettings();
+				})
+		);
+
+	new Setting(containerEl)
+		.setName("Embedding model")
+		.setDesc("Model used for evaluating short and long answer questions.")
+		.addDropdown(dropdown =>
+			dropdown
+				.addOptions(openAIEmbeddingModels)
+				.setValue(plugin.settings.openAIEmbeddingModel)
+				.onChange(async (value) => {
+					plugin.settings.openAIEmbeddingModel = value;
 					await plugin.saveSettings();
 				})
 		);

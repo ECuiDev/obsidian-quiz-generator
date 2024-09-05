@@ -1,31 +1,42 @@
+import { Notice } from "obsidian";
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
 
 interface AnswerInputProps {
 	onSubmit: (input: string) => void;
+	clearInputOnSubmit?: boolean;
 	disabled?: boolean;
 }
 
-const AnswerInput = ({ onSubmit, disabled = false }: AnswerInputProps) => {
+const AnswerInput = ({ onSubmit, clearInputOnSubmit = true, disabled = false }: AnswerInputProps) => {
 	const [userInput, setUserInput] = useState<string>("");
 	const inputRef = useRef<HTMLTextAreaElement>(null);
 
-	const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-		setUserInput(event.target.value);
+	const adjustInputHeight = () => {
 		if (inputRef.current) {
 			inputRef.current.style.height = "auto";
 			inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
 		}
 	};
 
+	const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+		setUserInput(event.target.value);
+		adjustInputHeight();
+	};
+
 	const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-		if (event.key === "Enter" && !event.shiftKey) {
-			event.preventDefault();
-			onSubmit(userInput);
-			setUserInput("");
-			if (inputRef.current) {
-				inputRef.current.style.height = "auto";
-			}
+		if (event.key !== "Enter" || event.shiftKey) return;
+
+		if (!userInput.trim()) {
+			new Notice("Input cannot be blank");
+			return;
 		}
+
+		event.preventDefault();
+		onSubmit(userInput);
+		if (clearInputOnSubmit || userInput.toLowerCase().trim() === "skip") {
+			setUserInput("");
+		}
+		adjustInputHeight();
 	};
 
 	return (
