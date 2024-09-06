@@ -2,6 +2,7 @@ import { Notice } from "obsidian";
 import { CohereClient } from "cohere-ai/Client";
 import Generator from "../generator";
 import { QuizSettings } from "../../settings/config";
+import { cosineSimilarity } from "../../utils/helpers";
 
 export default class CohereGenerator extends Generator {
 	private readonly cohere: CohereClient;
@@ -28,6 +29,20 @@ export default class CohereGenerator extends Generator {
 			}
 
 			return response.text;
+		} catch (error) {
+			throw new Error((error as Error).message);
+		}
+	}
+
+	public async shortOrLongAnswerSimilarity(userAnswer: string, answer: string): Promise<number> {
+		try {
+			const embedding = await this.cohere.embed({
+				model: this.settings.cohereEmbeddingModel,
+				texts: [userAnswer, answer],
+				inputType: "classification",
+			});
+
+			return cosineSimilarity((embedding.embeddings as number[][])[0], (embedding.embeddings as number[][])[1]);
 		} catch (error) {
 			throw new Error((error as Error).message);
 		}

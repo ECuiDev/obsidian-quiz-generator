@@ -1,6 +1,6 @@
 import { Setting } from "obsidian";
 import QuizGenerator from "../../../main";
-import { cohereTextGenModels } from "../../../generators/cohere/cohereModels";
+import { cohereEmbeddingModels, cohereTextGenModels } from "../../../generators/cohere/cohereModels";
 import { DEFAULT_COHERE_SETTINGS } from "./cohereConfig";
 
 const displayCohereSettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
@@ -48,6 +48,19 @@ const displayCohereSettings = (containerEl: HTMLElement, plugin: QuizGenerator, 
 				.setValue(plugin.settings.cohereTextGenModel)
 				.onChange(async (value) => {
 					plugin.settings.cohereTextGenModel = value;
+					await plugin.saveSettings();
+				})
+		);
+
+	new Setting(containerEl)
+		.setName("Embedding model")
+		.setDesc("Model used for evaluating short and long answer questions.")
+		.addDropdown(dropdown =>
+			dropdown
+				.addOptions(cohereEmbeddingModels)
+				.setValue(plugin.settings.cohereEmbeddingModel)
+				.onChange(async (value) => {
+					plugin.settings.cohereEmbeddingModel = value;
 					await plugin.saveSettings();
 				})
 		);
