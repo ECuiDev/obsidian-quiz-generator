@@ -1,6 +1,6 @@
 import { Setting } from "obsidian";
 import QuizGenerator from "../../../main";
-import { googleTextGenModels } from "../../../generators/google/googleModels";
+import { googleEmbeddingModels, googleTextGenModels } from "../../../generators/google/googleModels";
 import { DEFAULT_GOOGLE_SETTINGS } from "./googleConfig";
 
 const displayGoogleSettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
@@ -48,6 +48,19 @@ const displayGoogleSettings = (containerEl: HTMLElement, plugin: QuizGenerator, 
 				.setValue(plugin.settings.googleTextGenModel)
 				.onChange(async (value) => {
 					plugin.settings.googleTextGenModel = value;
+					await plugin.saveSettings();
+				})
+		);
+
+	new Setting(containerEl)
+		.setName("Embedding model")
+		.setDesc("Model used for evaluating short and long answer questions.")
+		.addDropdown(dropdown =>
+			dropdown
+				.addOptions(googleEmbeddingModels)
+				.setValue(plugin.settings.googleEmbeddingModel)
+				.onChange(async (value) => {
+					plugin.settings.googleEmbeddingModel = value;
 					await plugin.saveSettings();
 				})
 		);
