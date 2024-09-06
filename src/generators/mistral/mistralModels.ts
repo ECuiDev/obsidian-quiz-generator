@@ -13,3 +13,11 @@ export const mistralTextGenModels: Record<MistralTextGenModel, string> = {
 	[MistralTextGenModel.MIXTRAL_8x22B]: "Mixtral 8x22B",
 	[MistralTextGenModel.MISTRAL_LARGE]: "Mistral Large",
 };
+
+export const enum MistralEmbeddingModel {
+	MISTRAL_EMBED = "mistral-embed",
+}
+
+export const mistralEmbeddingModels: Record<MistralEmbeddingModel, string> = {
+	[MistralEmbeddingModel.MISTRAL_EMBED]: "Mistral Embed",
+};

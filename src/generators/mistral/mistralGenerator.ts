@@ -2,6 +2,7 @@ import { Notice } from "obsidian";
 import { Mistral } from "@mistralai/mistralai";
 import Generator from "../generator";
 import { QuizSettings } from "../../settings/config";
+import { cosineSimilarity } from "../../utils/helpers";
 
 export default class MistralGenerator extends Generator {
 	private readonly mistral: Mistral;
@@ -34,6 +35,24 @@ export default class MistralGenerator extends Generator {
 			}
 
 			return response.choices[0].message.content;
+		} catch (error) {
+			throw new Error((error as Error).message);
+		}
+	}
+
+	public async shortOrLongAnswerSimilarity(userAnswer: string, answer: string): Promise<number> {
+		try {
+			const embedding = await this.mistral.embeddings.create({
+				model: this.settings.mistralEmbeddingModel,
+				inputs: [userAnswer, answer],
+			});
+
+			if (!embedding.data[0].embedding || !embedding.data[1].embedding) {
+				new Notice("Error: Incomplete API response");
+				return 0;
+			}
+
+			return cosineSimilarity(embedding.data[0].embedding, embedding.data[1].embedding);
 		} catch (error) {
 			throw new Error((error as Error).message);
 		}

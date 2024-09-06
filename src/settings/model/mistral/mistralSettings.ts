@@ -1,6 +1,6 @@
 import { Setting } from "obsidian";
 import QuizGenerator from "../../../main";
-import { mistralTextGenModels } from "../../../generators/mistral/mistralModels";
+import { mistralEmbeddingModels, mistralTextGenModels } from "../../../generators/mistral/mistralModels";
 import { DEFAULT_MISTRAL_SETTINGS} from "./mistralConfig";
 
 const displayMistralSettings = (containerEl: HTMLElement, plugin: QuizGenerator, refreshSettings: () => void): void => {
@@ -48,6 +48,19 @@ const displayMistralSettings = (containerEl: HTMLElement, plugin: QuizGenerator,
 				.setValue(plugin.settings.mistralTextGenModel)
 				.onChange(async (value) => {
 					plugin.settings.mistralTextGenModel = value;
+					await plugin.saveSettings();
+				})
+		);
+
+	new Setting(containerEl)
+		.setName("Embedding model")
+		.setDesc("Model used for evaluating short and long answer questions.")
+		.addDropdown(dropdown =>
+			dropdown
+				.addOptions(mistralEmbeddingModels)
+				.setValue(plugin.settings.mistralEmbeddingModel)
+				.onChange(async (value) => {
+					plugin.settings.mistralEmbeddingModel = value;
 					await plugin.saveSettings();
 				})
 		);

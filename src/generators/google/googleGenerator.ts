@@ -21,7 +21,7 @@ export default class GoogleGenerator extends Generator {
 				},
 				{
 					baseUrl: this.settings.googleBaseURL,
-				},
+				}
 			);
 			const response = await model.generateContent(this.userPrompt(contents));
 
@@ -39,7 +39,7 @@ export default class GoogleGenerator extends Generator {
 				},
 				{
 					baseUrl: this.settings.googleBaseURL,
-				},
+				}
 			);
 			const embedding = await model.batchEmbedContents({
 				requests: [
