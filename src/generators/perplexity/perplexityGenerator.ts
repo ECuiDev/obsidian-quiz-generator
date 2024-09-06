@@ -34,4 +34,8 @@ export default class PerplexityGenerator extends Generator {
 			throw new Error((error as Error).message);
 		}
 	}
+
+	public async shortOrLongAnswerSimilarity(userAnswer: string, answer: string): Promise<number> {
+		throw new Error("Perplexity does not support grading short and long answer questions. Please switch to a provider that offers embedding models.");
+	}
 }
