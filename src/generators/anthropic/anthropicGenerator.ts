@@ -37,6 +37,10 @@ export default class AnthropicGenerator extends Generator {
 		}
 	}
 
+	public async shortOrLongAnswerSimilarity(userAnswer: string, answer: string): Promise<number> {
+		throw new Error("Anthropic does not support grading short and long answer questions. Please switch to a provider that offers embedding models.");
+	}
+
 	private getMaxTokens(): number {
 		return this.settings.anthropicTextGenModel === AnthropicTextGenModel.CLAUDE_3_5_SONNET ? 8192 : 4096;
 	}

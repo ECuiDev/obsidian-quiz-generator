@@ -26,12 +26,12 @@ const AnswerInput = ({ onSubmit, clearInputOnSubmit = true, disabled = false }: 
 	const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
 		if (event.key !== "Enter" || event.shiftKey) return;
 
+		event.preventDefault();
 		if (!userInput.trim()) {
 			new Notice("Input cannot be blank");
 			return;
 		}
 
-		event.preventDefault();
 		onSubmit(userInput);
 		if (clearInputOnSubmit || userInput.toLowerCase().trim() === "skip") {
 			setUserInput("");
