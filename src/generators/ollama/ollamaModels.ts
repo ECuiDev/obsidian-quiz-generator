@@ -2,6 +2,16 @@ import { Notice } from "obsidian";
 import { Ollama } from "ollama/dist/browser.mjs";
 
 export const getOllamaTextGenModels = async (baseUrl: string): Promise<Record<string, string>> => {
+	const models = await getOllamaModels(baseUrl);
+	return Object.fromEntries(Object.entries(models).filter(([model]) => !model.includes("embed")));
+};
+
+export const getOllamaEmbeddingModels = async (baseUrl: string): Promise<Record<string, string>> => {
+	const models = await getOllamaModels(baseUrl);
+	return Object.fromEntries(Object.entries(models).filter(([model]) => model.includes("embed")));
+};
+
+const getOllamaModels = async (baseUrl: string): Promise<Record<string, string>> => {
 	try {
 		const ollama = new Ollama({ host: baseUrl });
 		const models = await ollama.list();

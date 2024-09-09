@@ -216,7 +216,7 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 	cursor: default;
 }
 
-/* FillInTheBlankQuestion */
+/* FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 .input-container-qg {
 	position: absolute;
 	bottom: 0;
@@ -228,7 +228,7 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 	height: 50%;
 }
 
-/* FillInTheBlankQuestion */
+/* FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 .instruction-footnote-qg {
 	font-size: var(--font-ui-smaller);
 	text-align: center;
