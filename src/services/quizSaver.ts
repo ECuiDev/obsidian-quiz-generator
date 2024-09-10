@@ -86,7 +86,7 @@ export default class QuizSaver {
 
 	private async getSaveFile(): Promise<TFile> {
 		const sourcesProperty = this.settings.quizSourcesProperty
-			? `${this.settings.quizSourcesProperty}:\n  ${this.quizSources.map(source => `- "${this.app.fileManager.generateMarkdownLink(source, this.saveFilePath)}"`).join("\n")}\n`
+			? `${this.settings.quizSourcesProperty}:\n${this.quizSources.map(source => `  - "${this.app.fileManager.generateMarkdownLink(source, this.saveFilePath)}"`).join("\n")}\n`
 			: "";
 		const initialContent = this.settings.saveFormat === SaveFormat.SPACED_REPETITION
 			? `---\ntags:\n  - flashcards\n${sourcesProperty}---\n`
