@@ -26,7 +26,7 @@ const displaySavingSettings = (containerEl: HTMLElement, plugin: QuizGenerator):
 			search
 				.setValue(plugin.settings.savePath)
 				.onChange(async (value) => {
-					plugin.settings.savePath = normalizePath(value);
+					plugin.settings.savePath = normalizePath(value.trim());
 					await plugin.saveSettings();
 				})
 		});
@@ -45,13 +45,25 @@ const displaySavingSettings = (containerEl: HTMLElement, plugin: QuizGenerator):
 		);
 
 	new Setting(containerEl)
+		.setName("Quiz sources property")
+		.setDesc("Property name for links to notes used in generation (leave empty to disable).")
+		.addText(text =>
+			text
+				.setValue(plugin.settings.quizSourcesProperty)
+				.onChange(async (value) => {
+					plugin.settings.quizSourcesProperty = value.trim();
+					await plugin.saveSettings();
+				})
+		);
+
+	new Setting(containerEl)
 		.setName("Inline separator")
 		.setDesc("Separator for spaced repetition inline flashcards.")
 		.addText(text =>
 			text
 				.setValue(plugin.settings.inlineSeparator)
 				.onChange(async (value) => {
-					plugin.settings.inlineSeparator = value;
+					plugin.settings.inlineSeparator = value.trim();
 					await plugin.saveSettings();
 				})
 		);
@@ -63,7 +75,7 @@ const displaySavingSettings = (containerEl: HTMLElement, plugin: QuizGenerator):
 			text
 				.setValue(plugin.settings.multilineSeparator)
 				.onChange(async (value) => {
-					plugin.settings.multilineSeparator = value;
+					plugin.settings.multilineSeparator = value.trim();
 					await plugin.saveSettings();
 				})
 		);

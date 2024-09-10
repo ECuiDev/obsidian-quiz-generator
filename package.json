@@ -29,12 +29,12 @@
 		"typescript": "5.5.4"
 	},
 	"dependencies": {
-		"@anthropic-ai/sdk": "^0.27.2",
+		"@anthropic-ai/sdk": "^0.27.3",
 		"@google/generative-ai": "^0.17.1",
 		"@mistralai/mistralai": "^1.0.4",
 		"cohere-ai": "^7.13.0",
-		"ollama": "^0.5.8",
-		"openai": "^4.58.1",
+		"ollama": "^0.5.9",
+		"openai": "^4.58.2",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	}

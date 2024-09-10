@@ -20,7 +20,7 @@ export default class FolderViewerModal extends Modal {
 		this.notesContainer = this.contentEl.createDiv("item-container-qg");
 	}
 
-	public async onOpen(): Promise<void> {
+	public onOpen(): void {
 		super.onOpen();
 		this.modalEl.addClass("modal-qg");
 		this.contentEl.addClass("modal-content-qg");
@@ -31,19 +31,12 @@ export default class FolderViewerModal extends Modal {
 		this.modalEl.addClass("move-right-qg");
 		this.selectorModal.addClass("move-left-qg");
 
-		const promises: Promise<void>[] = [];
-		Vault.recurseChildren(this.folder, (file: TAbstractFile): void => {
+		Vault.recurseChildren(this.folder, async (file: TAbstractFile): Promise<void> => {
 			if (file instanceof TFile && file.extension === "md" &&
 				(this.settings.includeSubfolderNotes || file.parent?.path === this.folder.path)) {
-				promises.push(
-					(async (): Promise<void> => {
-						await this.renderNote(file);
-					})()
-				);
+				await this.renderNote(file);
 			}
 		});
-
-		await Promise.all(promises);
 	}
 
 	public onClose(): void {

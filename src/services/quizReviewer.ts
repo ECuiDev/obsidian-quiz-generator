@@ -32,7 +32,7 @@ export default class QuizReviewer {
 		this.spacedRepetitionParser(fileContents);
 
 		if (this.quiz.length > 0) {
-			await new QuizModalLogic(this.app, this.settings, this.quiz, Array(this.quiz.length).fill(true)).renderQuiz();
+			await new QuizModalLogic(this.app, this.settings, this.quiz, []).renderQuiz();
 		} else {
 			new Notice("No questions in this note");
 		}

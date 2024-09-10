@@ -1,4 +1,4 @@
-import { App, normalizePath, TFile, TFolder } from "obsidian";
+import { App, TFile } from "obsidian";
 import { createRoot, Root } from "react-dom/client";
 import { QuizSettings } from "../settings/config";
 import { Question } from "../utils/types";
@@ -9,20 +9,19 @@ import { shuffleArray } from "../utils/helpers";
 export default class QuizModalLogic {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
-	private quiz: Question[];
-	private readonly savedQuestions: boolean[];
-	private readonly fileName: string;
-	private validSavePath: boolean = false;
+	private readonly quiz: Question[];
+	private readonly quizSources: TFile[];
+	private readonly quizSaver: QuizSaver;
 	private container: HTMLDivElement | undefined;
 	private root: Root | undefined;
 	private readonly handleEscapePressed: (event: KeyboardEvent) => void;
 
-	constructor(app: App, settings: QuizSettings, quiz: Question[], savedQuestions: boolean[]) {
+	constructor(app: App, settings: QuizSettings, quiz: Question[], quizSources: TFile[]) {
 		this.app = app;
 		this.settings = settings;
 		this.quiz = quiz;
-		this.savedQuestions = savedQuestions;
-		this.fileName = this.getFileName();
+		this.quizSources = quizSources;
+		this.quizSaver = new QuizSaver(this.app, this.settings, this.quizSources);
 		this.handleEscapePressed = (event: KeyboardEvent): void => {
 			if (event.key === "Escape" && !(event.target instanceof HTMLInputElement)) {
 				this.removeQuiz();
@@ -31,25 +30,21 @@ export default class QuizModalLogic {
 	}
 
 	public async renderQuiz(): Promise<void> {
-		if (this.settings.randomizeQuestions) {
-			this.quiz = shuffleArray(this.quiz);
+		const quiz = this.settings.randomizeQuestions ? shuffleArray(this.quiz) : this.quiz;
+
+		if (this.settings.autoSave && this.quizSources.length > 0) {
+			await this.quizSaver.saveAllQuestions(quiz); // move into QuizModal or QuizModalWrapper?
 		}
-		if (this.settings.autoSave) {
-			const unsavedQuestions = this.quiz.filter((_, index) => !this.savedQuestions[index]);
-			await new QuizSaver(this.app, this.settings, unsavedQuestions, this.fileName,
-				this.validSavePath, this.savedQuestions.includes(true)).saveAllQuestions();
-			this.savedQuestions.fill(true);
-		}
+
 		this.container = document.body.createDiv();
 		this.root = createRoot(this.container);
 		this.root.render(QuizModalWrapper({
 			app: this.app,
 			settings: this.settings,
-			quiz: this.quiz,
-			initialSavedQuestions: this.savedQuestions,
-			fileName: this.fileName,
-			validSavePath: this.validSavePath,
-			handleClose: () => this.removeQuiz()
+			quiz: quiz,
+			quizSaver: this.quizSaver,
+			reviewing: this.quizSources.length === 0,
+			handleClose: () => this.removeQuiz(),
 		}));
 		document.body.addEventListener("keydown", this.handleEscapePressed);
 	}
@@ -58,31 +53,5 @@ export default class QuizModalLogic {
 		this.root?.unmount();
 		this.container?.remove();
 		document.body.removeEventListener("keydown", this.handleEscapePressed);
-	}
-
-	private getFileNames(folder: TFolder): string[] {
-		return folder.children
-			.filter(file => file instanceof TFile)
-			.map(file => file.name.toLowerCase())
-			.filter(name => name.startsWith("quiz"));
-	}
-
-	private getFileName(): string {
-		let count = 1;
-		let fileNames: string[];
-		const saveFolder = this.app.vault.getAbstractFileByPath(normalizePath(this.settings.savePath.trim()));
-
-		if (saveFolder instanceof TFolder) {
-			fileNames = this.getFileNames(saveFolder);
-			this.validSavePath = true;
-		} else {
-			fileNames = this.getFileNames(this.app.vault.getRoot());
-		}
-
-		while (fileNames.includes(`quiz ${count}.md`)) {
-			count++;
-		}
-
-		return `Quiz ${count}.md`;
 	}
 }

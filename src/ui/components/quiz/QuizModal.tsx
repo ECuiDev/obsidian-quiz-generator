@@ -23,15 +23,14 @@ interface QuizModalProps {
 	app: App;
 	settings: QuizSettings;
 	quiz: Question[];
-	initialSavedQuestions: boolean[];
-	fileName: string;
-	validSavePath: boolean;
+	quizSaver: QuizSaver;
+	reviewing: boolean;
 	handleClose: () => void;
 }
 
-const QuizModal = ({ app, settings, quiz, initialSavedQuestions, fileName, validSavePath, handleClose }: QuizModalProps) => {
+const QuizModal = ({ app, settings, quiz, quizSaver, reviewing, handleClose }: QuizModalProps) => {
 	const [questionIndex, setQuestionIndex] = useState<number>(0);
-	const [savedQuestions, setSavedQuestions] = useState<boolean[]>(initialSavedQuestions);
+	const [savedQuestions, setSavedQuestions] = useState<boolean[]>(Array(quiz.length).fill(reviewing));
 
 	const handlePreviousQuestion = () => {
 		if (questionIndex > 0) {
@@ -43,14 +42,14 @@ const QuizModal = ({ app, settings, quiz, initialSavedQuestions, fileName, valid
 		const updatedSavedQuestions = [...savedQuestions];
 		updatedSavedQuestions[questionIndex] = true;
 		setSavedQuestions(updatedSavedQuestions);
-		await new QuizSaver(app, settings, quiz, fileName, validSavePath, savedQuestions.includes(true)).saveQuestion(questionIndex);
+		await quizSaver.saveQuestion(quiz[questionIndex]);
 	};
 
 	const handleSaveAllQuestions = async () => {
 		const unsavedQuestions = quiz.filter((_, index) => !savedQuestions[index]);
 		const updatedSavedQuestions = savedQuestions.map(() => true);
 		setSavedQuestions(updatedSavedQuestions);
-		await new QuizSaver(app, settings, unsavedQuestions, fileName, validSavePath, savedQuestions.includes(true)).saveAllQuestions();
+		await quizSaver.saveAllQuestions(unsavedQuestions);
 	};
 
 	const handleNextQuestion = () => {

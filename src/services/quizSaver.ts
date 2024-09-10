@@ -1,4 +1,4 @@
-import { App, normalizePath, Notice, TFile } from "obsidian";
+import { App, normalizePath, Notice, TFile, TFolder } from "obsidian";
 import { QuizSettings } from "../settings/config";
 import { Question } from "../utils/types";
 import {
@@ -15,28 +15,25 @@ import { SaveFormat } from "../settings/saving/savingConfig";
 export default class QuizSaver {
 	private readonly app: App;
 	private readonly settings: QuizSettings;
-	private readonly quiz: Question[];
-	private readonly fileName: string;
+	private readonly quizSources: TFile[];
+	private readonly saveFilePath: string;
 	private readonly validSavePath: boolean;
-	private readonly fileCreated: boolean;
 
-	constructor(app: App, settings: QuizSettings, quiz: Question[],
-				fileName: string, validSavePath: boolean, fileCreated: boolean) {
+	constructor(app: App, settings: QuizSettings, quizSources: TFile[]) {
 		this.app = app;
 		this.settings = settings;
-		this.quiz = quiz;
-		this.fileName = validSavePath ? normalizePath(this.settings.savePath.trim() + "/" + fileName) : fileName;
-		this.validSavePath = validSavePath;
-		this.fileCreated = fileCreated;
+		this.quizSources = quizSources;
+		this.saveFilePath = this.getSaveFilePath();
+		this.validSavePath = this.app.vault.getAbstractFileByPath(this.settings.savePath) instanceof TFolder;
 	}
 
-	public async saveQuestion(questionIndex: number): Promise<void> {
+	public async saveQuestion(question: Question): Promise<void> {
 		const saveFile = await this.getSaveFile();
 
 		if (this.settings.saveFormat === SaveFormat.SPACED_REPETITION) {
-			await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(this.quiz[questionIndex]));
+			await this.app.vault.append(saveFile, this.createSpacedRepetitionQuestion(question));
 		} else {
-			await this.app.vault.append(saveFile, this.createCalloutQuestion(this.quiz[questionIndex]));
+			await this.app.vault.append(saveFile, this.createCalloutQuestion(question));
 		}
 
 		if (this.validSavePath) {
@@ -46,11 +43,11 @@ export default class QuizSaver {
 		}
 	}
 
-	public async saveAllQuestions(): Promise<void> {
-		if (this.quiz.length === 0) return;
+	public async saveAllQuestions(questions: Question[]): Promise<void> {
+		if (questions.length === 0) return;
 
 		const quiz: string[] = [];
-		for (const question of this.quiz) {
+		for (const question of questions) {
 			if (this.settings.saveFormat === SaveFormat.SPACED_REPETITION) {
 				quiz.push(this.createSpacedRepetitionQuestion(question));
 			} else {
@@ -67,16 +64,37 @@ export default class QuizSaver {
 		}
 	}
 
+	private getFileNames(folder: TFolder): string[] {
+		return folder.children
+			.filter(file => file instanceof TFile)
+			.map(file => file.name.toLowerCase())
+			.filter(name => name.startsWith("quiz"));
+	}
+
+	private getSaveFilePath(): string {
+		let count = 1;
+		const saveFolder = this.app.vault.getAbstractFileByPath(this.settings.savePath);
+		const validSavePath = saveFolder instanceof TFolder;
+		const fileNames = validSavePath ? this.getFileNames(saveFolder) : this.getFileNames(this.app.vault.getRoot());
+
+		while (fileNames.includes(`quiz ${count}.md`)) {
+			count++;
+		}
+
+		return validSavePath ? normalizePath(`${this.settings.savePath}/Quiz ${count}.md`) : `Quiz ${count}.md`;
+	}
+
 	private async getSaveFile(): Promise<TFile> {
-		const initialContent = this.settings.saveFormat === SaveFormat.SPACED_REPETITION ? "---\ntags:\n  - flashcards\n---\n" : "";
-		if (!this.fileCreated) {
-			return await this.app.vault.create(this.fileName, initialContent);
-		}
-		const file = this.app.vault.getAbstractFileByPath(this.fileName);
-		if (file instanceof TFile) {
-			return file;
-		}
-		return await this.app.vault.create(this.fileName, initialContent);
+		const sourcesProperty = this.settings.quizSourcesProperty
+			? `${this.settings.quizSourcesProperty}:\n  ${this.quizSources.map(source => `- "${this.app.fileManager.generateMarkdownLink(source, this.saveFilePath)}"`).join("\n")}\n`
+			: "";
+		const initialContent = this.settings.saveFormat === SaveFormat.SPACED_REPETITION
+			? `---\ntags:\n  - flashcards\n${sourcesProperty}---\n`
+			: sourcesProperty
+				? `---\n${sourcesProperty}---\n`
+				: "";
+		const saveFile = this.app.vault.getAbstractFileByPath(this.saveFilePath);
+		return saveFile instanceof TFile ? saveFile : await this.app.vault.create(this.saveFilePath, initialContent);
 	}
 
 	private createCalloutQuestion(question: Question): string {

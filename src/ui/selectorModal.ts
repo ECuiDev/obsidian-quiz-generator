@@ -30,7 +30,8 @@ export default class SelectorModal extends Modal {
 	private readonly settings: QuizSettings;
 	private notePaths: string[];
 	private folderPaths: string[];
-	private selectedNotes: Map<string, string> = new Map<string, string>();
+	private readonly selectedNotes: Map<string, string> = new Map<string, string>();
+	private readonly selectedNoteFiles: Map<string, TFile[]> = new Map<string, TFile[]>();
 	private readonly itemContainer: HTMLDivElement;
 	private readonly tokenContainer: HTMLSpanElement;
 	private promptTokens: number = 0;
@@ -46,9 +47,7 @@ export default class SelectorModal extends Modal {
 		super(app);
 		this.settings = settings;
 		this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
-		this.folderPaths = this.app.vault.getAllLoadedFiles()
-			.filter(abstractFile => abstractFile instanceof TFolder)
-			.map(folder => folder.path);
+		this.folderPaths = this.app.vault.getAllFolders(true).map(folder => folder.path);
 		this.scope = new Scope(this.app.scope);
 		this.scope.register([], "Escape", () => this.close());
 
@@ -89,12 +88,11 @@ export default class SelectorModal extends Modal {
 		const clearHandler = (): void => {
 			this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.GENERATE], true);
 			this.selectedNotes.clear();
+			this.selectedNoteFiles.clear();
 			this.itemContainer.empty();
 			this.updatePromptTokens(0);
 			this.notePaths = this.app.vault.getMarkdownFiles().map(file => file.path);
-			this.folderPaths = this.app.vault.getAllLoadedFiles()
-				.filter(abstractFile => abstractFile instanceof TFolder)
-				.map(folder => folder.path);
+			this.folderPaths = this.app.vault.getAllFolders(true).map(folder => folder.path);
 		};
 		const openQuizHandler = async (): Promise<void> => await this.quiz?.renderQuiz();
 		const addNoteHandler = (): void => this.openNoteSelector();
@@ -140,7 +138,7 @@ export default class SelectorModal extends Modal {
 					}
 				});
 
-				this.quiz = new QuizModalLogic(this.app, this.settings, questions, Array(questions.length).fill(false));
+				this.quiz = new QuizModalLogic(this.app, this.settings, questions, [...this.selectedNoteFiles.values()].flat());
 				await this.quiz.renderQuiz();
 				this.toggleButtons([SelectorModalButton.QUIZ], false);
 			} catch (error) {
@@ -163,10 +161,11 @@ export default class SelectorModal extends Modal {
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
 			if (selectedNote instanceof TFile) {
-				this.notePaths.remove(selectedNote.path);
+				this.notePaths = this.notePaths.filter(notePath => notePath !== selectedNote.path);
 				this.openNoteSelector();
 				const noteContents = await this.app.vault.cachedRead(selectedNote);
 				this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
+				this.selectedNoteFiles.set(selectedNote.path, [selectedNote]);
 				this.renderNote(selectedNote);
 			}
 		});
@@ -180,10 +179,11 @@ export default class SelectorModal extends Modal {
 		modal.setCallback(async (selectedItem: string): Promise<void> => {
 			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
 			if (selectedFolder instanceof TFolder) {
-				this.folderPaths.remove(selectedFolder.path);
+				this.folderPaths = this.folderPaths.filter(folderPath => folderPath !== selectedFolder.path);
 				this.openFolderSelector();
 
 				const folderContents: string[] = [];
+				const notes: TFile[] = [];
 				const promises: Promise<void>[] = [];
 				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
 					if (file instanceof TFile && file.extension === "md" &&
@@ -192,6 +192,7 @@ export default class SelectorModal extends Modal {
 							(async (): Promise<void> => {
 								const noteContents = await this.app.vault.cachedRead(file);
 								folderContents.push(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
+								notes.push(file);
 							})()
 						);
 					}
@@ -199,6 +200,7 @@ export default class SelectorModal extends Modal {
 
 				await Promise.all(promises);
 				this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
+				this.selectedNoteFiles.set(selectedFolder.path, notes);
 				this.renderFolder(selectedFolder);
 			}
 		});
@@ -257,6 +259,7 @@ export default class SelectorModal extends Modal {
 
 	private removeNoteOrFolder(item: TFile | TFolder, element: HTMLDivElement): void {
 		this.selectedNotes.delete(item.path);
+		this.selectedNoteFiles.delete(item.path);
 		this.itemContainer.removeChild(element);
 		item instanceof TFile ? this.notePaths.push(item.path) : this.folderPaths.push(item.path);
 	}
