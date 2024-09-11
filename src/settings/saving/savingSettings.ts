@@ -45,13 +45,13 @@ const displaySavingSettings = (containerEl: HTMLElement, plugin: QuizGenerator):
 		);
 
 	new Setting(containerEl)
-		.setName("Quiz sources property")
-		.setDesc("Property name for links to notes used in generation (leave empty to disable).")
+		.setName("Quiz material property")
+		.setDesc("Property name for links to notes used in quiz generation. Leave empty to disable.")
 		.addText(text =>
 			text
-				.setValue(plugin.settings.quizSourcesProperty)
+				.setValue(plugin.settings.quizMaterialProperty)
 				.onChange(async (value) => {
-					plugin.settings.quizSourcesProperty = value.trim();
+					plugin.settings.quizMaterialProperty = value.trim();
 					await plugin.saveSettings();
 				})
 		);

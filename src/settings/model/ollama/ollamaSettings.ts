@@ -33,7 +33,7 @@ const displayOllamaSettings = (containerEl: HTMLElement, plugin: QuizGenerator, 
 		.addButton(button =>
 			button
 				.setClass("clickable-icon")
-				.setIcon("refresh-ccw")
+				.setIcon("refresh-cw")
 				.setTooltip("Refresh models")
 				.onClick(() => refreshSettings())
 		)
@@ -59,7 +59,7 @@ const displayOllamaSettings = (containerEl: HTMLElement, plugin: QuizGenerator, 
 		.addButton(button =>
 			button
 				.setClass("clickable-icon")
-				.setIcon("refresh-ccw")
+				.setIcon("refresh-cw")
 				.setTooltip("Refresh models")
 				.onClick(() => refreshSettings())
 		)

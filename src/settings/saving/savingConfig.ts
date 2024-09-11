@@ -12,7 +12,7 @@ export interface SavingConfig {
 	autoSave: boolean;
 	savePath: string;
 	saveFormat: string;
-	quizSourcesProperty: string;
+	quizMaterialProperty: string;
 	inlineSeparator: string;
 	multilineSeparator: string;
 }
@@ -21,7 +21,7 @@ export const DEFAULT_SAVING_SETTINGS: SavingConfig = {
 	autoSave: false,
 	savePath: "/",
 	saveFormat: SaveFormat.CALLOUT,
-	quizSourcesProperty: "sources",
+	quizMaterialProperty: "sources",
 	inlineSeparator: "::",
 	multilineSeparator: "?",
 };
