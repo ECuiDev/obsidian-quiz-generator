@@ -2,27 +2,32 @@
 
 [![Downloads](https://img.shields.io/github/downloads/ECuiDev/obsidian-quiz-generator/total?style=for-the-badge&labelColor=21262d&color=238636)](https://github.com/ECuiDev/obsidian-quiz-generator/releases) [![Release](https://img.shields.io/github/v/release/ECuiDev/obsidian-quiz-generator?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/ECuiDev/obsidian-quiz-generator/releases/latest)
 
-**Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of OpenAI's GPT-3.5 and GPT-4 models to automatically generate interactive, exam-style questions (with answers) based on your notes. Whether you're a student looking to quiz yourself or an educator creating assessments, this plugin streamlines the question creation process.
+**Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of various AI models to generate interactive, exam-style questions from your notes. Whether you're a student preparing for exams or an educator designing assessments, this plugin streamlines the question creation process.
 
 https://github.com/user-attachments/assets/0f7227ef-9baa-4574-ab43-3560f32fde48
 
 ## Features
 
-- **Personalized Questions:** Select any combination of notes and folders to use as the quiz content. Preview the selected notes and folders to see their content before generating your questions.
-- **Customizable Generation:** Choose the type(s) and number of questions to generate.
-- **Multiple Question Types:** True or false, multiple choice, select all that apply, fill in the blank, matching, short answer, and long answer are all supported. Mix and match them to best suit your needs for an effective assessment.
-- **Interactive UI:** Answer generated questions in an interactive UI that provides real-time feedback on correctness.
-- **Question Saving:** Save generated questions in either of the following formats.
-  - Inline and multiline flashcards to review with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
-  - Markdown callouts for seamless integration with your notes.
-- **Reviewable Quizzes:** Review saved questions using the interactive UI (you can also create your own questions from scratch and open them in the UI without ever using the generator).
-- **Multiple Languages:** Generate questions in 21 different languages.
-- **Math Support:** Generate questions from notes that contain LaTeX.
-- **Model Options:** Choose between OpenAI's latest models, depending on your needs.
-  - `GPT-3.5 Turbo` (16k token context window): Ideal for fast response times and efficient question generation. Perfect for handling moderate-sized notes and everyday educational tasks.
-  - `GPT-4 Turbo` (128,000 token context window): Suited for generating questions from extensive notes and complex materials. Offers in-depth question generation, making it great for detailed assessments and advanced study.
-  - `GPT-4o Mini` (128,000 token context window): The optimal choice for balancing speed and performance. Versatile for a wide range of educational tasks, providing solid depth without compromising efficiency.
-  - `GPT-4o` (128,000 token context window): Delivers the most comprehensive and detailed question generation. Excellent for handling intricate content and creating nuanced questions for thorough study and advanced assessments.
+- **Personalized Quizzes:** Choose any combination of notes and folders to use as the quiz content.
+- **Flexible Generation:** Select the types and number of questions to generate according to your needs.
+- **Multiple Question Types:** Supports true or false, multiple choice, select all that apply, fill in the blank, matching, short answer, and long answer. Mix and match for a tailored assessment experience.
+- **Custom Quiz UI:** Answer questions in an interactive UI that provides real-time feedback on your responses.
+- **Question Saving:** Save questions in various formats.
+  - Inline and multiline flashcards compatible with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
+  - Markdown callouts for easy integration into your notes.
+- **Review and Create:** Review saved questions using the quiz UI or create your own questions from scratch without ever using the generator.
+- **Multi-Language Support:** Generate questions in 21 different languages.
+- **Math Support:** Generate questions from notes containing LaTeX.
+
+## Supported Providers
+
+- [OpenAI](https://openai.com/): Advanced models for high-quality question generation.
+- [Google](https://ai.google.dev/): Free to use with the largest context window for handling extensive notes.
+- [Anthropic](https://www.anthropic.com/): Optimized for thoughtful and contextually aware outputs.
+- [Perplexity](https://www.perplexity.ai/): Fine-tuned LLaMA models for robust question generation.
+- [Mistral](https://mistral.ai/): Lightweight models for fast and efficient processing.
+- [Cohere](https://cohere.com/): Free to use with strengths in generating coherent questions.
+- [Ollama](https://ollama.com/): Local LLMs for enhanced privacy and offline processing.
 
 ## Usage
 
@@ -37,8 +42,8 @@ This plugin is now available in the **Community plugins** page in Obsidian. You 
    - Search for `Quiz Generator`.
    - Select the plugin to open its page and then select **Install**.
    - Select **Enable** on the plugin page or go back to the **Community plugins** page and toggle the switch.
-2. Open the plugin settings and enter your API key.
-   - If you don't have an API key, create an account at [OpenAI](https://platform.openai.com/) and retrieve your API key from [API keys](https://platform.openai.com/api-keys).
+2. Open the plugin settings and enter your API key for the selected provider.
+   - If you don't have an API key, create an account at the relevant provider's site and retrieve your API key.
 3. Configure the other settings as desired.
 
 #### Manual Installation
@@ -47,8 +52,8 @@ This plugin is now available in the **Community plugins** page in Obsidian. You 
 2. Go to your Obsidian vault's `plugins` folder and create a new folder named `quiz-generator`.
 3. Move the files you downloaded in step 1 to this folder.
 4. Enable the plugin in the **Community plugins** page in Obsidian.
-5. Open the plugin settings and enter your API key.
-   - If you don't have an API key, create an account at [OpenAI](https://platform.openai.com/) and retrieve your API key from [API keys](https://platform.openai.com/api-keys).
+5. Open the plugin settings and enter your API key for the selected provider.
+   - If you don't have an API key, create an account at the relevant provider's site and retrieve your API key.
 6. Configure the other settings as desired.
 
 ### Generation
@@ -66,7 +71,6 @@ This plugin is now available in the **Community plugins** page in Obsidian. You 
 - Saved questions will be in a Markdown file named "Quiz [number]" in the folder specified by the "Save location" setting.
 - Select the [save](https://lucide.dev/icons/save) icon to save the current question.
 - Select the [save-all](https://lucide.dev/icons/save-all) icon to save all questions.
-- If the "Automatically save questions" setting is enabled, all questions will be immediately saved upon generation.
 
 ### Reviewing Saved Quizzes
 
@@ -80,7 +84,7 @@ This plugin is now available in the **Community plugins** page in Obsidian. You 
 
 If you want to write your own questions from scratch or modify any saved questions, they must follow the format below to be opened in the quiz UI. However, deviations in spacing and capitalization are okay (the parser is case-insensitive and ignores whitespace).
 
-Text enclosed by curly braces is required but can be anything. Text enclosed by angle brackets is optional and can be anything. Any other text (not enclosed by either) should be written as shown. You are allowed to make any of the callouts foldable by adding a plus or minus. For spaced repetition, you are allowed to bold or italicize the question type identifier using any combination of asterisks and underscores.
+Text enclosed by {curly braces} is required but can be anything. Text enclosed by &lt;angle brackets&gt; is optional and can be anything. Any other text (not enclosed by either) should be written as shown. You are allowed to make any of the callouts foldable by adding a plus (+) or minus (-). For spaced repetition, you are allowed to bold or italicize the question type identifier using any combination of asterisks and underscores.
 
 #### True or False Format
 
@@ -348,13 +352,10 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 
 ### Next Release
 
-- **Generation Details:** Save links to notes used for quiz generation.
-- **Dynamic Analysis:** Get real-time feedback on your response to short and long answer questions.
-- **More Models:** Support for Google Gemini, Anthropic Claude, OpenRouter, PerplexityAI, Cohere, and Ollama.
+- **Faster Question Creation:** Custom UI to streamline creating your own questions from scratch.
 
 ### Future Releases
 
-- **Better Question Creation:** Custom UI to streamline creating your own questions from scratch.
 - **Callout Aliases:** Specify what callout type identifiers you want to use.
 - **Randomize Choices:** Randomize order in which choices for multiple choice and select all that apply questions are displayed.
 - **New Question Type:** Categorization questions.
@@ -368,9 +369,9 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 - **Tag Adder:** Add notes by tag.
 - **Dataview Adder:** Add notes using [Dataview](https://github.com/blacksmithgu/obsidian-dataview) queries.
 - **Responsive UI:** Freely resize and move the UI.
-- **Advanced Question Types:** Numerical response and image-based.
+- **Advanced Question Type:** Image-based.
 - **Note Links:** Adding a note also adds the notes it links to.
-- **Extended Files:** Generate questions from PDF and image files.
+- **Extended Files:** Generate questions from PDFs and images.
 - **Question Variety:** Customization options to control the question scope and what it assesses.
 - **Quality of Life:** Reducing token usage while improving question quality.
 
