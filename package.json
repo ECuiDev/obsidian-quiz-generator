@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-quiz-generator",
-	"version": "2.0.1",
+	"version": "2.1.0",
 	"description": "Generate interactive quizzes from your notes using OpenAI's GPT-3.5 and GPT-4 models.",
 	"main": "main.js",
 	"scripts": {
@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.27.3",
-		"@google/generative-ai": "^0.17.1",
+		"@google/generative-ai": "^0.17.2",
 		"@mistralai/mistralai": "^1.0.4",
 		"cohere-ai": "^7.13.0",
 		"ollama": "^0.5.9",
