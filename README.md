@@ -4,7 +4,9 @@
 
 **Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of various AI models to generate interactive, exam-style questions from your notes. Whether you're a student preparing for exams or an educator designing assessments, this plugin streamlines the question creation process.
 
-https://github.com/user-attachments/assets/0f7227ef-9baa-4574-ab43-3560f32fde48
+## Demo
+
+https://github.com/user-attachments/assets/22770da4-af69-412c-ae05-1aae0fff4a10
 
 ## Features
 
