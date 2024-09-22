@@ -1,6 +1,6 @@
 import { App, Component, MarkdownRenderer } from "obsidian";
 import { useEffect, useRef, useState } from "react";
-import { MultipleChoice } from "../../../utils/types";
+import { MultipleChoice } from "../../utils/types";
 
 interface MultipleChoiceQuestionProps {
 	app: App;

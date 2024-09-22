@@ -1,8 +1,8 @@
 import { App } from "obsidian";
-import { QuizSettings } from "../../../settings/config";
-import { Question } from "../../../utils/types";
+import { QuizSettings } from "../../settings/config";
+import { Question } from "../../utils/types";
 import QuizModal from "./QuizModal";
-import QuizSaver from "../../../services/quizSaver";
+import QuizSaver from "../../services/quizSaver";
 
 interface QuizModalWrapperProps {
 	app: App;

@@ -1,6 +1,6 @@
 import { App, getFrontMatterInfo, Modal, Notice, Scope, TAbstractFile, TFile, TFolder, Vault } from "obsidian";
-import { QuizSettings } from "../settings/config";
-import { Question, Quiz } from "../utils/types";
+import { QuizSettings } from "../../settings/config";
+import { Question, Quiz } from "../../utils/types";
 import {
 	isFillInTheBlank,
 	isMatching,
@@ -8,15 +8,15 @@ import {
 	isSelectAllThatApply,
 	isShortOrLongAnswer,
 	isTrueFalse
-} from "../utils/typeGuards";
+} from "../../utils/typeGuards";
 import NoteAndFolderSelector from "./noteAndFolderSelector";
 import NoteViewerModal from "./noteViewerModal";
 import FolderViewerModal from "./folderViewerModal";
-import GeneratorFactory from "../generators/generatorFactory";
-import QuizModalLogic from "./quizModalLogic";
-import { cleanUpNoteContents } from "../utils/markdownCleaner";
-import { countNoteTokens, setIconAndTooltip } from "../utils/helpers";
-import { Provider } from "../generators/providers";
+import GeneratorFactory from "../../generators/generatorFactory";
+import QuizModalLogic from "../quiz/quizModalLogic";
+import { cleanUpNoteContents } from "../../utils/markdownCleaner";
+import { countNoteTokens, setIconAndTooltip } from "../../utils/helpers";
+import { Provider } from "../../generators/providers";
 
 const enum SelectorModalButton {
 	CLEAR,

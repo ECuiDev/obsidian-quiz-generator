@@ -1,6 +1,6 @@
 import { App, Component, MarkdownRenderer } from "obsidian";
 import { useEffect, useRef, useState } from "react";
-import { TrueFalse } from "../../../utils/types";
+import { TrueFalse } from "../../utils/types";
 
 interface TrueFalseQuestionProps {
 	app: App;

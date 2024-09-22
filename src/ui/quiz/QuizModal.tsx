@@ -1,7 +1,7 @@
 import { App } from "obsidian";
 import { useState } from "react";
-import { QuizSettings } from "../../../settings/config";
-import { Question } from "../../../utils/types";
+import { QuizSettings } from "../../settings/config";
+import { Question } from "../../utils/types";
 import {
 	isFillInTheBlank,
 	isMatching,
@@ -9,15 +9,15 @@ import {
 	isSelectAllThatApply,
 	isShortOrLongAnswer,
 	isTrueFalse
-} from "../../../utils/typeGuards";
-import ModalButton from "../ModalButton";
+} from "../../utils/typeGuards";
+import ModalButton from "../components/ModalButton";
 import TrueFalseQuestion from "./TrueFalseQuestion";
 import MultipleChoiceQuestion from "./MultipleChoiceQuestion";
 import SelectAllThatApplyQuestion from "./SelectAllThatApplyQuestion";
 import FillInTheBlankQuestion from "./FillInTheBlankQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import ShortOrLongAnswerQuestion from "./ShortOrLongAnswerQuestion";
-import QuizSaver from "../../../services/quizSaver";
+import QuizSaver from "../../services/quizSaver";
 
 interface QuizModalProps {
 	app: App;

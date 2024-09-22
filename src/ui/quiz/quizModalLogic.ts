@@ -1,10 +1,10 @@
 import { App, TFile } from "obsidian";
 import { createRoot, Root } from "react-dom/client";
-import { QuizSettings } from "../settings/config";
-import { Question } from "../utils/types";
-import QuizSaver from "../services/quizSaver";
-import QuizModalWrapper from "./components/quiz/QuizModalWrapper";
-import { shuffleArray } from "../utils/helpers";
+import { QuizSettings } from "../../settings/config";
+import { Question } from "../../utils/types";
+import QuizSaver from "../../services/quizSaver";
+import QuizModalWrapper from "./QuizModalWrapper";
+import { shuffleArray } from "../../utils/helpers";
 
 export default class QuizModalLogic {
 	private readonly app: App;

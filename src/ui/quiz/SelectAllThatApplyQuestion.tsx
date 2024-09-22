@@ -1,6 +1,6 @@
 import { App, Component, MarkdownRenderer } from "obsidian";
 import { useEffect, useRef, useState } from "react";
-import { SelectAllThatApply } from "../../../utils/types";
+import { SelectAllThatApply } from "../../utils/types";
 
 interface SelectAllThatApplyQuestionProps {
 	app: App;

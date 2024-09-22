@@ -1,6 +1,6 @@
 import { Menu, MenuItem, Plugin, TAbstractFile, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, QuizSettings } from "./settings/config";
-import SelectorModal from "./ui/selectorModal";
+import SelectorModal from "./ui/selector/selectorModal";
 import QuizSettingsTab from "./settings/settings";
 import QuizReviewer from "./services/quizReviewer";
 

@@ -1,7 +1,7 @@
 import { App, Component, MarkdownRenderer, Notice } from "obsidian";
 import { useEffect, useRef, useState } from "react";
-import { FillInTheBlank } from "../../../utils/types";
-import AnswerInput from "../AnswerInput";
+import { FillInTheBlank } from "../../utils/types";
+import AnswerInput from "../components/AnswerInput";
 
 interface FillInTheBlankQuestionProps {
 	app: App;

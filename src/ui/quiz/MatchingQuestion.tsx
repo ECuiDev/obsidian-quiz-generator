@@ -1,7 +1,7 @@
 import { App, Component, MarkdownRenderer } from "obsidian";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { Matching } from "../../../utils/types";
-import { shuffleArray } from "../../../utils/helpers";
+import { Matching } from "../../utils/types";
+import { shuffleArray } from "../../utils/helpers";
 
 interface MatchingQuestionProps {
 	app: App;

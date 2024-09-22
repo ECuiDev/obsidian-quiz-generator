@@ -1,9 +1,9 @@
 import { App, Component, MarkdownRenderer, Notice } from "obsidian";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ShortOrLongAnswer } from "../../../utils/types";
-import { QuizSettings } from "../../../settings/config";
-import GeneratorFactory from "../../../generators/generatorFactory";
-import AnswerInput from "../AnswerInput";
+import { ShortOrLongAnswer } from "../../utils/types";
+import { QuizSettings } from "../../settings/config";
+import GeneratorFactory from "../../generators/generatorFactory";
+import AnswerInput from "../components/AnswerInput";
 
 interface ShortOrLongAnswerQuestionProps {
 	app: App;

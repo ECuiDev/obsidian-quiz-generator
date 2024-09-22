@@ -9,7 +9,7 @@ import {
 	ShortOrLongAnswer,
 	TrueFalse
 } from "../utils/types";
-import QuizModalLogic from "../ui/quizModalLogic";
+import QuizModalLogic from "../ui/quiz/quizModalLogic";
 
 export default class QuizReviewer {
 	private readonly app: App;
