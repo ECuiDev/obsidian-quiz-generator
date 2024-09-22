@@ -40,7 +40,7 @@ const displayAnthropicSettings = (containerEl: HTMLElement, plugin: QuizGenerato
 		);
 
 	new Setting(containerEl)
-		.setName("Model")
+		.setName("Generation model")
 		.setDesc("Model used for quiz generation.")
 		.addDropdown(dropdown =>
 			dropdown

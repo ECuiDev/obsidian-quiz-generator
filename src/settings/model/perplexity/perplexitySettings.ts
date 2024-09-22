@@ -40,7 +40,7 @@ const displayPerplexitySettings = (containerEl: HTMLElement, plugin: QuizGenerat
 		);
 
 	new Setting(containerEl)
-		.setName("Model")
+		.setName("Generation model")
 		.setDesc("Model used for quiz generation.")
 		.addDropdown(dropdown =>
 			dropdown

@@ -13,7 +13,7 @@ const displayModelSettings = (containerEl: HTMLElement, plugin: QuizGenerator, r
 	new Setting(containerEl).setName("Model").setHeading();
 
 	new Setting(containerEl)
-		.setName("Model provider")
+		.setName("Provider")
 		.setDesc("Model provider to use.")
 		.addDropdown(dropdown =>
 			dropdown

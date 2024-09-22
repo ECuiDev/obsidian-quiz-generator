@@ -28,7 +28,7 @@ const displayOllamaSettings = (containerEl: HTMLElement, plugin: QuizGenerator, 
 		);
 
 	new Setting(containerEl)
-		.setName("Model")
+		.setName("Generation model")
 		.setDesc("Model used for quiz generation.")
 		.addButton(button =>
 			button
