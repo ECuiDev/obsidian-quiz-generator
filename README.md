@@ -18,7 +18,7 @@ https://github.com/user-attachments/assets/22770da4-af69-412c-ae05-1aae0fff4a10
   - Inline and multiline flashcards compatible with [obsidian-spaced-repetition](https://github.com/st3v3nmw/obsidian-spaced-repetition).
   - Markdown callouts for easy integration into your notes.
 - **Review and Create:** Review saved questions using the quiz UI or create your own questions from scratch without ever using the generator.
-- **Multi-Language Support:** Generate questions in 21 different languages.
+- **Multi-Language Support:** Generate questions in 22 different languages.
 - **Math Support:** Generate questions from notes containing LaTeX.
 
 ## Supported Providers
