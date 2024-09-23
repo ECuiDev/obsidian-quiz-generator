@@ -16,25 +16,25 @@
 	"author": "Edward Cui",
 	"license": "MIT",
 	"devDependencies": {
-		"@types/node": "^22.5.4",
-		"@types/react": "^18.3.5",
+		"@types/node": "^22.5.5",
+		"@types/react": "^18.3.8",
 		"@types/react-dom": "^18.3.0",
 		"@typescript-eslint/eslint-plugin": "7.16.1",
 		"@typescript-eslint/parser": "7.16.1",
 		"builtin-modules": "4.0.0",
-		"esbuild": "0.23.1",
+		"esbuild": "0.24.0",
 		"eslint-plugin-react-hooks": "^4.6.2",
-		"obsidian": "^1.6.6",
+		"obsidian": "^1.7.2",
 		"tslib": "2.7.0",
-		"typescript": "5.5.4"
+		"typescript": "5.6.2"
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.27.3",
-		"@google/generative-ai": "^0.17.2",
-		"@mistralai/mistralai": "^1.0.4",
-		"cohere-ai": "^7.13.0",
+		"@google/generative-ai": "^0.19.0",
+		"@mistralai/mistralai": "^1.1.0",
+		"cohere-ai": "^7.13.2",
 		"ollama": "^0.5.9",
-		"openai": "^4.58.2",
+		"openai": "^4.63.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
 	}
