@@ -54,10 +54,10 @@ const ShortOrLongAnswerQuestion = ({ app, question, settings }: ShortOrLongAnswe
 	};
 
 	return (
-		<div>
+		<div className="question-container-qg">
 			<div className="question-qg" ref={questionRef} />
 			{status === "submitted" && <button className="answer-qg" ref={answerRef} />}
-			<div className="input-container-qg">
+			<div className={status === "submitted" ? "input-container-qg" : "input-container-qg limit-height-qg"}>
 				<AnswerInput onSubmit={handleSubmit} clearInputOnSubmit={false} disabled={status !== "answering"} />
 				<div className="instruction-footnote-qg">
 					Press enter to submit your answer. Enter "skip" to reveal the answer.

@@ -150,7 +150,7 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 	};
 
 	return (
-		<div>
+		<div className="question-container-qg">
 			<div className="question-qg" ref={questionRef} />
 			<div className="matching-container-qg">
 				{question.answer.map((_, index) => (

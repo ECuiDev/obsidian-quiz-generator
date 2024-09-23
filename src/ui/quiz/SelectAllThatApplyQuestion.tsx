@@ -50,7 +50,7 @@ const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestio
 	};
 
 	return (
-		<div>
+		<div className="question-container-qg">
 			<div className="question-qg" ref={questionRef} />
 			<div className="select-all-that-apply-container-qg">
 				{question.options.map((_, index) => (

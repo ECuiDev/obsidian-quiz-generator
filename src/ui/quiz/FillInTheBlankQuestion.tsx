@@ -50,7 +50,7 @@ const FillInTheBlankQuestion = ({ app, question }: FillInTheBlankQuestionProps) 
 	};
 
 	return (
-		<div>
+		<div className="question-container-qg">
 			<div className="question-qg" ref={questionRef} />
 			<div className="input-container-qg">
 				<AnswerInput onSubmit={handleSubmit} disabled={filledBlanks.every(blank => blank.length > 0)} />

@@ -36,7 +36,7 @@ const MultipleChoiceQuestion = ({ app, question }: MultipleChoiceQuestionProps) 
 	};
 
 	return (
-		<div>
+		<div className="question-container-qg">
 			<div className="question-qg" ref={questionRef} />
 			<div className="multiple-choice-container-qg">
 				{question.options.map((_, index) => (

@@ -10,10 +10,16 @@
 	justify-content: center;
 }
 
-/* QuizModal, SelectorModal, FolderViewerModal */
+/* SelectorModal, FolderViewerModal */
 .modal-content-qg {
 	position: relative;
 	height: 90%;
+}
+
+/* QuizModal */
+.modal-content-flex-qg {
+	display: flex;
+	flex-direction: column;
 }
 
 /* SelectorModal, FolderViewerModal */
@@ -110,6 +116,14 @@
 
 /* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion,
 FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
+.question-container-qg {
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+}
+
+/* TrueFalseQuestion, MultipleChoiceQuestion, SelectAllThatApplyQuestion,
+FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 .question-qg {
 	text-align: center;
 	font-size: var(--font-text-size);
@@ -123,11 +137,16 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 	display: grid;
 	grid-template-columns: 1fr 1fr;
 	gap: 1em;
+}
+
+/* SelectAllThatApplyQuestion */
+.select-all-that-apply-container-qg {
 	padding-bottom: 1em;
 }
 
 /* MatchingQuestion */
 .matching-container-qg {
+	padding-bottom: 1em;
 	gap: 1.5em;
 }
 
@@ -196,7 +215,6 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 .submit-answer-qg {
 	width: 100%;
 	padding: 1.5em;
-	margin-bottom: 1em;
 	border: 0.125em solid;
 	background-color: transparent !important;
 	box-shadow: none !important;
@@ -218,14 +236,11 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 
 /* FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
 .input-container-qg {
-	position: absolute;
-	bottom: 0;
 	display: flex;
 	flex-direction: column;
+	flex-grow: 1;
 	justify-content: flex-end;
 	gap: 0.5em;
-	width: 100%;
-	height: 50%;
 }
 
 /* FillInTheBlankQuestion, ShortOrLongAnswerQuestion */
@@ -235,10 +250,16 @@ FillInTheBlankQuestion, MatchingQuestion, ShortOrLongAnswerQuestion */
 }
 
 /* ShortOrLongAnswerQuestion */
+.limit-height-qg {
+	height: 0;
+}
+
+/* ShortOrLongAnswerQuestion */
 .answer-qg {
 	width: 100%;
-	height: 100%;
+	height: auto;
 	border: 0.125em solid;
+	margin-bottom: 1em;
 	background-color: transparent !important;
 	box-shadow: none !important;
 	white-space: normal !important;
