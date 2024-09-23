@@ -20,6 +20,7 @@ export const languages: Record<string, string> = {
 	Swedish: "Svenska",
 	Persian: "فارسی",
 	Greek: "Ελληνικά",
+	Indonesian: "Bahasa Indonesia",
 };
 
 export interface GeneralConfig {
