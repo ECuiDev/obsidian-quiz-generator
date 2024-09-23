@@ -1,7 +1,7 @@
 {
 	"id": "quiz-generator",
 	"name": "Quiz Generator",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"minAppVersion": "0.15.0",
 	"description": "Generate interactive flashcards from your notes using models from OpenAI (ChatGPT), Google (Gemini), Ollama (local LLMs), and more. Or manually create your own to use with the quiz UI.",
 	"author": "Edward Cui",

@@ -1,7 +1,7 @@
 {
 	"name": "obsidian-quiz-generator",
-	"version": "2.1.0",
-	"description": "Generate interactive quizzes from your notes using OpenAI's GPT-3.5 and GPT-4 models.",
+	"version": "2.1.1",
+	"description": "Generate interactive flashcards from your notes using models from OpenAI (ChatGPT), Google (Gemini), Ollama (local LLMs), and more. Or manually create your own to use with the quiz UI.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
