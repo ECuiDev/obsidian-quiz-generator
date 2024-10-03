@@ -1,16 +1,15 @@
 import { App, FuzzySuggestModal } from "obsidian";
 
 export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
-	private callback: ((selectedItem: string, evt: MouseEvent | KeyboardEvent) => void) | undefined; // evt unnecessary?
 	private readonly paths: string[];
 	private readonly selectorModal: HTMLElement;
+	private readonly callback: (selectedItem: string) => void;
 
-	constructor(app: App, paths: string[], selectorModal: HTMLElement) {
+	constructor(app: App, paths: string[], selectorModal: HTMLElement, callback: (selectedItem: string) => void) {
 		super(app);
 		this.paths = paths;
 		this.selectorModal = selectorModal;
-
-		this.onChooseItem = this.onChooseItem.bind(this); // unnecessary?
+		this.callback = callback;
 	}
 
 	public onOpen(): void {
@@ -34,12 +33,6 @@ export default class NoteAndFolderSelector extends FuzzySuggestModal<string> {
 	}
 
 	public onChooseItem(item: string, evt: MouseEvent | KeyboardEvent): void {
-		if (this.callback) {
-			this.callback(item, evt);
-		}
-	}
-
-	public setCallback(callback: (selectedItem: string, evt: MouseEvent | KeyboardEvent) => void): void {
-		this.callback = callback;
+		this.callback(item);
 	}
 }

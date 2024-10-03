@@ -156,56 +156,54 @@ export default class SelectorModal extends Modal {
 	}
 
 	private openNoteSelector(): void {
-		const modal = new NoteAndFolderSelector(this.app, this.notePaths, this.modalEl);
-
-		modal.setCallback(async (selectedItem: string): Promise<void> => {
-			const selectedNote = this.app.vault.getAbstractFileByPath(selectedItem);
-			if (selectedNote instanceof TFile) {
-				this.notePaths = this.notePaths.filter(notePath => notePath !== selectedNote.path);
-				this.openNoteSelector();
-				const noteContents = await this.app.vault.cachedRead(selectedNote);
-				this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
-				this.selectedNoteFiles.set(selectedNote.path, [selectedNote]);
-				this.renderNote(selectedNote);
-			}
-		});
-
-		modal.open();
+		const selector = new NoteAndFolderSelector(this.app, this.notePaths, this.modalEl, this.addNote.bind(this));
+		selector.open();
 	}
 
 	private openFolderSelector(): void {
-		const modal = new NoteAndFolderSelector(this.app, this.folderPaths, this.modalEl);
+		const selector = new NoteAndFolderSelector(this.app, this.folderPaths, this.modalEl, this.addFolder.bind(this));
+		selector.open();
+	}
 
-		modal.setCallback(async (selectedItem: string): Promise<void> => {
-			const selectedFolder = this.app.vault.getAbstractFileByPath(selectedItem);
-			if (selectedFolder instanceof TFolder) {
-				this.folderPaths = this.folderPaths.filter(folderPath => folderPath !== selectedFolder.path);
-				this.openFolderSelector();
+	private async addNote(note: string): Promise<void> {
+		const selectedNote = this.app.vault.getAbstractFileByPath(note);
+		if (selectedNote instanceof TFile) {
+			this.notePaths = this.notePaths.filter(notePath => notePath !== selectedNote.path);
+			this.openNoteSelector();
+			const noteContents = await this.app.vault.cachedRead(selectedNote);
+			this.selectedNotes.set(selectedNote.path, cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
+			this.selectedNoteFiles.set(selectedNote.path, [selectedNote]);
+			this.renderNote(selectedNote);
+		}
+	}
 
-				const folderContents: string[] = [];
-				const notes: TFile[] = [];
-				const promises: Promise<void>[] = [];
-				Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
-					if (file instanceof TFile && file.extension === "md" &&
-						(this.settings.includeSubfolderNotes || file.parent?.path === selectedFolder.path)) {
-						promises.push(
-							(async (): Promise<void> => {
-								const noteContents = await this.app.vault.cachedRead(file);
-								folderContents.push(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
-								notes.push(file);
-							})()
-						);
-					}
-				});
+	private async addFolder(folder: string): Promise<void> {
+		const selectedFolder = this.app.vault.getAbstractFileByPath(folder);
+		if (selectedFolder instanceof TFolder) {
+			this.folderPaths = this.folderPaths.filter(folderPath => folderPath !== selectedFolder.path);
+			this.openFolderSelector();
 
-				await Promise.all(promises);
-				this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
-				this.selectedNoteFiles.set(selectedFolder.path, notes);
-				this.renderFolder(selectedFolder);
-			}
-		});
+			const folderContents: string[] = [];
+			const notes: TFile[] = [];
+			const promises: Promise<void>[] = [];
+			Vault.recurseChildren(selectedFolder, (file: TAbstractFile): void => {
+				if (file instanceof TFile && file.extension === "md" &&
+					(this.settings.includeSubfolderNotes || file.parent?.path === selectedFolder.path)) {
+					promises.push(
+						(async (): Promise<void> => {
+							const noteContents = await this.app.vault.cachedRead(file);
+							folderContents.push(cleanUpNoteContents(noteContents, getFrontMatterInfo(noteContents).exists));
+							notes.push(file);
+						})()
+					);
+				}
+			});
 
-		modal.open();
+			await Promise.all(promises);
+			this.selectedNotes.set(selectedFolder.path, folderContents.join(" "));
+			this.selectedNoteFiles.set(selectedFolder.path, notes);
+			this.renderFolder(selectedFolder);
+		}
 	}
 
 	private renderNote(note: TFile): void {
