@@ -15,9 +15,13 @@ const SelectAllThatApplyQuestion = ({ app, question }: SelectAllThatApplyQuestio
 
 	useEffect(() => {
 		const component = new Component();
-		if (questionRef.current) {
-			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
-		}
+
+		question.question.split("\\n").forEach(questionFragment => {
+			if (questionRef.current) {
+				MarkdownRenderer.render(app, questionFragment, questionRef.current, "", component);
+			}
+		});
+
 		buttonRefs.current = buttonRefs.current.slice(0, question.options.length);
 		buttonRefs.current.forEach((button, index) => {
 			if (button) {

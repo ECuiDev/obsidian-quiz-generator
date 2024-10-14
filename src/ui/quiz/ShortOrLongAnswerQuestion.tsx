@@ -18,9 +18,11 @@ const ShortOrLongAnswerQuestion = ({ app, question, settings }: ShortOrLongAnswe
 	const answerRef = useRef<HTMLButtonElement>(null);
 
 	useEffect(() => {
-		if (questionRef.current) {
-			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
-		}
+		question.question.split("\\n").forEach(questionFragment => {
+			if (questionRef.current) {
+				MarkdownRenderer.render(app, questionFragment, questionRef.current, "", component);
+			}
+		});
 	}, [app, question, component]);
 
 	useEffect(() => {

@@ -12,9 +12,13 @@ const TrueFalseQuestion = ({ app, question }: TrueFalseQuestionProps) => {
 	const questionRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		if (questionRef.current) {
-			MarkdownRenderer.render(app, question.question, questionRef.current, "", new Component());
-		}
+		const component = new Component();
+
+		question.question.split("\\n").forEach(questionFragment => {
+			if (questionRef.current) {
+				MarkdownRenderer.render(app, questionFragment, questionRef.current, "", component);
+			}
+		});
 	}, [app, question]);
 
 	const getButtonClass = (buttonAnswer: boolean) => {

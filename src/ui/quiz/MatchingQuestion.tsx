@@ -39,9 +39,13 @@ const MatchingQuestion = ({ app, question }: MatchingQuestionProps) => {
 
 	useEffect(() => {
 		const component = new Component();
-		if (questionRef.current) {
-			MarkdownRenderer.render(app, question.question, questionRef.current, "", component);
-		}
+
+		question.question.split("\\n").forEach(questionFragment => {
+			if (questionRef.current) {
+				MarkdownRenderer.render(app, questionFragment, questionRef.current, "", component);
+			}
+		});
+
 		buttonRefs.current = buttonRefs.current.slice(0, question.answer.length * 2);
 		question.answer.forEach((_, index) => {
 			const leftButton = buttonRefs.current[index * 2];
