@@ -233,7 +233,7 @@ export default class QuizReviewer {
 			if (match[2].toLowerCase() === "true" || match[2].toLowerCase() === "false") {
 				this.quiz.push({
 					question: match[1],
-					answer: match[2] === "true"
+					answer: match[2].toLowerCase() === "true"
 				} as TrueFalse);
 			} else if (/`_+`/.test(match[1])) {
 				this.quiz.push({
