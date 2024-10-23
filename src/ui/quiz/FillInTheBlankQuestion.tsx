@@ -13,9 +13,9 @@ const FillInTheBlankQuestion = ({ app, question }: FillInTheBlankQuestionProps) 
 	const questionRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const generateQuestion = (str: string) => {
+		const generateQuestion = () => {
 			let blankIndex = 0;
-			return str.replace(/`_+`/g, match => {
+			return question.question.replace(/`_+`/g, match => {
 				if (blankIndex < filledBlanks.length && filledBlanks[blankIndex] === question.answer[blankIndex]) {
 					return filledBlanks[blankIndex++];
 				}
@@ -28,7 +28,7 @@ const FillInTheBlankQuestion = ({ app, question }: FillInTheBlankQuestionProps) 
 			questionRef.current.empty();
 			const component = new Component();
 
-			generateQuestion(question.question).split("\\n").forEach(questionFragment => {
+			generateQuestion().split("\\n").forEach(questionFragment => {
 				if (questionRef.current) {
 					MarkdownRenderer.render(app, questionFragment, questionRef.current, "", component);
 				}
