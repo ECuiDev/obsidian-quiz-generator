@@ -1,6 +1,6 @@
 # Quiz Generator
 
-[![Downloads](https://img.shields.io/github/downloads/ECuiDev/obsidian-quiz-generator/total?style=for-the-badge&labelColor=21262d&color=238636)](https://github.com/ECuiDev/obsidian-quiz-generator/releases) [![Release](https://img.shields.io/github/v/release/ECuiDev/obsidian-quiz-generator?display_name=tag&style=for-the-badge&logo=github&labelColor=21262d&color=1f6feb)](https://github.com/ECuiDev/obsidian-quiz-generator/releases/latest)
+[![GitHub Downloads](https://img.shields.io/github/downloads/ECuiDev/obsidian-quiz-generator/total?labelColor=21262d&color=238636&logo=github&style=for-the-badge)](https://github.com/ECuiDev/obsidian-quiz-generator/releases) [![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?labelColor=21262d&color=%23483699&label=downloads&query=%24%5B%22quiz-generator%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json&logo=obsidian&style=for-the-badge)](https://github.com/ECuiDev/obsidian-quiz-generator/releases) [![Release](https://img.shields.io/github/v/release/ECuiDev/obsidian-quiz-generator?display_name=tag&labelColor=21262d&color=1f6feb&style=for-the-badge)](https://github.com/ECuiDev/obsidian-quiz-generator/releases/latest)
 
 **Quiz Generator** is a plugin for [Obsidian](https://obsidian.md/) that leverages the power of various AI models to generate interactive, exam-style questions from your notes. Whether you're a student preparing for exams or an educator designing assessments, this plugin streamlines the question creation process.
 
@@ -354,28 +354,29 @@ I'm actively working on bringing more features and improvements to Quiz Generato
 
 ### Next Release
 
-- **Faster Question Creation:** Custom UI to streamline creating your own questions from scratch.
+- **Feature Requests:** [#16](https://github.com/ECuiDev/obsidian-quiz-generator/issues/16), [#17](https://github.com/ECuiDev/obsidian-quiz-generator/issues/17), [#21](https://github.com/ECuiDev/obsidian-quiz-generator/issues/21), [#22](https://github.com/ECuiDev/obsidian-quiz-generator/issues/22).
+- **Chunking:** Automatically break down long notes into smaller segments. Intended to fix [#19](https://github.com/ECuiDev/obsidian-quiz-generator/issues/19) and [#20](https://github.com/ECuiDev/obsidian-quiz-generator/issues/20).
+- **Note Links:** Adding a note also adds outgoing links and backlinks.
 
 ### Future Releases
 
-- **Callout Aliases:** Specify what callout type identifiers you want to use.
-- **Randomize Choices:** Randomize order in which choices for multiple choice and select all that apply questions are displayed.
-- **New Question Type:** Categorization questions.
-- **Save Format Conversion Tool:** Convert saved questions between callout and spaced repetition format.
-- **Anki Integration:** Sync questions with Anki and vice versa.
-- **Homepage:** Access all your saved quizzes from a custom homepage UI.
+- **Randomize Choices:** Randomize choice order for multiple choice and select all that apply questions are displayed.
+- **New Question Type:** Categorization.
 - **Test Mode:** Take quizzes with a time limit and receive a score at the end.
-- **Adjustable Difficulty:** Set the difficulty of generated questions.
-- **Custom View:** Embed the quiz UI directly inside your notes.
-- **Advanced Generation:** Control the number of choices, blanks, and pairs to generate.
-- **Tag Adder:** Add notes by tag.
-- **Dataview Adder:** Add notes using [Dataview](https://github.com/blacksmithgu/obsidian-dataview) queries.
-- **Responsive UI:** Freely resize and move the UI.
-- **Advanced Question Type:** Image-based.
-- **Note Links:** Adding a note also adds the notes it links to.
+- **Homepage:** Access all your quizzes from a custom homepage UI.
+- **Spaced Repetition:** Use the quiz UI with spaced repetition to review quizzes.
+- **Faster Question Creation:** Custom UI to streamline creating your own questions from scratch.
 - **Extended Files:** Generate questions from PDFs and images.
+- **Advanced Question Type:** Image-based.
 - **Question Variety:** Customization options to control the question scope and what it assesses.
 - **Quality of Life:** Reducing token usage while improving question quality.
+- **Tag Adder:** Add notes by tag.
+- **Custom View:** Embed the quiz UI directly inside your notes.
+- **Dataview Adder:** Add notes using [Dataview](https://github.com/blacksmithgu/obsidian-dataview) queries.
+- **Save Format Conversion Tool:** Convert saved questions between callout and spaced repetition format.
+- **Adjustable Difficulty:** Set the difficulty of generated questions.
+- **Advanced Generation:** Control the number of choices, blanks, and pairs to generate.
+- **Responsive UI:** Freely resize and move the UI.
 
 ## Issues and Feature Requests
 
