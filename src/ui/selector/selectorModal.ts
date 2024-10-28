@@ -35,12 +35,7 @@ export default class SelectorModal extends Modal {
 	private readonly itemContainer: HTMLDivElement;
 	private readonly tokenContainer: HTMLSpanElement;
 	private promptTokens: number = 0;
-	private readonly buttonContainer: HTMLDivElement;
-	private readonly clearButton: HTMLButtonElement;
-	private readonly openQuizButton: HTMLButtonElement;
-	private readonly addNoteButton: HTMLButtonElement;
-	private readonly addFolderButton: HTMLButtonElement;
-	private readonly generateQuizButton: HTMLButtonElement;
+	private readonly buttonMap: Record<SelectorModalButton, HTMLButtonElement>;
 	private quiz: QuizModalLogic | undefined;
 
 	constructor(app: App, settings: QuizSettings) {
@@ -59,14 +54,7 @@ export default class SelectorModal extends Modal {
 		this.itemContainer = this.contentEl.createDiv("item-container-qg");
 		this.tokenContainer = this.contentEl.createSpan("prompt-tokens-qg");
 		this.tokenContainer.textContent = "Prompt tokens: " + this.promptTokens;
-		this.buttonContainer = this.contentEl.createDiv("modal-button-container-qg");
-		this.clearButton = this.buttonContainer.createEl("button", "modal-button-qg");
-		this.openQuizButton = this.buttonContainer.createEl("button", "modal-button-qg");
-		this.addNoteButton = this.buttonContainer.createEl("button", "modal-button-qg");
-		this.addFolderButton = this.buttonContainer.createEl("button", "modal-button-qg");
-		this.generateQuizButton = this.buttonContainer.createEl("button", "modal-button-qg");
-
-		this.activateButtons();
+		this.buttonMap = this.activateButtons();
 	}
 
 	public onOpen(): void {
@@ -74,16 +62,26 @@ export default class SelectorModal extends Modal {
 		this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.QUIZ, SelectorModalButton.GENERATE], true);
 	}
 
-	public onClose(): void {
-		super.onClose();
-	}
+	private activateButtons(): Record<SelectorModalButton, HTMLButtonElement> {
+		const buttonContainer = this.contentEl.createDiv("modal-button-container-qg");
+		const clearButton = buttonContainer.createEl("button", "modal-button-qg");
+		const openQuizButton = buttonContainer.createEl("button", "modal-button-qg");
+		const addNoteButton = buttonContainer.createEl("button", "modal-button-qg");
+		const addFolderButton = buttonContainer.createEl("button", "modal-button-qg");
+		const generateQuizButton = buttonContainer.createEl("button", "modal-button-qg");
+		const buttonMap: Record<SelectorModalButton, HTMLButtonElement> = {
+			[SelectorModalButton.CLEAR]: clearButton,
+			[SelectorModalButton.QUIZ]: openQuizButton,
+			[SelectorModalButton.NOTE]: addNoteButton,
+			[SelectorModalButton.FOLDER]: addFolderButton,
+			[SelectorModalButton.GENERATE]: generateQuizButton,
+		};
 
-	private activateButtons(): void {
-		setIconAndTooltip(this.clearButton, "book-x", "Remove all");
-		setIconAndTooltip(this.openQuizButton, "scroll-text", "Open quiz");
-		setIconAndTooltip(this.addNoteButton, "file-plus-2", "Add note");
-		setIconAndTooltip(this.addFolderButton, "folder-plus", "Add folder");
-		setIconAndTooltip(this.generateQuizButton, "webhook", "Generate");
+		setIconAndTooltip(clearButton, "book-x", "Remove all");
+		setIconAndTooltip(openQuizButton, "scroll-text", "Open quiz");
+		setIconAndTooltip(addNoteButton, "file-plus-2", "Add note");
+		setIconAndTooltip(addFolderButton, "folder-plus", "Add folder");
+		setIconAndTooltip(generateQuizButton, "webhook", "Generate");
 
 		const clearHandler = (): void => {
 			this.toggleButtons([SelectorModalButton.CLEAR, SelectorModalButton.GENERATE], true);
@@ -148,11 +146,13 @@ export default class SelectorModal extends Modal {
 			}
 		};
 
-		this.clearButton.addEventListener("click", clearHandler);
-		this.openQuizButton.addEventListener("click", openQuizHandler);
-		this.addNoteButton.addEventListener("click", addNoteHandler);
-		this.addFolderButton.addEventListener("click", addFolderHandler);
-		this.generateQuizButton.addEventListener("click", generateQuizHandler);
+		clearButton.addEventListener("click", clearHandler);
+		openQuizButton.addEventListener("click", openQuizHandler);
+		addNoteButton.addEventListener("click", addNoteHandler);
+		addFolderButton.addEventListener("click", addFolderHandler);
+		generateQuizButton.addEventListener("click", generateQuizHandler);
+
+		return buttonMap;
 	}
 
 	private openNoteSelector(): void {
@@ -263,14 +263,7 @@ export default class SelectorModal extends Modal {
 	}
 
 	private toggleButtons(buttons: SelectorModalButton[], disabled: boolean): void {
-		const buttonMap: Record<SelectorModalButton, HTMLButtonElement> = {
-			[SelectorModalButton.CLEAR]: this.clearButton,
-			[SelectorModalButton.QUIZ]: this.openQuizButton,
-			[SelectorModalButton.NOTE]: this.addNoteButton,
-			[SelectorModalButton.FOLDER]: this.addFolderButton,
-			[SelectorModalButton.GENERATE]: this.generateQuizButton,
-		};
-		buttons.forEach(button => buttonMap[button].disabled = disabled);
+		buttons.forEach(button => this.buttonMap[button].disabled = disabled);
 	}
 
 	private updatePromptTokens(tokens: number): void {
